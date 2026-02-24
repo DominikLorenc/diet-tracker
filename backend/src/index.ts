@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import userRoutes from "./routes/userRoutes";
 
 
 dotenv.config();
@@ -20,6 +21,8 @@ app.get("/", (req, res) => {
 app.get("/health", (req, res) => {
     res.send({ status: "ok" });
 });
+
+app.use("/api/users", userRoutes);
 
 const PORT = process.env.PORT || 4000;
 
