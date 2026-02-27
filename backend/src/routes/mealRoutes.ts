@@ -3,6 +3,6 @@ import { test } from "../controllers/userController";
 
 const router = Router();
 
-router.post("/test", test);
+router.post("/meal", test);
 
 export default router;
