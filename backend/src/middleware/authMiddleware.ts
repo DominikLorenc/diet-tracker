@@ -22,7 +22,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
         if (error instanceof AppError) {
             return res.status(error.statusCode).json({ message: error.message });
         }
-        return res.status(500).json({ message: "Error qwe" });
+        return res.status(500).json({ message: "Error" });
     }
 }
 
