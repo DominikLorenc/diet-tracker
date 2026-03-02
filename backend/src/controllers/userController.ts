@@ -1,29 +1,37 @@
 import { Request, Response } from "express";
-import prisma from "../lib/prisma";
+import { loginSchema, registerSchema } from "../schemas/userSchema";
+import { registerUser, loginUser } from "../services/userService";
+import { AppError } from "../utils/AppError";
 
 
-export const test = async (req: Request, res: Response) => {
+export const register = async (req: Request, res: Response) => {
 
-    // console.log(req.body);
-
-    const { email, username, password } = req.body;
+    const result = registerSchema.safeParse(req.body);
+    if (!result.success) {
+        return res.status(400).json({ message: result.error.issues });
+    }
 
 
     try {
-        const user = await prisma.user.findUnique({
-            where: {
-                email: email,
-            },
+        const { email, username, password } = result.data;
+
+
+
+        const user = await registerUser({
+            email,
+            username,
+            password,
         });
 
         if (!user) {
-            return res.status(404).json({ message: "User not found" });
+            throw new AppError("User not added", 500);
         }
 
-        console.log(user);
-        return res.json({ message: user });
+        return res.status(201).json({ message: "User added", user });
     } catch (error) {
-        console.log(error);
+        if (error instanceof AppError) {
+            return res.status(error.statusCode).json({ message: error.message });
+        }
         return res.status(500).json({ message: "Error" });
     }
 
@@ -32,3 +40,37 @@ export const test = async (req: Request, res: Response) => {
 }
 
 
+export const login = async (req: Request, res: Response) => {
+    const result = loginSchema.safeParse(req.body);
+    if (!result.success) {
+        return res.status(400).json({ message: result.error.issues });
+    }
+
+    try {
+        const { email, password } = result.data;
+
+        const user = await loginUser(email, password);
+
+        const { token, ...userData } = user
+
+        return res.cookie("token", token, {
+            httpOnly: true,
+            maxAge: 60 * 60 * 1000,
+            sameSite: "strict",
+            secure: process.env.NODE_ENV === "production",
+        }).json({ message: "User logged in", user: userData });
+
+
+    } catch (error) {
+        if (error instanceof AppError) {
+            return res.status(error.statusCode).json({ message: error.message });
+        }
+        return res.status(500).json({ message: "Error" });
+    }
+
+}
+
+
+export const logout = async (req: Request, res: Response) => {
+    return res.clearCookie("token").json({ message: "User logged out" });
+}

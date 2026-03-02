@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import apiRoutes from "./routes";
 import rateLimit from "express-rate-limit";
+import cookieParser from "cookie-parser";
 
 
 dotenv.config();
@@ -20,6 +21,7 @@ app.use(limiter);
 
 
 app.use(express.json());
+app.use(cookieParser())
 
 
 

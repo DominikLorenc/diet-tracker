@@ -14,6 +14,4 @@ export const updateProductSchema = productSchema.partial().refine(
     { message: "At least one field must be provided" }
 );
 
-export const productIdSchema = z
-    .string()
-    .uuid({ message: "Product ID must be a valid UUID" });
+export const productIdSchema = z.uuid({ message: "Product ID must be a valid UUID" });
