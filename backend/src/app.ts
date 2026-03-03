@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import apiRoutes from './routes';
 import cookieParser from 'cookie-parser';
 import { globalRateLimiter } from './middleware/rateLimiter';
+import { errorHandler } from './middleware/errorHandler';
 
 dotenv.config();
 
@@ -20,4 +21,5 @@ app.get('/health', (req, res) => {
 
 app.use('/api/v1', apiRoutes);
 
+app.use(errorHandler);
 export default app;

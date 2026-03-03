@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { loginSchema, registerSchema } from '../schemas/userSchema';
 import { registerUser, loginUser } from '../services/userService';
 import { AppError } from '../utils/AppError';
 
-export const register = async (req: Request, res: Response) => {
+export const register = async (req: Request, res: Response, next: NextFunction) => {
     const result = registerSchema.safeParse(req.body);
     if (!result.success) {
         return res.status(400).json({ message: result.error.issues });
@@ -24,14 +24,11 @@ export const register = async (req: Request, res: Response) => {
 
         return res.status(201).json({ message: 'User added', user });
     } catch (error) {
-        if (error instanceof AppError) {
-            return res.status(error.statusCode).json({ message: error.message });
-        }
-        return res.status(500).json({ message: 'Error' });
+        next(error);
     }
 };
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response, next: NextFunction) => {
     const result = loginSchema.safeParse(req.body);
     if (!result.success) {
         return res.status(400).json({ message: result.error.issues });
@@ -53,10 +50,7 @@ export const login = async (req: Request, res: Response) => {
             })
             .json({ message: 'User logged in', user: userData });
     } catch (error) {
-        if (error instanceof AppError) {
-            return res.status(error.statusCode).json({ message: error.message });
-        }
-        return res.status(500).json({ message: 'Error' });
+        next(error);
     }
 };
 

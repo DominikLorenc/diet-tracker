@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import {
     createProduct as createProductService,
     getAllProducts,
@@ -7,9 +7,8 @@ import {
     deleteProductService,
 } from '../services/productService';
 import { productSchema, productIdSchema, updateProductSchema } from '../schemas/productSchema';
-import { AppError } from '../utils/AppError';
 
-export const createProduct = async (req: Request, res: Response) => {
+export const createProduct = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const result = productSchema.safeParse(req.body);
         if (!result.success) {
@@ -21,28 +20,20 @@ export const createProduct = async (req: Request, res: Response) => {
 
         res.status(201).json({ message: 'Product created', product });
     } catch (error) {
-        if (error instanceof AppError) {
-            res.status(error.statusCode).json({ message: error.message });
-            return;
-        }
-        res.status(500).json({ message: 'Could not create product' });
+        next(error);
     }
 };
 
-export const getProducts = async (req: Request, res: Response) => {
+export const getProducts = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const products = await getAllProducts();
         res.status(200).json({ products });
     } catch (error) {
-        if (error instanceof AppError) {
-            res.status(error.statusCode).json({ message: error.message });
-            return;
-        }
-        res.status(500).json({ message: 'Could not get products' });
+        next(error);
     }
 };
 
-export const getProduct = async (req: Request, res: Response) => {
+export const getProduct = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
     const result = productIdSchema.safeParse(id);
@@ -55,15 +46,11 @@ export const getProduct = async (req: Request, res: Response) => {
         const product = await getProductById(result.data);
         res.status(200).json({ product });
     } catch (error) {
-        if (error instanceof AppError) {
-            res.status(error.statusCode).json({ message: error.message });
-            return;
-        }
-        res.status(500).json({ message: 'Could not get product' });
+        next(error);
     }
 };
 
-export const updateProduct = async (req: Request, res: Response) => {
+export const updateProduct = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
 
@@ -84,15 +71,11 @@ export const updateProduct = async (req: Request, res: Response) => {
 
         res.status(200).json({ product: updated });
     } catch (error) {
-        if (error instanceof AppError) {
-            res.status(error.statusCode).json({ message: error.message });
-            return;
-        }
-        res.status(500).json({ message: 'Could not update product' });
+        next(error);
     }
 };
 
-export const deleteProduct = async (req: Request, res: Response) => {
+export const deleteProduct = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
     const result = productIdSchema.safeParse(id);
@@ -105,10 +88,6 @@ export const deleteProduct = async (req: Request, res: Response) => {
         const deleted = await deleteProductService(result.data);
         res.status(200).json({ message: 'Product deleted', deleted });
     } catch (error) {
-        if (error instanceof AppError) {
-            res.status(error.statusCode).json({ message: error.message });
-            return;
-        }
-        res.status(500).json({ message: 'Could not delete product' });
+        next(error);
     }
 };
