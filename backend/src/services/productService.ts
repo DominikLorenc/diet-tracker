@@ -43,9 +43,15 @@ export const getProductById = async (id: string): Promise<Product> => {
 };
 
 export const updateProductValues = async (id: string, product: Prisma.ProductUpdateInput): Promise<Product> => {
-    const isProductExists = await productExists(id);
-    if (isProductExists) {
-        throw new AppError('Product not found', 404);
+    const productToUpdate = await getProductById(id);
+
+    const name = product?.name;
+
+    if (typeof name === 'string' && name !== productToUpdate.name) {
+        const exists = await productExists(name);
+        if (exists) {
+            throw new AppError('Product already exists', 409);
+        }
     }
 
     const updatedProduct = await prisma.product.update({
@@ -67,4 +73,21 @@ export const deleteProductService = async (id: string): Promise<Product> => {
         },
     });
     return deletedProduct;
+};
+
+export const searchProductsService = async (search: string): Promise<Product[]> => {
+    const products = await prisma.product.findMany({
+        where: {
+            name: {
+                contains: search,
+                mode: 'insensitive',
+            },
+        },
+        orderBy: {
+            name: 'asc',
+        },
+        take: 10,
+    });
+
+    return products;
 };

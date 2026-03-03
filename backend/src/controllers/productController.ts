@@ -5,8 +5,9 @@ import {
     getProductById,
     updateProductValues,
     deleteProductService,
+    searchProductsService,
 } from '../services/productService';
-import { productSchema, productIdSchema, updateProductSchema } from '../schemas/productSchema';
+import { productSchema, productIdSchema, updateProductSchema, searchProductSchema } from '../schemas/productSchema';
 
 export const createProduct = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -87,6 +88,23 @@ export const deleteProduct = async (req: Request, res: Response, next: NextFunct
     try {
         const deleted = await deleteProductService(result.data);
         res.status(200).json({ message: 'Product deleted', deleted });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const searchProducts = async (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.query.q);
+    const result = searchProductSchema.safeParse({ search: req.query.q });
+    if (!result.success) {
+        res.status(400).json({ message: result.error.issues });
+        return;
+    }
+
+    try {
+        const query = result.data.search;
+        const products = await searchProductsService(query);
+        res.status(200).json({ products });
     } catch (error) {
         next(error);
     }

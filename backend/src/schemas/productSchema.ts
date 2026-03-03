@@ -13,3 +13,7 @@ export const updateProductSchema = productSchema
     .refine((data) => Object.keys(data).length > 0, { message: 'At least one field must be provided' });
 
 export const productIdSchema = z.uuid({ message: 'Product ID must be a valid UUID' });
+
+export const searchProductSchema = z.object({
+    search: z.string().min(1, 'Search term is required'),
+});

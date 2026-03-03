@@ -65,5 +65,3 @@ export const loginUser = async (
         token,
     };
 };
-
-//https://www.rbxactive.com/products/everyday-ribbed-ankle-pant?variant=44076417417338&__orly_pdpOutfit=enabled&__orly_origin=qa-bento-dev
