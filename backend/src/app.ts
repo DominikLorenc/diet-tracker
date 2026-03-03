@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.get('/health', (req, res) => {
-    res.send({ status: 'api works' });
+    res.send({ status: 'ok', message: 'API is running' });
 });
 
 app.use('/api/v1', apiRoutes);
