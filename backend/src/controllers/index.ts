@@ -1,4 +1,4 @@
-import { createProduct, getProducts, getProduct, updateProduct, deleteProduct } from "./productController";
+import { createProduct, getProducts, getProduct, updateProduct, deleteProduct } from './productController';
 
 const productController = {
     createProduct,
@@ -7,6 +7,5 @@ const productController = {
     updateProduct,
     deleteProduct,
 };
-
 
 export { productController };

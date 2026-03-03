@@ -1,13 +1,11 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
-import apiRoutes from "./routes";
-import cookieParser from "cookie-parser";
-import { globalRateLimiter } from "./middleware/rateLimiter";
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import apiRoutes from './routes';
+import cookieParser from 'cookie-parser';
+import { globalRateLimiter } from './middleware/rateLimiter';
 
 dotenv.config();
-
-
 
 const app = express();
 
@@ -16,8 +14,8 @@ app.use(globalRateLimiter);
 app.use(express.json());
 app.use(cookieParser());
 
-app.get("/health", (req, res) => {
-    res.send({ status: "ok" });
+app.get('/health', (req, res) => {
+    res.send({ status: 'ok' });
 });
 
 app.use('/api/v1', apiRoutes);
