@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { loginSchema, registerSchema } from '../schemas/userSchema';
-import { registerUser, loginUser } from '../services/userService';
+import { registerUser, loginUser, getUserById } from '../services/userService';
 import { AppError } from '../utils/AppError';
 
 export const register = async (req: Request, res: Response, next: NextFunction) => {
@@ -56,4 +56,18 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
 export const logout = async (req: Request, res: Response) => {
     return res.clearCookie('token').json({ message: 'User logged out' });
+};
+
+export const me = async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.userId;
+    if (!userId) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    try {
+        const user = await getUserById(userId);
+        return res.status(200).json({ message: 'User found', user });
+    } catch (error) {
+        next(error);
+    }
 };

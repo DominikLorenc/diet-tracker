@@ -65,3 +65,15 @@ export const loginUser = async (
         token,
     };
 };
+
+export const getUserById = async (id: string): Promise<User> => {
+    const user = await prisma.user.findUnique({
+        where: {
+            id: id,
+        },
+    });
+    if (!user) {
+        throw new AppError('User not found', 404);
+    }
+    return user;
+};
