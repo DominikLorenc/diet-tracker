@@ -23,6 +23,7 @@ model User {
     role      String   @default("user")
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    diaryEntries DiaryEntry[]
   }
 
 model Product {
@@ -41,6 +42,7 @@ model Meal {
   name      String   @unique
   createdAt DateTime @default(now())
   mealProducts MealProduct[]
+  diaryEntries DiaryEntry[]
 }
 
 
@@ -56,3 +58,21 @@ model MealProduct {
     quantity  Decimal
     unit      String
   }
+
+enum MealType {                                                                                                                                                                       
+    BREAKFAST                                                                                                                                                                           
+    LUNCH                                                                                                                                                                               
+    DINNER                                                                                                                                                                              
+    SNACK                                                                                                                                                                             
+  }  
+
+model DiaryEntry {
+  id        String   @id @default(uuid())
+  date      DateTime
+  mealId    String
+  meal      Meal     @relation(fields: [mealId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  mealType  MealType   @default(BREAKFAST)
+  createdAt DateTime @default(now())
+}
