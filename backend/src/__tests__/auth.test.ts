@@ -9,7 +9,7 @@ process.env.JWT_SECRET = 'test-secret';
 
 vi.mock('../services/userService');
 
-describe('POST /api/v1/auth/register', () => {
+describe('POST /api/v1/users/register', () => {
     it('should return 201 when valid data is provided', async () => {
         vi.mocked(registerUser).mockResolvedValue({
             id: '1',
@@ -78,7 +78,7 @@ describe('POST /api/v1/auth/register', () => {
     });
 });
 
-describe('POST /api/v1/auth/login', () => {
+describe('POST /api/v1/users/login', () => {
     it('should return 200 and set cookie when valid data is provided', async () => {
         vi.mocked(loginUser).mockResolvedValue({
             email: 'test@test.com',
@@ -106,7 +106,7 @@ describe('POST /api/v1/auth/login', () => {
     });
 });
 
-describe('DELETE /api/v1/auth/logout', () => {
+describe('DELETE /api/v1/logout', () => {
     it('should return 200 when user is logged in', async () => {
         const token = jwt.sign({ id: '1' }, process.env.JWT_SECRET!);
         const res = await request(app)
