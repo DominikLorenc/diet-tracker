@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { PrismaClient } from '../generated/prisma/client';
+import { PrismaClient } from '../generated/prisma';
 import { PrismaPg } from '@prisma/adapter-pg';
 
 const adapter = new PrismaPg({
@@ -12,6 +12,6 @@ const omit = {
     },
 };
 
-const prisma = new PrismaClient({ adapter, omit });
+const prisma = new PrismaClient({ adapter, omit }) as unknown as PrismaClient;
 
 export default prisma;

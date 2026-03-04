@@ -1,0 +1,65 @@
+import { Request, Response, NextFunction } from 'express';
+import { addDiaryService, deleteDiaryService, getDiaryServiceByDate } from '../services/diaryService';
+import { diaryEntrySchema, dateDiarySchema, diaryIdSchema } from '../schemas/diarySchema';
+
+export const createDiaryEntry = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const result = diaryEntrySchema.safeParse(req.body);
+        if (!result.success) {
+            res.status(400).json({ message: result.error.issues });
+            return;
+        }
+
+        const { date, mealId, mealType } = result.data;
+
+        const newDiaryEntry = await addDiaryService({
+            date,
+            mealType,
+            meal: {
+                connect: { id: mealId },
+            },
+            user: {
+                connect: { id: req.userId },
+            },
+        });
+
+        res.status(201).json({ message: 'Diary entry created', newDiaryEntry });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getDiary = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { date } = req.query;
+
+        const searchDate = dateDiarySchema.safeParse({ date });
+        if (!searchDate.success) {
+            res.status(400).json({ message: searchDate.error.issues });
+            return;
+        }
+
+        const diaryEntries = await getDiaryServiceByDate(searchDate.data.date);
+
+        res.status(200).json({ message: 'Diary entries', diaryEntries });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const deleteDiaryEntry = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+
+        const result = diaryIdSchema.safeParse(id);
+        if (!result.success) {
+            res.status(400).json({ message: result.error.issues });
+            return;
+        }
+
+        const deleted = await deleteDiaryService(result.data);
+        res.status(200).json({ message: 'Diary entry deleted', deleted });
+    } catch (error) {
+        next(error);
+    }
+};
