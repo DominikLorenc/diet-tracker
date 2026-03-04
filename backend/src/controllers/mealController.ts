@@ -11,7 +11,6 @@ import {
 import { productIdSchema } from '../schemas/productSchema';
 
 export const createMeal = async (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.body);
     try {
         const result = mealSchema.safeParse(req.body);
         if (!result.success) {
