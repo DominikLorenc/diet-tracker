@@ -1,5 +1,13 @@
 import { Router } from 'express';
-import { createMeal, getMeals, getMeal, updateMeal, deleteMeal, addProductToMeal } from '../controllers/mealController';
+import {
+    createMeal,
+    getMeals,
+    getMeal,
+    updateMeal,
+    deleteMeal,
+    addProductToMeal,
+    removeProductFromMeal,
+} from '../controllers/mealController';
 import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = Router();
@@ -12,5 +20,6 @@ router.get('/:id', getMeal);
 router.post('/:id/products', addProductToMeal);
 router.patch('/:id', updateMeal);
 router.delete('/:id', deleteMeal);
+router.delete('/:mealId/products/:mealProductId', removeProductFromMeal);
 
 export default router;

@@ -6,6 +6,7 @@ import {
     updateMealValues,
     deleteMealService,
     addProductToMealService,
+    removeProductFromMealService,
 } from '../services/mealService';
 import request from 'supertest';
 import app from '../app';
@@ -252,5 +253,61 @@ describe('POST /api/v1/meals/:id/products', () => {
             productId: productId,
         });
         expect(res.status).toBe(401);
+    });
+});
+
+describe('DELETE /api/v1/meals/:id/products/:productId', () => {
+    beforeEach(() => {
+        vi.resetAllMocks();
+    });
+    it('should return 200 and deleted product from meal', async () => {
+        vi.mocked(removeProductFromMealService).mockResolvedValue({
+            mealId: mealId,
+            productId: productId,
+            quantity: new Decimal(1),
+            unit: 'g',
+            id: '1',
+        });
+        const res = await request(app)
+            .delete(`/api/v1/meals/${mealId}/products/${productId}`)
+            .set('Cookie', ['token=' + token]);
+        expect(res.status).toBe(200);
+    });
+
+    it('should return 404 when meal not found', async () => {
+        vi.mocked(removeProductFromMealService).mockRejectedValue(new AppError('Meal not found', 404));
+
+        const res = await request(app)
+            .delete(`/api/v1/meals/${mealId}/products/${productId}`)
+            .set('Cookie', ['token=' + token]);
+        expect(res.status).toBe(404);
+    });
+
+    it('should return 404 when product not found', async () => {
+        vi.mocked(removeProductFromMealService).mockRejectedValue(new AppError('Product not found', 404));
+
+        const res = await request(app)
+            .delete(`/api/v1/meals/${mealId}/products/${productId}`)
+            .set('Cookie', ['token=' + token]);
+        expect(res.status).toBe(404);
+    });
+
+    it('should return 401 when user is not logged in', async () => {
+        const res = await request(app).delete(`/api/v1/meals/${mealId}/products/${productId}`);
+        expect(res.status).toBe(401);
+    });
+
+    it('should return 400 when meal uuid is invalid', async () => {
+        const res = await request(app)
+            .delete(`/api/v1/meals/123/products/${productId}`)
+            .set('Cookie', ['token=' + token]);
+        expect(res.status).toBe(400);
+    });
+
+    it('should return 400 when product uuid is invalid', async () => {
+        const res = await request(app)
+            .delete(`/api/v1/meals/${mealId}/products/123`)
+            .set('Cookie', ['token=' + token]);
+        expect(res.status).toBe(400);
     });
 });

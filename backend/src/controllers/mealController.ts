@@ -7,6 +7,7 @@ import {
     updateMealValues,
     deleteMealService,
     addProductToMealService,
+    removeProductFromMealService,
 } from '../services/mealService';
 import { productIdSchema } from '../schemas/productSchema';
 
@@ -115,6 +116,33 @@ export const addProductToMeal = async (req: Request, res: Response, next: NextFu
         const meal = await addProductToMealService(mealId.data, id.data);
 
         res.status(201).json({ message: 'Product added to meal', meal });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const removeProductFromMeal = async (req: Request, res: Response, next: NextFunction) => {
+    const { mealId, mealProductId } = req.params;
+
+    const mealIdValidation = mealIdSchema.safeParse(mealId);
+    if (!mealIdValidation.success) {
+        res.status(400).json({ message: mealIdValidation.error.issues });
+        return;
+    }
+
+    const mealProductIdValidation = productIdSchema.safeParse(mealProductId);
+    if (!mealProductIdValidation.success) {
+        res.status(400).json({ message: mealProductIdValidation.error.issues });
+        return;
+    }
+
+    try {
+        const productId = mealProductIdValidation.data;
+        const mealId = mealIdValidation.data;
+
+        const meal = await removeProductFromMealService(productId, mealId);
+
+        res.status(200).json({ message: 'Product removed from meal', meal });
     } catch (error) {
         next(error);
     }

@@ -93,3 +93,17 @@ export const addProductToMealService = async (mealId: string, productId: string)
 
     return meal;
 };
+
+export const removeProductFromMealService = async (mealProductId: string, mealId: string): Promise<MealProduct> => {
+    const currentMeal = await getMealById(mealId);
+
+    const isProductInMeal = currentMeal.mealProducts.some((mealProduct) => mealProduct.id === mealProductId);
+    if (!isProductInMeal) {
+        throw new AppError('Product not found in meal', 404);
+    }
+
+    const meal = await prisma.mealProduct.delete({
+        where: { id: mealProductId },
+    });
+    return meal;
+};
