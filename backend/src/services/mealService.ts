@@ -1,4 +1,4 @@
-import { Prisma, Meal } from '../generated/prisma';
+import { Prisma, Meal, MealProduct } from '../generated/prisma';
 import prisma from '../lib/prisma';
 import { AppError } from '../utils/AppError';
 
@@ -29,10 +29,17 @@ export const getAllMeals = async (): Promise<Meal[]> => {
     return meals;
 };
 
-export const getMealById = async (id: string): Promise<Meal> => {
+export const getMealById = async (id: string): Promise<Meal & { mealProducts: MealProduct[] }> => {
     const meal = await prisma.meal.findUnique({
         where: {
             id: id,
+        },
+        include: {
+            mealProducts: {
+                include: {
+                    product: true,
+                },
+            },
         },
     });
     if (!meal) {
@@ -71,5 +78,18 @@ export const deleteMealService = async (id: string): Promise<Meal> => {
             id: id,
         },
     });
+    return meal;
+};
+
+export const addProductToMealService = async (mealId: string, productId: string): Promise<MealProduct> => {
+    const meal = await prisma.mealProduct.create({
+        data: {
+            mealId,
+            productId,
+            quantity: 1,
+            unit: 'g',
+        },
+    });
+
     return meal;
 };

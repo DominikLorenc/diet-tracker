@@ -6,7 +6,9 @@ import {
     getMealById,
     updateMealValues,
     deleteMealService,
+    addProductToMealService,
 } from '../services/mealService';
+import { productIdSchema } from '../schemas/productSchema';
 
 export const createMeal = async (req: Request, res: Response, next: NextFunction) => {
     console.log(req.body);
@@ -88,6 +90,32 @@ export const deleteMeal = async (req: Request, res: Response, next: NextFunction
     try {
         const deleted = await deleteMealService(result.data);
         res.status(200).json({ message: 'Meal deleted', deleted });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const addProductToMeal = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+
+    const mealId = mealIdSchema.safeParse(id);
+    if (!mealId.success) {
+        res.status(404).json({ message: mealId.error.issues });
+        return;
+    }
+
+    try {
+        const { productId } = req.body;
+
+        const id = productIdSchema.safeParse(productId);
+        if (!id.success) {
+            res.status(400).json({ message: id.error.issues });
+            return;
+        }
+
+        const meal = await addProductToMealService(mealId.data, id.data);
+
+        res.status(201).json({ message: 'Product added to meal', meal });
     } catch (error) {
         next(error);
     }
