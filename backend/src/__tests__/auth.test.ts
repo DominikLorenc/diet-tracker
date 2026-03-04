@@ -19,6 +19,10 @@ describe('POST /api/v1/auth/register', () => {
             role: 'USER',
             createdAt: new Date(),
             updatedAt: new Date(),
+            dailyCaloriesGoal: 0,
+            dailyProteinGoal: 0,
+            dailyCarbsGoal: 0,
+            dailyFatGoal: 0,
         });
 
         const res = await request(app).post('/api/v1/users/register').send({

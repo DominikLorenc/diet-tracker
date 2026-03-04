@@ -77,3 +77,25 @@ export const getUserById = async (id: string): Promise<User> => {
     }
     return user;
 };
+
+export const updateGoalsService = async (
+    userId: string,
+    dailyCaloriesGoal: number,
+    dailyProteinGoal: number,
+    dailyCarbsGoal: number,
+    dailyFatGoal: number,
+): Promise<User> => {
+    const updated = await prisma.user.update({
+        where: {
+            id: userId,
+        },
+        data: {
+            dailyCaloriesGoal,
+            dailyProteinGoal,
+            dailyCarbsGoal,
+            dailyFatGoal,
+        },
+    });
+
+    return updated;
+};

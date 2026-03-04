@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { loginSchema, registerSchema } from '../schemas/userSchema';
-import { registerUser, loginUser, getUserById } from '../services/userService';
+import { loginSchema, registerSchema, updateGoalsSchema } from '../schemas/userSchema';
+import { registerUser, loginUser, getUserById, updateGoalsService } from '../services/userService';
 import { AppError } from '../utils/AppError';
 
 export const register = async (req: Request, res: Response, next: NextFunction) => {
@@ -67,6 +67,32 @@ export const me = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = await getUserById(userId);
         return res.status(200).json({ message: 'User found', user });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const updateGoals = async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.userId;
+    if (!userId) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    try {
+        const validation = updateGoalsSchema.safeParse(req.body);
+        if (!validation.success) {
+            return res.status(400).json({ message: validation.error.issues });
+        }
+
+        const { dailyCaloriesGoal, dailyProteinGoal, dailyCarbsGoal, dailyFatGoal } = validation.data;
+        const updated = await updateGoalsService(
+            userId,
+            dailyCaloriesGoal,
+            dailyProteinGoal,
+            dailyCarbsGoal,
+            dailyFatGoal,
+        );
+        return res.status(200).json({ message: 'Goals updated', updated });
     } catch (error) {
         next(error);
     }

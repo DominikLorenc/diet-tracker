@@ -40,3 +40,10 @@ export const loginSchema = userSchema.pick({
     email: true,
     password: true,
 });
+
+export const updateGoalsSchema = z.object({
+    dailyCaloriesGoal: z.number().int().min(0),
+    dailyProteinGoal: z.number().int().min(0),
+    dailyCarbsGoal: z.number().int().min(0),
+    dailyFatGoal: z.number().int().min(0),
+});

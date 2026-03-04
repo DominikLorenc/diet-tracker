@@ -8,11 +8,14 @@
         "build": "tsc",
         "start": "node dist/index.js",
         "studio": "prisma studio",
-        "test": "vitest run",
+        "test": "NODE_ENV=test vitest run",
         "test:watch": "vitest",
         "lint": "eslint .",
         "format": "prettier --write src/",
-        "prepare": "husky"
+        "prepare": "husky",
+        "prisma:devMigrate": "prisma migrate dev",
+        "prisma:migrate": "prisma migrate deploy",
+        "prisma:generate": "prisma generate"
     },
     "lint-staged": {
         "*.ts": [
