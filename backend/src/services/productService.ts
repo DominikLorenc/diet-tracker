@@ -67,6 +67,14 @@ export const updateProductValues = async (id: string, product: Prisma.ProductUpd
 export const deleteProductService = async (id: string): Promise<Product> => {
     await getProductById(id);
 
+    const existing = await prisma.mealProduct.findFirst({
+        where: { productId: id },
+    });
+
+    if (existing) {
+        throw new AppError('Product is used in meal', 409);
+    }
+
     const deletedProduct = await prisma.product.delete({
         where: {
             id: id,
