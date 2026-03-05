@@ -27,14 +27,7 @@ const userSchema = z.object({
         .regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character'),
 });
 
-export const registerSchema = userSchema
-    .extend({
-        passwordConfirm: z.string(),
-    })
-    .refine((data) => data.password === data.passwordConfirm, {
-        message: 'Passwords must match',
-        path: ['passwordConfirm'],
-    });
+export const registerSchema = userSchema;
 
 export const loginSchema = userSchema.pick({
     email: true,
