@@ -10,17 +10,22 @@ export const createDiaryEntry = async (req: Request, res: Response, next: NextFu
             return;
         }
 
-        const { date, mealId, mealType } = result.data;
+        const { date, productId, recipeId, quantity, mealType } = result.data;
+
+        const userId = req.userId;
+
+        if (!userId) {
+            res.status(401).json({ message: 'Unauthorized' });
+            return;
+        }
 
         const newDiaryEntry = await addDiaryService({
             date,
+            productId,
+            recipeId,
+            quantity,
             mealType,
-            meal: {
-                connect: { id: mealId },
-            },
-            user: {
-                connect: { id: req.userId },
-            },
+            userId,
         });
 
         res.status(201).json({ message: 'Diary entry created', newDiaryEntry });

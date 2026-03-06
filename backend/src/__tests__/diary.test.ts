@@ -10,8 +10,11 @@ process.env.JWT_SECRET = 'test-secret';
 vi.mock('../services/diaryService');
 
 const token = jwt.sign({ id: '1' }, process.env.JWT_SECRET!);
-const mealId = 'e87f94c7-0e0c-46ab-90a2-6537a30fa688';
+const productId = 'e87f94c7-0e0c-46ab-90a2-6537a30fa688';
 const userId = 'e87f94c7-0e0c-46ab-90a2-6537a30fa688';
+const recipeId = 'e87f94c7-0e0c-46ab-90a2-6537a30fa688';
+const quantity = 1;
+const diaryId = 'e87f94c7-0e0c-46ab-90a2-6537a30fa688';
 
 describe('POST /api/v1/diary', () => {
     beforeEach(() => {
@@ -21,16 +24,17 @@ describe('POST /api/v1/diary', () => {
         vi.mocked(addDiaryService).mockResolvedValue({
             id: '1',
             date: new Date(),
-            mealId: mealId,
-            userId: userId,
-            mealType: 'BREAKFAST',
+            userId,
             createdAt: new Date(),
         });
         const res = await request(app)
             .post('/api/v1/diary')
             .send({
+                userId,
                 date: new Date(),
-                mealId: mealId,
+                productId,
+                recipeId,
+                quantity,
                 mealType: 'BREAKFAST',
             })
             .set('Cookie', ['token=' + token]);
@@ -49,8 +53,11 @@ describe('POST /api/v1/diary', () => {
 
     it('should return 401 when user is not logged in', async () => {
         const res = await request(app).post('/api/v1/diary').send({
+            userId,
             date: new Date(),
-            mealId: mealId,
+            productId,
+            recipeId,
+            quantity,
             mealType: 'BREAKFAST',
         });
         expect(res.status).toBe(401);
@@ -64,11 +71,9 @@ describe('GET /api/v1/diary', () => {
     it('should return 200 and all diary entries', async () => {
         vi.mocked(getDiaryServiceByDate).mockResolvedValue([
             {
-                date: new Date(),
-                mealId: mealId,
-                userId: userId,
-                mealType: 'BREAKFAST',
                 id: '1',
+                date: new Date(),
+                userId,
                 createdAt: new Date(),
             },
         ]);
@@ -90,15 +95,13 @@ describe('DELETE /api/v1/diary/:id', () => {
     });
     it('should return 200 and deleted diary entry', async () => {
         vi.mocked(deleteDiaryService).mockResolvedValue({
-            date: new Date(),
-            userId: userId,
-            mealId: mealId,
-            mealType: 'BREAKFAST',
             id: '1',
+            date: new Date(),
+            userId,
             createdAt: new Date(),
         });
         const res = await request(app)
-            .delete(`/api/v1/diary/${mealId}`)
+            .delete(`/api/v1/diary/${diaryId}`)
             .set('Cookie', ['token=' + token]);
         expect(res.status).toBe(200);
     });
@@ -107,13 +110,13 @@ describe('DELETE /api/v1/diary/:id', () => {
         vi.mocked(deleteDiaryService).mockRejectedValue(new AppError('Diary not found', 404));
 
         const res = await request(app)
-            .delete(`/api/v1/diary/${mealId}`)
+            .delete(`/api/v1/diary/${diaryId}`)
             .set('Cookie', ['token=' + token]);
         expect(res.status).toBe(404);
     });
 
     it('should return 401 when user is not logged in', async () => {
-        const res = await request(app).delete(`/api/v1/diary/${mealId}`);
+        const res = await request(app).delete(`/api/v1/diary/${diaryId}`);
         expect(res.status).toBe(401);
     });
 

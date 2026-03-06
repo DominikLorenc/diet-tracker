@@ -38,30 +38,11 @@ model Product {
   protein      Decimal
   fat          Decimal
   createdAt    DateTime      @default(now())
-  mealProducts MealProduct[]
-}
-
-model Meal {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  createdAt DateTime @default(now())
-  mealProducts MealProduct[]
-  diaryEntries DiaryEntry[]
+  diaryEntriesItems DiaryEntryItem[]
+  recipeIngredient RecipeIngredient[]
 }
 
 
-model MealProduct {                                                                                             
-    id        String   @id @default(uuid())                                                                       
-                                                                                                                  
-    mealId    String                                                                           
-    meal      Meal     @relation(fields: [mealId], references: [id])
-
-    productId String
-    product   Product  @relation(fields: [productId], references: [id])
-
-    quantity  Decimal
-    unit      String
-  }
 
 enum MealType {                                                                                                                                                                       
     BREAKFAST                                                                                                                                                                           
@@ -70,13 +51,42 @@ enum MealType {
     SNACK                                                                                                                                                                             
   }  
 
+  model Recipe {
+    id           String        @id @default(uuid())
+    name         String        @unique
+    createdAt    DateTime      @default(now())
+    products RecipeIngredient[]
+    diaryEntriesItems DiaryEntryItem[]
+  }
+
+  model RecipeIngredient {
+    id           String        @id @default(uuid())
+    recipeId     String
+    recipe       Recipe        @relation(fields: [recipeId], references: [id])
+    productId    String
+    product      Product       @relation(fields: [productId], references: [id])
+    quantity     Decimal
+    createdAt    DateTime      @default(now())
+  }
+
 model DiaryEntry {
   id        String   @id @default(uuid())
   date      DateTime
-  mealId    String
-  meal      Meal     @relation(fields: [mealId], references: [id])
   userId    String
   user      User     @relation(fields: [userId], references: [id])
-  mealType  MealType   @default(BREAKFAST)
   createdAt DateTime @default(now())
+  items DiaryEntryItem[]  
+}
+
+model DiaryEntryItem {
+  id        String   @id @default(uuid())
+  diaryEntryId String
+  diaryEntry DiaryEntry @relation(fields: [diaryEntryId], references: [id])
+  productId String?
+  product   Product?  @relation(fields: [productId], references: [id])
+  recipeId  String?
+  recipe    Recipe?   @relation(fields: [recipeId], references: [id])
+  mealType  MealType @default(BREAKFAST)
+  createdAt DateTime @default(now())
+  quantity  Decimal
 }

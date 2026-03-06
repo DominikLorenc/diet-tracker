@@ -67,12 +67,13 @@ export const updateProductValues = async (id: string, product: Prisma.ProductUpd
 export const deleteProductService = async (id: string): Promise<Product> => {
     await getProductById(id);
 
-    const existing = await prisma.mealProduct.findFirst({
-        where: { productId: id },
-    });
+    const [existingInDiary, existingInRecipe] = await Promise.all([
+        prisma.diaryEntryItem.findFirst({ where: { productId: id } }),
+        prisma.recipeIngredient.findFirst({ where: { productId: id } }),
+    ]);
 
-    if (existing) {
-        throw new AppError('Product is used in meal', 409);
+    if (existingInDiary || existingInRecipe) {
+        throw new AppError('Product is used in diary or recipe', 409);
     }
 
     const deletedProduct = await prisma.product.delete({
