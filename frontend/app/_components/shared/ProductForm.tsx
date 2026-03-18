@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState } from "react";
 import { ProductCard } from "../search/ProductCard";
+import { uploadImage } from "@/utils/uploadImage";
 
 type Inputs = z.infer<typeof productSchema>;
 
@@ -17,6 +18,7 @@ type Product = {
   carbs: number;
   protein: number;
   fat: number;
+  imageUrl: string;
 };
 
 export const ProductForm = ({
@@ -49,19 +51,32 @@ export const ProductForm = ({
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [product, setProduct] = useState<Product | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
+  const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    setImageFile(file ?? null);
+  };
 
   const addProduct = async (data: Inputs) => {
     setIsLoading(true);
     setError("");
+
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const imageUrl = imageFile ? await uploadImage(imageFile) : null;
+
+      const preparedData = imageUrl ? { ...data, imageUrl } : data;
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/products`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(preparedData),
         },
-        credentials: "include",
-        body: JSON.stringify(data),
-      });
+      );
 
       const responseJson = (await response.json()) as {
         message: string;
@@ -87,6 +102,10 @@ export const ProductForm = ({
     setIsLoading(true);
     setError("");
     try {
+      const imageUrl = imageFile ? await uploadImage(imageFile) : null;
+
+      const preparedData = imageUrl ? { ...data, imageUrl } : data;
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/products/${productToEdit?.id}`,
         {
@@ -95,7 +114,7 @@ export const ProductForm = ({
             "Content-Type": "application/json",
           },
           credentials: "include",
-          body: JSON.stringify(data),
+          body: JSON.stringify(preparedData),
         },
       );
 
@@ -237,6 +256,18 @@ export const ProductForm = ({
           {errors.fat && (
             <p className="text-sm text-red-400">{errors.fat.message}</p>
           )}
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="imageUrl" className={labelClass}>
+            Dodaj obrazek
+          </label>
+          <input
+            type="file"
+            id="imageUrl"
+            className={inputClass}
+            onChange={onFileChange}
+          />
         </div>
       </div>
 

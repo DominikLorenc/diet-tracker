@@ -6,6 +6,7 @@ export const productSchema = z.object({
     carbs: z.number().nonnegative('Carbs must be a positive number'),
     protein: z.number().nonnegative('Protein must be a positive number'),
     fat: z.number().nonnegative('Fat must be a positive number'),
+    imageUrl: z.string().optional(),
 });
 
 export const updateProductSchema = productSchema

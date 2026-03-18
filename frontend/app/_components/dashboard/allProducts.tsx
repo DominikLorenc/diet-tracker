@@ -14,6 +14,7 @@ type Product = {
   carbs: number;
   protein: number;
   fat: number;
+  imageUrl: string;
 };
 
 export const AllProducts = () => {

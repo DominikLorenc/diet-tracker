@@ -1,5 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
-import { addDiaryService, deleteDiaryService, getDiaryServiceByDate } from '../services/diaryService';
+import {
+    addDiaryService,
+    deleteDiaryItemProductService,
+    deleteDiaryService,
+    getDiaryServiceByDate,
+} from '../services/diaryService';
 import { diaryEntrySchema, dateDiarySchema, diaryIdSchema } from '../schemas/diarySchema';
 
 export const createDiaryEntry = async (req: Request, res: Response, next: NextFunction) => {
@@ -63,6 +68,23 @@ export const deleteDiaryEntry = async (req: Request, res: Response, next: NextFu
         }
 
         const deleted = await deleteDiaryService(result.data);
+        res.status(200).json({ message: 'Diary entry deleted', deleted });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const deleteDiaryItem = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+
+        const result = diaryIdSchema.safeParse(id);
+        if (!result.success) {
+            res.status(400).json({ message: result.error.issues });
+            return;
+        }
+
+        const deleted = await deleteDiaryItemProductService(result.data);
         res.status(200).json({ message: 'Diary entry deleted', deleted });
     } catch (error) {
         next(error);

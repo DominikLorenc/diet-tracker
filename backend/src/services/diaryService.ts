@@ -2,13 +2,22 @@ import { Prisma, DiaryEntry, DiaryEntryItem, MealType } from '../generated/prism
 import prisma from '../lib/prisma';
 import { AppError } from '../utils/AppError';
 
-const diaryExists = async (id: string): Promise<boolean> => {
-    const diary = await prisma.diaryEntry.findUnique({
+// const diaryExists = async (id: string): Promise<boolean> => {
+//     const diary = await prisma.diaryEntry.findUnique({
+//         where: {
+//             id,
+//         },
+//     });
+//     return !!diary;
+// };
+
+const findDiaryItemById = async (id: string): Promise<DiaryEntryItem | null> => {
+    const diaryItem = await prisma.diaryEntryItem.findUnique({
         where: {
             id,
         },
     });
-    return !!diary;
+    return diaryItem;
 };
 
 const findDiaryByUserIdAndDate = async (userId: string, date: Date): Promise<DiaryEntry | null> => {
@@ -96,8 +105,16 @@ export const getDiaryServiceByDate = async (date: Date): Promise<DiaryEntry[]> =
         include: {
             items: {
                 include: {
+                    recipe: {
+                        include: {
+                            products: {
+                                include: {
+                                    product: true,
+                                },
+                            },
+                        },
+                    },
                     product: true,
-                    recipe: true,
                 },
             },
         },
@@ -106,14 +123,34 @@ export const getDiaryServiceByDate = async (date: Date): Promise<DiaryEntry[]> =
 };
 
 export const deleteDiaryService = async (id: string): Promise<DiaryEntry> => {
-    if (!(await diaryExists(id))) {
+    try {
+        const deleted = await prisma.diaryEntry.delete({
+            where: {
+                id,
+            },
+        });
+        return deleted;
+    } catch (error) {
+        console.log(error);
+        throw new AppError('Diary entry not found', 404);
+    }
+};
+
+export const deleteDiaryItemProductService = async (id: string): Promise<DiaryEntryItem> => {
+    const diaryItem = await findDiaryItemById(id);
+    if (!diaryItem) {
         throw new AppError('Diary entry not found', 404);
     }
 
-    const deleted = await prisma.diaryEntry.delete({
-        where: {
-            id,
-        },
-    });
-    return deleted;
+    try {
+        const deleted = await prisma.diaryEntryItem.delete({
+            where: {
+                id,
+            },
+        });
+        return deleted;
+    } catch (error) {
+        console.log(error);
+        throw new AppError('Diary entry not found', 404);
+    }
 };

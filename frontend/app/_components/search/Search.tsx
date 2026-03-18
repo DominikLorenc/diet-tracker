@@ -8,6 +8,7 @@ import { useState } from "react";
 import { ProductCard } from "./ProductCard";
 import { ProductForm } from "@/app/_components/shared/ProductForm";
 import { Modal } from "@/app/_components/shared/Modal";
+import { useSearchParams } from "next/navigation";
 
 type Product = {
   name: string;
@@ -21,7 +22,11 @@ type Product = {
 
 type Inputs = z.infer<typeof searchSchema>;
 
-export const Search = () => {
+export const Search = ({
+  onProductSelect,
+}: {
+  onProductSelect?: (product: Product) => void;
+}) => {
   const {
     register,
     handleSubmit,
@@ -32,11 +37,51 @@ export const Search = () => {
     reValidateMode: "onSubmit",
   });
 
+  const searchParams = useSearchParams();
+
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setIsSearched] = useState(false);
   const [error, setError] = useState("");
   const [results, setResults] = useState<Product[]>([]);
   const [openMoadl, setOpenModal] = useState(false);
+
+  const handleAddProductToDiary = (id: string, quantity: number) => {
+    const currentDate = new Date();
+    const mealType = searchParams.get("mealType");
+    const date = searchParams.get("date");
+
+    if (!mealType || !date) {
+      return;
+    }
+
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/diary`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        userId: searchParams.get("userId"),
+        date: currentDate.toISOString().split("T")[0],
+        productId: id,
+        quantity,
+        mealType,
+      }),
+    })
+      .then(async (response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        const data = await response.json();
+        throw new Error(data.message);
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     setIsLoading(true);
@@ -120,7 +165,12 @@ export const Search = () => {
 
       <div className="mt-6">
         {results.map((result) => (
-          <ProductCard key={result.id} product={result} />
+          <ProductCard
+            key={result.id}
+            product={result}
+            addProductToDiary={handleAddProductToDiary}
+            onProductSelect={onProductSelect}
+          />
         ))}
       </div>
 

@@ -37,6 +37,7 @@ model Product {
   carbs        Decimal
   protein      Decimal
   fat          Decimal
+  imageUrl     String        @default("")
   createdAt    DateTime      @default(now())
   diaryEntriesItems DiaryEntryItem[]
   recipeIngredient RecipeIngredient[]

@@ -15,6 +15,8 @@ export default function DashboardLayout({
     { name: "🥗 Produkty", href: "/dashboard/products" },
     { name: "👤 Profil", href: "/dashboard/profile" },
     { name: "🥩 Wszystkie Produkty", href: "/dashboard/all" },
+    { name: "📝 Przepisy", href: "/dashboard/recipes" },
+    { name: "🧠 Stówrz przepis", href: "/dashboard/recipe-builder" },
   ];
 
   return (
