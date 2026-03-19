@@ -1,0 +1,22 @@
+meta {
+  name: Create Product
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/products
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Chicken Breast",
+    "calories": 165,
+    "carbs": 0,
+    "protein": 31,
+    "fat": 3.6,
+    "imageUrl": ""
+  }
+}

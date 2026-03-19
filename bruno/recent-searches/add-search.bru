@@ -1,0 +1,17 @@
+meta {
+  name: Add Recent Search
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/recent-searches
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "productId": "{{productId}}"
+  }
+}

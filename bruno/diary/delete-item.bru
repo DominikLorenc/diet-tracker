@@ -1,0 +1,11 @@
+meta {
+  name: Delete Diary Item
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{baseUrl}}/diary/{{diaryItemId}}/item
+  body: none
+  auth: none
+}

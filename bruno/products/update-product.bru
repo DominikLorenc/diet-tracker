@@ -1,0 +1,18 @@
+meta {
+  name: Update Product
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{baseUrl}}/products/{{productId}}
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "calories": 170,
+    "protein": 32
+  }
+}

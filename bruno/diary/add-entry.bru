@@ -1,0 +1,20 @@
+meta {
+  name: Add Diary Entry
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/diary
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "date": "2026-03-19",
+    "mealType": "BREAKFAST",
+    "productId": "{{productId}}",
+    "quantity": 150
+  }
+}

@@ -1,0 +1,15 @@
+meta {
+  name: Search Products
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/products/search?q=chicken
+  body: none
+  auth: none
+}
+
+params:query {
+  q: chicken
+}

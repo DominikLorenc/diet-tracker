@@ -1,0 +1,20 @@
+meta {
+  name: Update Daily Goals
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/users/goals
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "dailyCaloriesGoal": 2500,
+    "dailyProteinGoal": 150,
+    "dailyCarbsGoal": 300,
+    "dailyFatGoal": 80
+  }
+}

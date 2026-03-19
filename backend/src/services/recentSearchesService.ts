@@ -1,6 +1,7 @@
 import { RecentSearch } from '../generated/prisma';
 import prisma from '../lib/prisma';
 import { AppError } from '../utils/AppError';
+import { getProductById } from './productService';
 
 const productIdExistsInRecentSearches = async (productId: string, userId: string) => {
     const recentSearches = await prisma.recentSearch.findFirst({
@@ -32,6 +33,8 @@ export const addRecentSearchService = async (productId: string, userId: string):
         });
         return updated;
     }
+
+    await getProductById(productId);
 
     const recentSearchLength = await prisma.recentSearch.count({
         where: {

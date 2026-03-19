@@ -1,0 +1,11 @@
+meta {
+  name: Delete Recipe
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/recipes/{{recipeId}}
+  body: none
+  auth: none
+}
