@@ -18,6 +18,7 @@ type Product = {
   carbs: number;
   protein: number;
   fat: number;
+  imageUrl: string;
 };
 
 type Inputs = z.infer<typeof searchSchema>;
