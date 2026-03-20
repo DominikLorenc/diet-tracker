@@ -81,6 +81,9 @@ export const getRecentSearchesService = async (userId: string): Promise<RecentSe
             createdAt: 'desc',
         },
         take: 10,
+        include: {
+            product: true,
+        },
     });
 
     return recentSearches;
