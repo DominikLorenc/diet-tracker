@@ -40,3 +40,7 @@ export const updateGoalsSchema = z.object({
     dailyCarbsGoal: z.number().int().min(0),
     dailyFatGoal: z.number().int().min(0),
 });
+
+export const updateImageUrlSchema = z.object({
+    imageUrl: z.string().min(1, 'Image URL is required'),
+});

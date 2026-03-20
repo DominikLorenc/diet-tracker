@@ -21,7 +21,7 @@ export default function DashboardLayout({
 
   return (
     <div className="flex h-screen">
-      <aside className="w-64 h-full bg-gray-900 flex flex-col p-4 gap-2">
+      <aside className=" hidden sm:flex w-64 h-full bg-amber-400 color flex-col p-4 gap-2 ">
         <nav className="flex flex-col gap-1">
           {navigation.map((item) => (
             <Link
@@ -36,7 +36,9 @@ export default function DashboardLayout({
           ))}
         </nav>
       </aside>
-      <main className="flex-1 overflow-auto  bg-gray-950">{children}</main>
+      <main className="flex-1 overflow-auto  bg-surface-muted pl-4 pr-4">
+        {children}
+      </main>
     </div>
   );
 }

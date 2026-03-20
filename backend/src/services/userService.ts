@@ -99,3 +99,16 @@ export const updateGoalsService = async (
 
     return updated;
 };
+
+export const updateImageUrl = async (userId: string, imageUrl: string): Promise<string> => {
+    const updated = await prisma.user.update({
+        where: {
+            id: userId,
+        },
+        data: {
+            imageUrl,
+        },
+    });
+
+    return updated.imageUrl;
+};

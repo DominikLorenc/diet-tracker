@@ -10,9 +10,29 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Brand */
+  --color-brand-primary: #ff6b6b;
+  --color-brand-secondary: #6366f1;
+
+  /* Makroskładniki */
+  --color-macro-carbs: #6366f1;
+  --color-macro-protein: #22c55e;
+  --color-macro-fat: #fcd34d;
+
+  /* Powierzchnie */
+  --color-surface: #ffffff;
+  --color-surface-muted: #f6f7f8;
+  --color-surface-dark: #1a1a1a;
+  --color-surface-dark-card: #2a2a2a;
+
+  /* Tekst */
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #6b7280;
+  --color-text-muted: #9ca3af;
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
@@ -23,4 +43,4 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-}
+} */

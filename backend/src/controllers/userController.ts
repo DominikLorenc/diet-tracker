@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { loginSchema, registerSchema, updateGoalsSchema } from '../schemas/userSchema';
-import { registerUser, loginUser, getUserById, updateGoalsService } from '../services/userService';
+import { loginSchema, registerSchema, updateGoalsSchema, updateImageUrlSchema } from '../schemas/userSchema';
+import { registerUser, loginUser, getUserById, updateGoalsService, updateImageUrl } from '../services/userService';
 import { AppError } from '../utils/AppError';
 
 export const register = async (req: Request, res: Response, next: NextFunction) => {
@@ -93,6 +93,26 @@ export const updateGoals = async (req: Request, res: Response, next: NextFunctio
             dailyFatGoal,
         );
         return res.status(200).json({ message: 'Goals updated', updated });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const updateImageUrlController = async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.userId;
+    if (!userId) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    try {
+        const validation = updateImageUrlSchema.safeParse(req.body);
+        if (!validation.success) {
+            return res.status(400).json({ message: validation.error.issues });
+        }
+
+        const { imageUrl } = validation.data;
+        const updated = await updateImageUrl(userId, imageUrl);
+        return res.status(200).json({ message: 'Image URL updated', updated });
     } catch (error) {
         next(error);
     }

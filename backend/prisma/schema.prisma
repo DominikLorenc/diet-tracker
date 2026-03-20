@@ -27,6 +27,7 @@ model User {
     dailyProteinGoal  Int?
     dailyCarbsGoal    Int?
     dailyFatGoal      Int?
+    imageUrl          String @default("")
     diaryEntries DiaryEntry[]
     recentSearches RecentSearch[]
   }

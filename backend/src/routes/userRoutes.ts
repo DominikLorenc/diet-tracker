@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { register, login, logout, me, updateGoals } from '../controllers/userController';
+import { register, login, logout, me, updateGoals, updateImageUrlController } from '../controllers/userController';
 import { authMiddleware } from '../middleware/authMiddleware';
 import { authRateLimiter } from '../middleware/rateLimiter';
 
@@ -10,6 +10,7 @@ router.post('/register', authRateLimiter, register);
 
 router.use(authMiddleware);
 router.get('/me', me);
+router.patch('/image', updateImageUrlController);
 router.patch('/goals', updateGoals);
 router.delete('/logout', logout);
 
