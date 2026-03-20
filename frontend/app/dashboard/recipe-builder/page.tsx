@@ -21,6 +21,7 @@ type Ingredient = {
 export default function RecipeBuilder() {
   const [name, setName] = useState("");
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [error, setError] = useState("");
 
   const handleAddIngredient = (product: Product) => {
     const ingredientExists = ingredients.some(
@@ -51,6 +52,15 @@ export default function RecipeBuilder() {
   };
 
   const handleSave = async () => {
+    if (name.length === 0) {
+      setError("Nazwa przepisu nie może być pusta");
+      return;
+    }
+
+    if (ingredients.length === 0) {
+      setError("Brak składników");
+      return;
+    }
     await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -72,6 +82,16 @@ export default function RecipeBuilder() {
       .catch((error) => console.log(error));
   };
 
+  const onChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value.length === 0) {
+      setError("Nazwa przepisu nie może być pusta");
+      return;
+    }
+
+    setError("");
+    setName(e.target.value);
+  };
+
   return (
     <div className="flex flex-col gap-4 p-6 w-full max-w-3xl">
       <h2 className="text-2xl font-bold text-white">Nowy przepis</h2>
@@ -88,9 +108,10 @@ export default function RecipeBuilder() {
             type="text"
             placeholder="np. Owsianka z owocami..."
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={onChangeName}
             className="w-full bg-transparent text-white placeholder-white/20 focus:outline-none"
           />
+          {error && <span className="text-red-400">{error}</span>}
         </div>
       </div>
 

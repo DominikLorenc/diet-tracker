@@ -4,7 +4,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { searchSchema } from "@/schemas/searchSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ProductCard } from "./ProductCard";
 import { ProductForm } from "@/app/_components/shared/ProductForm";
 import { Modal } from "@/app/_components/shared/Modal";
@@ -19,6 +19,14 @@ type Product = {
   protein: number;
   fat: number;
   imageUrl: string;
+};
+
+type RecentSearch = {
+  id: string;
+  userId: string;
+  createdAt: Date;
+  productId: string;
+  product: Product;
 };
 
 type Inputs = z.infer<typeof searchSchema>;
@@ -45,6 +53,56 @@ export const Search = ({
   const [error, setError] = useState("");
   const [results, setResults] = useState<Product[]>([]);
   const [openMoadl, setOpenModal] = useState(false);
+  const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([]);
+
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/recent-searches`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    })
+      .then(async (response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        const data = await response.json();
+        throw new Error(data.message);
+      })
+      .then((data) => {
+        setRecentSearches(data.recentSearches);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  const handleAddProductToRecentSearches = (id: string) => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/recent-searches`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        productId: id,
+      }),
+    })
+      .then(async (response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        const data = await response.json();
+        throw new Error(data.message);
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const handleAddProductToDiary = (id: string, quantity: number) => {
     const currentDate = new Date();
@@ -82,6 +140,8 @@ export const Search = ({
       .catch((error) => {
         console.log(error);
       });
+
+    handleAddProductToRecentSearches(id);
   };
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
@@ -161,6 +221,22 @@ export const Search = ({
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             ></path>
           </svg>
+        </div>
+      )}
+
+      {recentSearches.length > 0 && (
+        <div className="mt-6">
+          <h2 className="text-xl font-bold text-white mb-4">
+            Ostatnie wyszukiwania
+          </h2>
+          {recentSearches.map((result) => (
+            <ProductCard
+              key={result.id}
+              product={result.product}
+              // addProductToDiary={handleAddProductToDiary}
+              onProductSelect={onProductSelect}
+            />
+          ))}
         </div>
       )}
 
