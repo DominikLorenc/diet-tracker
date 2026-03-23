@@ -29,9 +29,9 @@ const userSchema = z.object({
 
 export const registerSchema = userSchema;
 
-export const loginSchema = userSchema.pick({
-    email: true,
-    password: true,
+export const loginSchema = z.object({
+    email: z.email(),
+    password: z.string().min(1, 'Password required'),
 });
 
 export const updateGoalsSchema = z.object({

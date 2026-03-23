@@ -6,8 +6,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useState } from "react";
+import { apiClient, ApiError } from "@/app/lib/apiClient";
 
 type Inputs = z.infer<typeof loginSchema>;
+
+type UserDataResponse = {
+  message: string;
+  user: {
+    username: string;
+    email: string;
+    role: string;
+  };
+};
 
 export const LoginForm = () => {
   const {
@@ -26,23 +36,13 @@ export const LoginForm = () => {
     setIsLoading(true);
     setError("");
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(data),
-      });
+      await apiClient.post<UserDataResponse, Inputs>(`/users/login`, data);
 
-      if (response.ok) {
-        router.push("/dashboard");
-      } else {
-        setError("Niepoprawny login lub hasło");
-      }
+      router.push("/dashboard");
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
+      if (error instanceof ApiError) {
+        if (error.status === 401) setError("Nieprawidłowy email lub hasło");
+        else setError("Coś poszło nie tak, spróbuj ponownie");
       }
     } finally {
       setIsLoading(false);
