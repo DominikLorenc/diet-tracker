@@ -7,6 +7,7 @@ import { z } from "zod";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiClient, ApiError } from "@/app/lib/apiClient";
+import { Mail, Lock, Eye, EyeOff, User, Loader2 } from "lucide-react";
 
 type User = {
   id: string;
@@ -39,27 +40,20 @@ export const RegisterForm = () => {
   });
 
   const router = useRouter();
-
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     setIsLoading(true);
     setError("");
     try {
       const { username, email, password } = data;
-
-      const body = {
-        username,
-        email,
-        password,
-      };
-
       await apiClient.post<UserDataResponse, Omit<Inputs, "passwordConfirm">>(
         `/users/register`,
-        body,
+        { username, email, password },
       );
-
       router.push("/login");
     } catch (error) {
       if (error instanceof ApiError) {
@@ -72,116 +66,134 @@ export const RegisterForm = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="mb-6">
-          <label
-            htmlFor="email"
-            className="block mb-2 text-sm font-medium text-white"
-          >
-            Email address
-          </label>
-          <input
-            type="email"
-            id="email"
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            {...register("email")}
-          />
-          {errors.email && (
-            <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>
-          )}
-        </div>
-
-        <div className="mb-6">
-          <label
-            htmlFor="username"
-            className="block mb-2 text-sm font-medium text-white"
-          >
-            Username
-          </label>
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      {/* Nazwa użytkownika */}
+      <div className="flex flex-col gap-1.5">
+        <label
+          htmlFor="username"
+          className="text-sm font-medium text-[#374151]"
+        >
+          Nazwa użytkownika
+        </label>
+        <div className="flex items-center gap-2.5 h-12 px-4 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB] focus-within:border-brand-primary focus-within:ring-2 focus-within:ring-brand-primary/20 transition-all">
+          <User className="w-4 h-4 text-text-muted shrink-0" />
           <input
             type="text"
             id="username"
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            placeholder="jankowalski"
+            className="flex-1 bg-transparent text-sm text-text-primary placeholder:text-text-muted outline-none"
             {...register("username")}
           />
-          {errors.username && (
-            <p className="mt-2 text-sm text-red-600">
-              {errors.username.message}
-            </p>
-          )}
         </div>
+        {errors.username && (
+          <p className="text-xs text-red-500">{errors.username.message}</p>
+        )}
+      </div>
 
-        <div className="mb-6">
-          <label
-            htmlFor="password"
-            className="block mb-2 text-sm font-medium text-white"
-          >
-            Password
-          </label>
+      {/* Email */}
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="email" className="text-sm font-medium text-[#374151]">
+          Adres email
+        </label>
+        <div className="flex items-center gap-2.5 h-12 px-4 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB] focus-within:border-brand-primary focus-within:ring-2 focus-within:ring-brand-primary/20 transition-all">
+          <Mail className="w-4 h-4 text-text-muted shrink-0" />
           <input
-            type="password"
+            type="email"
+            id="email"
+            placeholder="jan@przyklad.pl"
+            className="flex-1 bg-transparent text-sm text-text-primary placeholder:text-text-muted outline-none"
+            {...register("email")}
+          />
+        </div>
+        {errors.email && (
+          <p className="text-xs text-red-500">{errors.email.message}</p>
+        )}
+      </div>
+
+      {/* Hasło */}
+      <div className="flex flex-col gap-1.5">
+        <label
+          htmlFor="password"
+          className="text-sm font-medium text-[#374151]"
+        >
+          Hasło
+        </label>
+        <div className="flex items-center gap-2.5 h-12 px-4 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB] focus-within:border-brand-primary focus-within:ring-2 focus-within:ring-brand-primary/20 transition-all">
+          <Lock className="w-4 h-4 text-text-muted shrink-0" />
+          <input
+            type={showPassword ? "text" : "password"}
             id="password"
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            placeholder="Min. 8 znaków"
+            className="flex-1 bg-transparent text-sm text-text-primary placeholder:text-text-muted outline-none"
             {...register("password")}
           />
-          {errors.password && (
-            <p className="mt-2 text-sm text-red-600">
-              {errors.password.message}
-            </p>
-          )}
-        </div>
-
-        <div className="mb-6">
-          <label
-            htmlFor="passwordConfirm"
-            className="block mb-2 text-sm font-medium text-white"
+          <button
+            type="button"
+            onClick={() => setShowPassword((v) => !v)}
+            className="text-text-muted hover:text-text-secondary transition-colors cursor-pointer"
           >
-            Confirm password
-          </label>
+            {showPassword ? (
+              <EyeOff className="w-4 h-4" />
+            ) : (
+              <Eye className="w-4 h-4" />
+            )}
+          </button>
+        </div>
+        {errors.password && (
+          <p className="text-xs text-red-500">{errors.password.message}</p>
+        )}
+      </div>
+
+      {/* Potwierdź hasło */}
+      <div className="flex flex-col gap-1.5">
+        <label
+          htmlFor="passwordConfirm"
+          className="text-sm font-medium text-[#374151]"
+        >
+          Potwierdź hasło
+        </label>
+        <div className="flex items-center gap-2.5 h-12 px-4 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB] focus-within:border-brand-primary focus-within:ring-2 focus-within:ring-brand-primary/20 transition-all">
+          <Lock className="w-4 h-4 text-text-muted shrink-0" />
           <input
-            type="password"
+            type={showConfirm ? "text" : "password"}
             id="passwordConfirm"
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            placeholder="Powtórz hasło"
+            className="flex-1 bg-transparent text-sm text-text-primary placeholder:text-text-muted outline-none"
             {...register("passwordConfirm")}
           />
-          {errors.passwordConfirm && (
-            <p className="mt-2 text-sm text-red-600">
-              {errors.passwordConfirm.message}
-            </p>
-          )}
+          <button
+            type="button"
+            onClick={() => setShowConfirm((v) => !v)}
+            className="text-text-muted hover:text-text-secondary transition-colors cursor-pointer"
+          >
+            {showConfirm ? (
+              <EyeOff className="w-4 h-4" />
+            ) : (
+              <Eye className="w-4 h-4" />
+            )}
+          </button>
         </div>
+        {errors.passwordConfirm && (
+          <p className="text-xs text-red-500">
+            {errors.passwordConfirm.message}
+          </p>
+        )}
+      </div>
 
-        <button
-          type="submit"
-          className="w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        >
-          Zarejestruj się
-          {isLoading && (
-            <svg
-              className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              ></circle>
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
-            </svg>
-          )}
-        </button>
-        {error && <div className="mt-2 text-sm text-red-600">{error}</div>}
-      </form>
-    </div>
+      {error && (
+        <div className="text-sm text-red-500 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+          {error}
+        </div>
+      )}
+
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="mt-2 flex items-center justify-center gap-2 h-12 w-full rounded-xl bg-brand-primary text-white text-sm font-semibold hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+      >
+        {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+        Utwórz konto
+      </button>
+    </form>
   );
 };
