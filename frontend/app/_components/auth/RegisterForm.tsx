@@ -6,6 +6,26 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { apiClient, ApiError } from "@/app/lib/apiClient";
+
+type User = {
+  id: string;
+  createdAt: Date;
+  username: string;
+  email: string;
+  role: string;
+  updatedAt: Date;
+  dailyCaloriesGoal: number | null;
+  dailyProteinGoal: number | null;
+  dailyCarbsGoal: number | null;
+  dailyFatGoal: number | null;
+  imageUrl: string;
+};
+
+type UserDataResponse = {
+  message: string;
+  user: User;
+};
 
 type Inputs = z.infer<typeof registerSchema>;
 
@@ -29,28 +49,22 @@ export const RegisterForm = () => {
     try {
       const { username, email, password } = data;
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/users/register`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({ username, email, password }),
-        },
+      const body = {
+        username,
+        email,
+        password,
+      };
+
+      await apiClient.post<UserDataResponse, Omit<Inputs, "passwordConfirm">>(
+        `/users/register`,
+        body,
       );
 
-      const responseJson = await response.json();
-
-      if (response.ok) {
-        router.push("/login");
-      } else {
-        setError(responseJson.message);
-      }
+      router.push("/login");
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
+      if (error instanceof ApiError) {
+        if (error.status === 401) setError("Nieprawidłowy email lub hasło");
+        else setError("Coś poszło nie tak, spróbuj ponownie");
       }
     } finally {
       setIsLoading(false);

@@ -3,11 +3,21 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { uploadImage } from "@/utils/uploadImage";
+import { apiClient, ApiError } from "@/app/lib/apiClient";
 
 type AvatarCardProps = {
   name: string;
   email?: string;
   imageUrl?: string;
+};
+
+type ImagePayload = {
+  imageUrl: string;
+};
+
+type Response = {
+  message: string;
+  updated: string;
 };
 
 export const AvatarCard = ({ name, email, imageUrl }: AvatarCardProps) => {
@@ -24,7 +34,6 @@ export const AvatarCard = ({ name, email, imageUrl }: AvatarCardProps) => {
 
   const updateImage = async () => {
     try {
-      console.log(userImageUrl);
       const imageUrl = userImageUrl ? await uploadImage(userImageUrl) : null;
 
       const preparedData = imageUrl;
@@ -34,33 +43,14 @@ export const AvatarCard = ({ name, email, imageUrl }: AvatarCardProps) => {
         return;
       }
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/users/image`,
+      const response = await apiClient.patch<Response, ImagePayload>(
+        `/users/image`,
         {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            imageUrl: preparedData,
-          }),
+          imageUrl: preparedData,
         },
       );
 
-      const responseJson = (await response.json()) as {
-        message: string;
-        updated: string;
-      };
-      if (response.ok) {
-        console.log(responseJson);
-        setUserImage(responseJson.updated);
-      } else {
-        console.log(responseJson.message);
-        if (responseJson.message === "Product already exists") {
-          setError("Produkt już istnieje");
-        }
-      }
+      setUserImage(response.updated);
     } catch (error) {
       console.log(error);
       setError("Coś poszło nie tak");
@@ -86,17 +76,18 @@ export const AvatarCard = ({ name, email, imageUrl }: AvatarCardProps) => {
             className="w-full h-full rounded-full object-cover"
             width={80}
             height={80}
+            loading="eager"
+            loader={({ src }) => `${src}?w=80&h=80&fit=crop`}
           />
         ) : (
           <span className="text-white text-3xl font-semibold">{initial}</span>
         )}
       </div>
-      {/* Dane */}
+
       <div className="flex flex-col items-center gap-1">
         <h2 className="text-lg font-bold text-text-primary">{name}</h2>
         {email && <p className="text-sm text-text-secondary">{email}</p>}
       </div>
-      {/* Przycisk */}
       <label className="flex items-center gap-2 px-5 py-2 rounded-xl border border-gray-200 text-sm text-text-secondary bg-surface hover:bg-surface-muted transition-colors cursor-pointer">
         <span>🖼</span>
         <span>Change Photo</span>

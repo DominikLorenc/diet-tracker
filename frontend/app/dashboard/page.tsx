@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { UserInfo } from "@/app/_components/auth/UserInfo";
-import { MacroCalculator } from "@/app/_components/shared/MakroCalculator";
+import { MacroCalculator } from "@/app/_components/shared/MacroCalculator";
 import { DiaryDayView } from "../_components/dashboard/DiaryDayView";
 
 export default function Dashboard() {

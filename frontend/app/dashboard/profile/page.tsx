@@ -1,4 +1,13 @@
+"use client";
+
 import { AvatarCard } from "@/app/_components/profile/AvatarCard";
+import { MacroGoals } from "@/app/_components/profile/MacroGoals";
+import { MacroCalculator } from "@/app/_components/shared/MacroCalculator";
+import { Card } from "@/app/_components/ui/Card";
+import { SectionHeader } from "@/app/_components/ui/SectionHeader";
+import { Button } from "@/app/_components/ui/Button";
+import { apiClient, ApiError } from "@/app/lib/apiClient";
+import { useEffect, useState } from "react";
 
 const stats = [
   {
@@ -27,13 +36,106 @@ const stats = [
   },
 ];
 
-const macros = [
-  { name: "Carbs", percent: 50, grams: "250g", color: "bg-brand-primary" },
-  { name: "Protein", percent: 30, grams: "150g", color: "bg-macro-protein" },
-  { name: "Fat", percent: 20, grams: "44g", color: "bg-macro-fat" },
-];
+type User = {
+  id: string;
+  createdAt: Date;
+  username: string;
+  email: string;
+  role: string;
+  updatedAt: Date;
+  dailyCaloriesGoal: number | null;
+  dailyProteinGoal: number | null;
+  dailyCarbsGoal: number | null;
+  dailyFatGoal: number | null;
+  imageUrl: string;
+};
+
+type UserDataResponse = {
+  message: string;
+  user: User;
+};
 
 export default function Profile() {
+  const [user, setUser] = useState<User | null>(null);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        setIsLoading(true);
+        const response = await apiClient.get<UserDataResponse>(`/users/me`);
+        setUser(response.user);
+      } catch (error) {
+        if (error instanceof ApiError) {
+          setError(error.message);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  if (isLoading) {
+    return <div>Ładowanie...</div>;
+  }
+
+  if (error) {
+    return <div>Błąd: {error}</div>;
+  }
+
+  if (!user) {
+    return;
+  }
+
+  const {
+    dailyCaloriesGoal,
+    dailyProteinGoal,
+    dailyCarbsGoal,
+    dailyFatGoal,
+    username,
+    email,
+    imageUrl,
+  } = user;
+
+  const caloriesFromCarbs = dailyCarbsGoal ? dailyCarbsGoal * 4 : 0;
+  const caloriesFromProtein = dailyProteinGoal ? dailyProteinGoal * 4 : 0;
+  const caloriesFromFat = dailyFatGoal ? dailyFatGoal * 9 : 0;
+
+  const totalCalories = dailyCaloriesGoal ?? 0;
+
+  const macros = [
+    {
+      name: "Carbs",
+      percent:
+        caloriesFromCarbs > 0
+          ? Math.round((caloriesFromCarbs / totalCalories) * 100)
+          : 0,
+      grams: `${user.dailyCarbsGoal}g`,
+      color: "bg-brand-primary",
+    },
+    {
+      name: "Protein",
+      percent:
+        caloriesFromProtein > 0
+          ? Math.round((caloriesFromProtein / totalCalories) * 100)
+          : 0,
+      grams: `${user.dailyProteinGoal}g`,
+      color: "bg-macro-protein",
+    },
+    {
+      name: "Fat",
+      percent:
+        caloriesFromFat > 0
+          ? Math.round((caloriesFromFat / totalCalories) * 100)
+          : 0,
+      grams: `${user.dailyFatGoal}g`,
+      color: "bg-macro-fat",
+    },
+  ];
+
   return (
     <div className="px-4 py-6 max-w-6xl mx-auto flex flex-col gap-6">
       {/* Header */}
@@ -49,7 +151,7 @@ export default function Profile() {
         {/* Lewa kolumna — avatar + stats */}
         <div className="flex flex-col gap-4 w-full lg:w-72 shrink-0">
           <div className="bg-surface rounded-2xl shadow-sm">
-            <AvatarCard name="Dominik" email="dominik@example.com" />
+            <AvatarCard name={username} email={email} imageUrl={imageUrl} />
           </div>
 
           <div>
@@ -74,15 +176,15 @@ export default function Profile() {
         {/* Prawa kolumna — formularz + cele */}
         <div className="flex flex-col gap-4 flex-1 w-full">
           {/* Personal Information */}
-          <div className="bg-surface rounded-2xl shadow-sm p-5 flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold text-text-primary">
-                Personal Information
-              </h2>
-              <button className="text-xs text-brand-primary flex items-center gap-1">
-                ✏️ Edit
-              </button>
-            </div>
+          <Card>
+            <SectionHeader
+              title="Personal Information"
+              action={
+                <button className="text-xs text-brand-primary flex items-center gap-1">
+                  ✏️ Edit
+                </button>
+              }
+            />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="flex flex-col gap-1">
@@ -142,79 +244,17 @@ export default function Profile() {
             </div>
 
             <div className="flex justify-end">
-              <button className="bg-brand-primary text-white text-sm font-medium px-5 py-2.5 rounded-xl hover:opacity-90 transition-opacity">
-                Update Profile
-              </button>
+              <Button>Update Profile</Button>
             </div>
-          </div>
+          </Card>
 
-          {/* Caloric & Macro Goals */}
-          <div className="bg-surface rounded-2xl shadow-sm p-5 flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold text-text-primary">
-                Caloric &amp; Macro Goals
-              </h2>
-              <span className="text-xs text-brand-primary border border-brand-primary rounded-full px-2 py-0.5">
-                Save
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-text-secondary">
-                Daily Calorie Goal
-              </span>
-              <span className="text-sm font-semibold text-text-primary">
-                1000 kcal
-              </span>
-            </div>
-            <div className="flex gap-2">
-              <input
-                type="number"
-                defaultValue={2000}
-                className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-brand-primary"
-              />
-              <span className="bg-brand-primary text-white text-sm font-medium px-4 py-2.5 rounded-xl">
-                kcal
-              </span>
-            </div>
-
-            <h3 className="text-sm font-medium text-text-primary">
-              Macro Distribution
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {macros.map((macro) => (
-                <div
-                  key={macro.name}
-                  className="flex flex-col gap-2 border border-gray-100 rounded-xl p-3"
-                >
-                  <div className="flex justify-between text-sm">
-                    <span className="font-medium text-text-primary">
-                      {macro.name}
-                    </span>
-                    <span className="text-text-muted">{macro.percent}%</span>
-                  </div>
-                  <div className="h-1.5 bg-gray-100 rounded-full">
-                    <div
-                      className={`h-full rounded-full ${macro.color}`}
-                      style={{ width: `${macro.percent}%` }}
-                    />
-                  </div>
-                  <span className="text-sm font-semibold text-text-primary">
-                    {macro.grams}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            <div className="flex justify-end gap-2">
-              <button className="border border-gray-200 text-sm text-text-secondary px-5 py-2.5 rounded-xl hover:bg-surface-muted transition-colors">
-                Cancel
-              </button>
-              <button className="bg-brand-primary text-white text-sm font-medium px-5 py-2.5 rounded-xl hover:opacity-90 transition-opacity">
-                Save Changes
-              </button>
-            </div>
-          </div>
+          <MacroCalculator onSuccess={() => window.location.reload()} />
+          <MacroGoals
+            dailyCaloriesGoal={dailyCaloriesGoal}
+            dailyProteinGoal={dailyProteinGoal}
+            dailyCarbsGoal={dailyCarbsGoal}
+            dailyFatGoal={dailyFatGoal}
+          />
         </div>
       </div>
     </div>

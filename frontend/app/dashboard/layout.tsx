@@ -36,7 +36,7 @@ export default function DashboardLayout({
           ))}
         </nav>
       </aside>
-      <main className="flex-1 overflow-auto  bg-surface-muted pl-4 pr-4">
+      <main className="flex-1 overflow-auto  bg-gray-600 pl-4 pr-4">
         {children}
       </main>
     </div>
