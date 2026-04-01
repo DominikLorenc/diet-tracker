@@ -33,6 +33,7 @@ describe('POST /api/v1/products/', () => {
             fat: new Decimal(100),
             id: productId,
             createdAt: new Date(),
+            imageUrl: '',
         });
 
         const res = await request(app)
@@ -107,6 +108,7 @@ describe('GET /api/v1/products', () => {
                 fat: new Decimal(100),
                 id: productId,
                 createdAt: new Date(),
+                imageUrl: '',
             },
         ]);
         const res = await request(app)
@@ -134,6 +136,7 @@ describe(`GET /api/v1/products/${productId}`, () => {
             fat: new Decimal(100),
             id: productId,
             createdAt: new Date(),
+            imageUrl: '',
         });
         const res = await request(app)
             .get(`/api/v1/products/${productId}`)
@@ -169,6 +172,7 @@ describe(`GET /api/v1/products/search?q=apple`, () => {
                 fat: new Decimal(100),
                 id: productId,
                 createdAt: new Date(),
+                imageUrl: '',
             },
         ]);
         const res = await request(app)
@@ -201,6 +205,7 @@ describe('PATCH /api/v1/products/:id', () => {
             fat: new Decimal(100),
             id: productId,
             createdAt: new Date(),
+            imageUrl: '',
         });
         const res = await request(app)
             .patch(`/api/v1/products/${productId}`)
@@ -282,6 +287,7 @@ describe('DELETE /api/v1/products/:id', () => {
             fat: new Decimal(100),
             id: productId,
             createdAt: new Date(),
+            imageUrl: '',
         });
         const res = await request(app)
             .delete(`/api/v1/products/${productId}`)

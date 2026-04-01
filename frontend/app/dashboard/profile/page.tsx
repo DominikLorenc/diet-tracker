@@ -43,11 +43,18 @@ type User = {
   email: string;
   role: string;
   updatedAt: Date;
+  userGoals: UserGoal | null;
+  imageUrl: string;
+};
+
+type UserGoal = {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
   dailyCaloriesGoal: number | null;
   dailyProteinGoal: number | null;
   dailyCarbsGoal: number | null;
   dailyFatGoal: number | null;
-  imageUrl: string;
 };
 
 type UserDataResponse = {
@@ -90,15 +97,15 @@ export default function Profile() {
     return;
   }
 
-  const {
-    dailyCaloriesGoal,
-    dailyProteinGoal,
-    dailyCarbsGoal,
-    dailyFatGoal,
-    username,
-    email,
-    imageUrl,
-  } = user;
+  const { username, email, imageUrl } = user;
+
+  const { dailyCaloriesGoal, dailyProteinGoal, dailyCarbsGoal, dailyFatGoal } =
+    user.userGoals ?? {
+      dailyCaloriesGoal: 0,
+      dailyProteinGoal: 0,
+      dailyCarbsGoal: 0,
+      dailyFatGoal: 0,
+    };
 
   const caloriesFromCarbs = dailyCarbsGoal ? dailyCarbsGoal * 4 : 0;
   const caloriesFromProtein = dailyProteinGoal ? dailyProteinGoal * 4 : 0;
@@ -113,7 +120,7 @@ export default function Profile() {
         caloriesFromCarbs > 0
           ? Math.round((caloriesFromCarbs / totalCalories) * 100)
           : 0,
-      grams: `${user.dailyCarbsGoal}g`,
+      grams: `${dailyCarbsGoal}g`,
       color: "bg-brand-primary",
     },
     {
@@ -122,7 +129,7 @@ export default function Profile() {
         caloriesFromProtein > 0
           ? Math.round((caloriesFromProtein / totalCalories) * 100)
           : 0,
-      grams: `${user.dailyProteinGoal}g`,
+      grams: `${dailyProteinGoal}g`,
       color: "bg-macro-protein",
     },
     {
@@ -131,7 +138,7 @@ export default function Profile() {
         caloriesFromFat > 0
           ? Math.round((caloriesFromFat / totalCalories) * 100)
           : 0,
-      grams: `${user.dailyFatGoal}g`,
+      grams: `${dailyFatGoal}g`,
       color: "bg-macro-fat",
     },
   ];

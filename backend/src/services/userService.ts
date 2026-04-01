@@ -1,4 +1,4 @@
-import { Prisma, User } from '../generated/prisma';
+import { Prisma, User, UserGoal } from '../generated/prisma';
 import prisma from '../lib/prisma';
 import { AppError } from '../utils/AppError';
 import bcrypt from 'bcrypt';
@@ -66,10 +66,13 @@ export const loginUser = async (
     };
 };
 
-export const getUserById = async (id: string): Promise<User> => {
+export const getUserById = async (id: string): Promise<User & { userGoals: UserGoal | null }> => {
     const user = await prisma.user.findUnique({
         where: {
             id: id,
+        },
+        include: {
+            userGoals: true,
         },
     });
     if (!user) {
@@ -84,16 +87,31 @@ export const updateGoalsService = async (
     dailyProteinGoal: number,
     dailyCarbsGoal: number,
     dailyFatGoal: number,
-): Promise<User> => {
+): Promise<User & { userGoals: UserGoal | null }> => {
     const updated = await prisma.user.update({
         where: {
             id: userId,
         },
         data: {
-            dailyCaloriesGoal,
-            dailyProteinGoal,
-            dailyCarbsGoal,
-            dailyFatGoal,
+            userGoals: {
+                upsert: {
+                    update: {
+                        dailyCaloriesGoal,
+                        dailyProteinGoal,
+                        dailyCarbsGoal,
+                        dailyFatGoal,
+                    },
+                    create: {
+                        dailyCaloriesGoal,
+                        dailyProteinGoal,
+                        dailyCarbsGoal,
+                        dailyFatGoal,
+                    },
+                },
+            },
+        },
+        include: {
+            userGoals: true,
         },
     });
 

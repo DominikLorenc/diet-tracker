@@ -15,21 +15,36 @@ datasource db {
   provider = "postgresql"
 }
 
+  enum Role {
+    USER
+    ADMIN
+  }
+
+
 model User {
     id        String   @id @default(uuid())
     email     String   @unique
     username  String
     password  String
-    role      String   @default("user")
+    role      Role   @default(USER)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    imageUrl          String @default("")
+    diaryEntries DiaryEntry[]
+    recentSearches RecentSearch[]
+    userGoals UserGoal?
+  }
+
+  model UserGoal {
+    id        String   @id @default(uuid())
+    userId    String   @unique
+    user      User     @relation(fields: [userId], references: [id])
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     dailyCaloriesGoal Int?
     dailyProteinGoal  Int?
     dailyCarbsGoal    Int?
     dailyFatGoal      Int?
-    imageUrl          String @default("")
-    diaryEntries DiaryEntry[]
-    recentSearches RecentSearch[]
   }
 
 model Product {
