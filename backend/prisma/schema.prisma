@@ -33,6 +33,20 @@ model User {
     diaryEntries DiaryEntry[]
     recentSearches RecentSearch[]
     userGoals UserGoal?
+    bodyMeasurements BodyMeasurement[]
+  }
+
+  model BodyMeasurement {
+    id        String   @id @default(uuid())
+    userId    String
+    user      User     @relation(fields: [userId], references: [id])
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    date      DateTime
+    weight    Decimal
+    waist    Decimal
+    hips    Decimal
+    arm    Decimal
   }
 
   model UserGoal {

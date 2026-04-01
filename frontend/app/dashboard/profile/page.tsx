@@ -3,9 +3,6 @@
 import { AvatarCard } from "@/app/_components/profile/AvatarCard";
 import { MacroGoals } from "@/app/_components/profile/MacroGoals";
 import { MacroCalculator } from "@/app/_components/shared/MacroCalculator";
-import { Card } from "@/app/_components/ui/Card";
-import { SectionHeader } from "@/app/_components/ui/SectionHeader";
-import { Button } from "@/app/_components/ui/Button";
 import { apiClient, ApiError } from "@/app/lib/apiClient";
 import { useEffect, useState } from "react";
 
@@ -182,79 +179,6 @@ export default function Profile() {
 
         {/* Prawa kolumna — formularz + cele */}
         <div className="flex flex-col gap-4 flex-1 w-full">
-          {/* Personal Information */}
-          <Card>
-            <SectionHeader
-              title="Personal Information"
-              action={
-                <button className="text-xs text-brand-primary flex items-center gap-1">
-                  ✏️ Edit
-                </button>
-              }
-            />
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="flex flex-col gap-1">
-                <label className="text-xs text-text-secondary">
-                  First Name
-                </label>
-                <input
-                  type="text"
-                  defaultValue="Dominik"
-                  className="border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-brand-primary"
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs text-text-secondary">Last Name</label>
-                <input
-                  type="text"
-                  defaultValue="Kowalski"
-                  className="border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-brand-primary"
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs text-text-secondary">Email</label>
-                <input
-                  type="email"
-                  defaultValue="dominik@example.com"
-                  className="border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-brand-primary"
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs text-text-secondary">Age</label>
-                <input
-                  type="number"
-                  defaultValue={24}
-                  className="border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-brand-primary"
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs text-text-secondary">
-                  Weight (kg)
-                </label>
-                <input
-                  type="number"
-                  defaultValue={82}
-                  className="border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-brand-primary"
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs text-text-secondary">
-                  Height (kg)
-                </label>
-                <input
-                  type="number"
-                  defaultValue={78}
-                  className="border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-brand-primary"
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end">
-              <Button>Update Profile</Button>
-            </div>
-          </Card>
-
           <MacroCalculator onSuccess={() => window.location.reload()} />
           <MacroGoals
             dailyCaloriesGoal={dailyCaloriesGoal}
