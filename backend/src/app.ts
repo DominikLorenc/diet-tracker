@@ -1,12 +1,16 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import apiRoutes from './routes';
 import cookieParser from 'cookie-parser';
 import { globalRateLimiter } from './middleware/rateLimiter';
 import { errorHandler } from './middleware/errorHandler';
+import swaggerUi from 'swagger-ui-express';
+import { generateOpenAPIDocument } from './swagger';
 
-dotenv.config();
+const openApiDocument = generateOpenAPIDocument();
 
 const app = express();
 
@@ -24,6 +28,12 @@ app.get('/health', (req, res) => {
     res.send({ status: 'ok', message: 'API is running' });
 });
 
+if (process.env.NODE_ENV !== 'production') {
+    app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
+    app.get('/api/v1/docs.json', (req, res) => {
+        res.json(openApiDocument);
+    });
+}
 app.use('/api/v1', apiRoutes);
 
 app.use(errorHandler);
