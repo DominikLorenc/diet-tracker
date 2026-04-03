@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { createRecipe, getRecipes, getRecipe, updateRecipe, deleteRecipe } from '../controllers/recipeController';
 import { authMiddleware } from '../middleware/authMiddleware';
-import { registry } from '../swagger';
+import { registry, errorSchema } from '../swagger';
 import { recipeSchema } from '../schemas/recipeSchema';
 import { z } from 'zod';
 
@@ -9,23 +9,40 @@ const router = Router();
 
 router.use(authMiddleware);
 
+const errorContent = { 'application/json': { schema: errorSchema } };
+
+const recipeResponseSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    createdAt: z.string(),
+    products: z.array(
+        z.object({
+            id: z.string(),
+            quantity: z.number(),
+            productId: z.string(),
+            recipeId: z.string(),
+        }),
+    ),
+});
+
 registry.registerPath({
     method: 'post',
     path: '/recipes',
     tags: ['Recipes'],
-    summary: 'Utwórz przepis',
+    summary: 'Create a recipe',
     security: [{ cookieAuth: [] }],
     request: {
-        body: {
-            content: {
-                'application/json': { schema: recipeSchema },
-            },
-        },
+        body: { content: { 'application/json': { schema: recipeSchema } } },
     },
     responses: {
-        201: { description: 'Przepis utworzony' },
-        400: { description: 'Błąd walidacji' },
-        401: { description: 'Brak autoryzacji' },
+        201: {
+            description: 'Recipe created',
+            content: {
+                'application/json': { schema: z.object({ message: z.string(), recipe: recipeResponseSchema }) },
+            },
+        },
+        400: { description: 'Validation error', content: errorContent },
+        401: { description: 'Unauthorized', content: errorContent },
     },
 });
 router.post('/', createRecipe);
@@ -34,11 +51,14 @@ registry.registerPath({
     method: 'get',
     path: '/recipes',
     tags: ['Recipes'],
-    summary: 'Pobierz wszystkie przepisy',
+    summary: 'Get all recipes',
     security: [{ cookieAuth: [] }],
     responses: {
-        200: { description: 'Lista przepisów' },
-        401: { description: 'Brak autoryzacji' },
+        200: {
+            description: 'List of recipes',
+            content: { 'application/json': { schema: z.object({ recipes: z.array(recipeResponseSchema) }) } },
+        },
+        401: { description: 'Unauthorized', content: errorContent },
     },
 });
 router.get('/', getRecipes);
@@ -47,17 +67,18 @@ registry.registerPath({
     method: 'get',
     path: '/recipes/{id}',
     tags: ['Recipes'],
-    summary: 'Pobierz przepis po ID',
+    summary: 'Get recipe by ID',
     security: [{ cookieAuth: [] }],
     request: {
-        params: z.object({
-            id: z.uuid(),
-        }),
+        params: z.object({ id: z.uuid() }),
     },
     responses: {
-        200: { description: 'Przepis' },
-        404: { description: 'Przepis nie znaleziony' },
-        401: { description: 'Brak autoryzacji' },
+        200: {
+            description: 'Recipe',
+            content: { 'application/json': { schema: z.object({ recipe: recipeResponseSchema }) } },
+        },
+        404: { description: 'Recipe not found', content: errorContent },
+        401: { description: 'Unauthorized', content: errorContent },
     },
 });
 router.get('/:id', getRecipe);
@@ -66,23 +87,20 @@ registry.registerPath({
     method: 'patch',
     path: '/recipes/{id}',
     tags: ['Recipes'],
-    summary: 'Zaktualizuj przepis',
+    summary: 'Update recipe',
     security: [{ cookieAuth: [] }],
     request: {
-        params: z.object({
-            id: z.uuid(),
-        }),
-        body: {
-            content: {
-                'application/json': { schema: recipeSchema.partial() },
-            },
-        },
+        params: z.object({ id: z.uuid() }),
+        body: { content: { 'application/json': { schema: recipeSchema.partial() } } },
     },
     responses: {
-        200: { description: 'Przepis zaktualizowany' },
-        400: { description: 'Błąd walidacji' },
-        404: { description: 'Przepis nie znaleziony' },
-        401: { description: 'Brak autoryzacji' },
+        200: {
+            description: 'Recipe updated',
+            content: { 'application/json': { schema: z.object({ recipe: recipeResponseSchema }) } },
+        },
+        400: { description: 'Validation error', content: errorContent },
+        404: { description: 'Recipe not found', content: errorContent },
+        401: { description: 'Unauthorized', content: errorContent },
     },
 });
 router.patch('/:id', updateRecipe);
@@ -91,17 +109,20 @@ registry.registerPath({
     method: 'delete',
     path: '/recipes/{id}',
     tags: ['Recipes'],
-    summary: 'Usuń przepis',
+    summary: 'Delete recipe',
     security: [{ cookieAuth: [] }],
     request: {
-        params: z.object({
-            id: z.uuid(),
-        }),
+        params: z.object({ id: z.uuid() }),
     },
     responses: {
-        200: { description: 'Przepis usunięty' },
-        404: { description: 'Przepis nie znaleziony' },
-        401: { description: 'Brak autoryzacji' },
+        200: {
+            description: 'Recipe deleted',
+            content: {
+                'application/json': { schema: z.object({ message: z.string(), deleted: recipeResponseSchema }) },
+            },
+        },
+        404: { description: 'Recipe not found', content: errorContent },
+        401: { description: 'Unauthorized', content: errorContent },
     },
 });
 router.delete('/:id', deleteRecipe);

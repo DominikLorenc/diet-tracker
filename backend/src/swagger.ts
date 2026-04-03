@@ -5,6 +5,8 @@ extendZodWithOpenApi(z);
 
 export const registry = new OpenAPIRegistry();
 
+export const errorSchema = z.object({ message: z.string() });
+
 registry.registerComponent('securitySchemes', 'cookieAuth', {
     type: 'apiKey',
     in: 'cookie',

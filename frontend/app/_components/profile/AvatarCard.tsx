@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { uploadImage } from "@/utils/uploadImage";
-import { apiClient, ApiError } from "@/app/lib/apiClient";
+import { apiClient } from "@/app/lib/apiClient";
 
 type AvatarCardProps = {
   name: string;
@@ -11,59 +11,40 @@ type AvatarCardProps = {
   imageUrl?: string;
 };
 
-type ImagePayload = {
-  imageUrl: string;
-};
-
-type Response = {
-  message: string;
-  updated: string;
-};
-
 export const AvatarCard = ({ name, email, imageUrl }: AvatarCardProps) => {
   const initial = name.charAt(0).toUpperCase();
 
-  const [userImageUrl, setUserImageUrl] = useState<File | null>(null);
   const [userImage, setUserImage] = useState<string | undefined>(imageUrl);
   const [error, setError] = useState("");
 
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    setUserImageUrl(file ?? null);
-  };
-
-  const updateImage = async () => {
-    try {
-      const imageUrl = userImageUrl ? await uploadImage(userImageUrl) : null;
-
-      const preparedData = imageUrl;
-
-      if (!preparedData) {
-        setError("Nie udało się załadować obrazka");
-        return;
-      }
-
-      const response = await apiClient.patch<Response, ImagePayload>(
-        `/users/image`,
-        {
-          imageUrl: preparedData,
-        },
-      );
-
-      setUserImage(response.updated);
-    } catch (error) {
-      console.log(error);
-      setError("Coś poszło nie tak");
-    } finally {
+    if (file) {
+      updateImage(file);
     }
   };
 
-  useEffect(() => {
-    if (!userImageUrl) {
+  const updateImage = async (file: File) => {
+    const uploadedUrl = file ? await uploadImage(file) : null;
+
+    if (!uploadedUrl) {
+      setError("Nie udało się załadować obrazka");
       return;
     }
-    updateImage();
-  }, [userImageUrl]);
+
+    const { data, error } = await apiClient.PATCH("/users/image", {
+      body: { imageUrl: uploadedUrl },
+    });
+
+    if (error) {
+      setError(error.message ?? "Coś poszło nie tak");
+      return;
+    }
+
+    if (data?.updated) {
+      setUserImage(data.updated);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center gap-3 py-6">

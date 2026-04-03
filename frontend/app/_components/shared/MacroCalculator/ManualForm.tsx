@@ -3,7 +3,7 @@
 import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
 import { Button } from "@/app/_components/ui/Button";
-import { apiClient, ApiError } from "@/app/lib/apiClient";
+import { apiClient } from "@/app/lib/apiClient";
 import { MacroValues, recalculate } from "@/utils/macroCalculator";
 
 type ManualInputs = MacroValues & { kcal: number };
@@ -74,21 +74,24 @@ export const ManualForm = ({ onSuccess }: Props) => {
   const handleSave = async (data: ManualInputs) => {
     setIsLoading(true);
     setError("");
-    try {
-      await apiClient.patch("/users/goals", {
+
+    const { error } = await apiClient.PATCH("/users/goals", {
+      body: {
         dailyCaloriesGoal: data.kcal,
         dailyProteinGoal: data.protein_g,
         dailyCarbsGoal: data.carbs_g,
         dailyFatGoal: data.fat_g,
-      });
+      },
+    });
+
+    if (error) {
+      setError(error.message ?? "Błąd połączenia z serwerem.");
+    } else {
       setSuccess(true);
       onSuccess?.();
-    } catch (err) {
-      if (err instanceof ApiError) setError(err.message);
-      else setError("Błąd połączenia z serwerem.");
-    } finally {
-      setIsLoading(false);
     }
+
+    setIsLoading(false);
   };
 
   return (

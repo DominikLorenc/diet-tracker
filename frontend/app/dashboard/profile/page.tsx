@@ -3,7 +3,7 @@
 import { AvatarCard } from "@/app/_components/profile/AvatarCard";
 import { MacroGoals } from "@/app/_components/profile/MacroGoals";
 import { MacroCalculator } from "@/app/_components/shared/MacroCalculator";
-import { apiClient, ApiError } from "@/app/lib/apiClient";
+import { apiClient } from "@/app/lib/apiClient";
 import { useEffect, useState } from "react";
 
 const stats = [
@@ -35,28 +35,21 @@ const stats = [
 
 type User = {
   id: string;
-  createdAt: Date;
+  createdAt: string;
   username: string;
   email: string;
   role: string;
-  updatedAt: Date;
+  updatedAt: string;
   userGoals: UserGoal | null;
-  imageUrl: string;
+  imageUrl: string | null;
 };
 
 type UserGoal = {
   id: string;
-  createdAt: Date;
-  updatedAt: Date;
   dailyCaloriesGoal: number | null;
   dailyProteinGoal: number | null;
   dailyCarbsGoal: number | null;
   dailyFatGoal: number | null;
-};
-
-type UserDataResponse = {
-  message: string;
-  user: User;
 };
 
 export default function Profile() {
@@ -66,17 +59,17 @@ export default function Profile() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      try {
-        setIsLoading(true);
-        const response = await apiClient.get<UserDataResponse>(`/users/me`);
-        setUser(response.user);
-      } catch (error) {
-        if (error instanceof ApiError) {
-          setError(error.message);
-        }
-      } finally {
-        setIsLoading(false);
+      setIsLoading(true);
+
+      const { data, error } = await apiClient.GET("/users/me");
+
+      if (error) {
+        setError(error.message ?? "Coś poszło nie tak");
+      } else if (data?.user) {
+        setUser(data.user);
       }
+
+      setIsLoading(false);
     };
 
     fetchUser();
@@ -155,7 +148,11 @@ export default function Profile() {
         {/* Lewa kolumna — avatar + stats */}
         <div className="flex flex-col gap-4 w-full lg:w-72 shrink-0">
           <div className="bg-surface rounded-2xl shadow-sm">
-            <AvatarCard name={username} email={email} imageUrl={imageUrl} />
+            <AvatarCard
+              name={username}
+              email={email}
+              imageUrl={imageUrl ?? undefined}
+            />
           </div>
 
           <div>

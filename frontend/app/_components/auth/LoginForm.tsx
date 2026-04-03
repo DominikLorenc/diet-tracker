@@ -6,19 +6,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useState } from "react";
-import { apiClient, ApiError } from "@/app/lib/apiClient";
+import { apiClient } from "@/app/lib/apiClient";
 import { Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 
 type Inputs = z.infer<typeof loginSchema>;
-
-type UserDataResponse = {
-  message: string;
-  user: {
-    username: string;
-    email: string;
-    role: string;
-  };
-};
 
 export const LoginForm = () => {
   const {
@@ -34,20 +25,18 @@ export const LoginForm = () => {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+  const onSubmit: SubmitHandler<Inputs> = async (body) => {
     setIsLoading(true);
     setError("");
-    try {
-      await apiClient.post<UserDataResponse, Inputs>(`/users/login`, data);
-      router.push("/dashboard");
-    } catch (error) {
-      if (error instanceof ApiError) {
-        if (error.status === 401) setError("Nieprawidłowy email lub hasło");
-        else setError("Coś poszło nie tak, spróbuj ponownie");
-      }
-    } finally {
+
+    const { error } = await apiClient.POST("/users/login", { body });
+
+    if (error) {
+      setError(error.message ?? "Unexpected error");
       setIsLoading(false);
+      return;
     }
+    router.push("/dashboard");
   };
 
   return (

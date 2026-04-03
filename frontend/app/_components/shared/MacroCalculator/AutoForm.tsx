@@ -9,7 +9,7 @@ import {
   calorieCalculatorSchema,
   CalorieCalculatorInputs,
 } from "@/schemas/goalsSchema";
-import { apiClient, ApiError } from "@/app/lib/apiClient";
+import { apiClient } from "@/app/lib/apiClient";
 import { Button } from "@/app/_components/ui/Button";
 
 const inputClass =
@@ -51,21 +51,24 @@ export const AutoForm = ({ onSuccess }: Props) => {
     if (!result) return;
     setIsLoading(true);
     setError("");
-    try {
-      await apiClient.patch("/users/goals", {
+
+    const { error } = await apiClient.PATCH("/users/goals", {
+      body: {
         dailyCaloriesGoal: result.calories,
         dailyProteinGoal: result.protein,
         dailyCarbsGoal: result.carbs,
         dailyFatGoal: result.fat,
-      });
+      },
+    });
+
+    if (error) {
+      setError(error.message ?? "Błąd połączenia z serwerem.");
+    } else {
       setSuccess(true);
       onSuccess?.();
-    } catch (err) {
-      if (err instanceof ApiError) setError(err.message);
-      else setError("Błąd połączenia z serwerem.");
-    } finally {
-      setIsLoading(false);
     }
+
+    setIsLoading(false);
   };
 
   const onSubmit: SubmitHandler<CalorieCalculatorInputs> = (data) => {

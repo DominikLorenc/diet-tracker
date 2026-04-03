@@ -2,27 +2,36 @@ import { Router } from 'express';
 import { register, login, logout, me, updateGoals, updateImageUrlController } from '../controllers/userController';
 import { authMiddleware } from '../middleware/authMiddleware';
 import { authRateLimiter } from '../middleware/rateLimiter';
-import { registry } from '../swagger';
+import { registry, errorSchema } from '../swagger';
 import { registerSchema, loginSchema, updateGoalsSchema, updateImageUrlSchema } from '../schemas/userSchema';
+import { z } from 'zod';
 
 const router = Router();
+
+const errorContent = { 'application/json': { schema: errorSchema } };
 
 registry.registerPath({
     method: 'post',
     path: '/users/register',
     tags: ['Users'],
-    summary: 'Zarejestruj nowego użytkownika',
+    summary: 'Register a new user',
     request: {
-        body: {
-            content: {
-                'application/json': { schema: registerSchema },
-            },
-        },
+        body: { content: { 'application/json': { schema: registerSchema } } },
     },
     responses: {
-        201: { description: 'Użytkownik zarejestrowany' },
-        400: { description: 'Błąd walidacji' },
-        409: { description: 'Email lub nazwa użytkownika już istnieje' },
+        201: {
+            description: 'User registered',
+            content: {
+                'application/json': {
+                    schema: z.object({
+                        message: z.string(),
+                        user: z.object({ id: z.string(), username: z.string(), email: z.string() }),
+                    }),
+                },
+            },
+        },
+        400: { description: 'Validation error', content: errorContent },
+        409: { description: 'Email or username already exists', content: errorContent },
     },
 });
 router.post('/register', authRateLimiter, register);
@@ -31,18 +40,24 @@ registry.registerPath({
     method: 'post',
     path: '/users/login',
     tags: ['Users'],
-    summary: 'Zaloguj użytkownika',
+    summary: 'Login user',
     request: {
-        body: {
-            content: {
-                'application/json': { schema: loginSchema },
-            },
-        },
+        body: { content: { 'application/json': { schema: loginSchema } } },
     },
     responses: {
-        200: { description: 'Zalogowano, token w cookie' },
-        400: { description: 'Błąd walidacji' },
-        401: { description: 'Nieprawidłowe dane logowania' },
+        200: {
+            description: 'Logged in, token set in cookie',
+            content: {
+                'application/json': {
+                    schema: z.object({
+                        message: z.string(),
+                        user: z.object({ id: z.string(), username: z.string(), email: z.string(), role: z.string() }),
+                    }),
+                },
+            },
+        },
+        400: { description: 'Validation error', content: errorContent },
+        401: { description: 'Invalid credentials', content: errorContent },
     },
 });
 router.post('/login', authRateLimiter, login);
@@ -53,11 +68,41 @@ registry.registerPath({
     method: 'get',
     path: '/users/me',
     tags: ['Users'],
-    summary: 'Pobierz dane zalogowanego użytkownika',
+    summary: 'Get current user',
     security: [{ cookieAuth: [] }],
     responses: {
-        200: { description: 'Dane użytkownika' },
-        401: { description: 'Brak autoryzacji' },
+        200: {
+            description: 'User data',
+            content: {
+                'application/json': {
+                    schema: z.object({
+                        message: z.string(),
+                        user: registry.register(
+                            'UserProfile',
+                            z.object({
+                                id: z.string(),
+                                username: z.string(),
+                                email: z.string(),
+                                role: z.string(),
+                                imageUrl: z.string().nullable(),
+                                createdAt: z.string(),
+                                updatedAt: z.string(),
+                                userGoals: z
+                                    .object({
+                                        id: z.string(),
+                                        dailyCaloriesGoal: z.number().nullable(),
+                                        dailyProteinGoal: z.number().nullable(),
+                                        dailyCarbsGoal: z.number().nullable(),
+                                        dailyFatGoal: z.number().nullable(),
+                                    })
+                                    .nullable(),
+                            }),
+                        ),
+                    }),
+                },
+            },
+        },
+        401: { description: 'Unauthorized', content: errorContent },
     },
 });
 router.get('/me', me);
@@ -66,19 +111,25 @@ registry.registerPath({
     method: 'patch',
     path: '/users/image',
     tags: ['Users'],
-    summary: 'Zaktualizuj zdjęcie profilowe',
+    summary: 'Update profile image',
     security: [{ cookieAuth: [] }],
     request: {
-        body: {
-            content: {
-                'application/json': { schema: updateImageUrlSchema },
-            },
-        },
+        body: { content: { 'application/json': { schema: updateImageUrlSchema } } },
     },
     responses: {
-        200: { description: 'Zdjęcie zaktualizowane' },
-        400: { description: 'Błąd walidacji' },
-        401: { description: 'Brak autoryzacji' },
+        200: {
+            description: 'Image updated',
+            content: {
+                'application/json': {
+                    schema: z.object({
+                        message: z.string(),
+                        updated: z.string(),
+                    }),
+                },
+            },
+        },
+        400: { description: 'Validation error', content: errorContent },
+        401: { description: 'Unauthorized', content: errorContent },
     },
 });
 router.patch('/image', updateImageUrlController);
@@ -87,19 +138,31 @@ registry.registerPath({
     method: 'patch',
     path: '/users/goals',
     tags: ['Users'],
-    summary: 'Zaktualizuj cele żywieniowe',
+    summary: 'Update nutrition goals',
     security: [{ cookieAuth: [] }],
     request: {
-        body: {
-            content: {
-                'application/json': { schema: updateGoalsSchema },
-            },
-        },
+        body: { content: { 'application/json': { schema: updateGoalsSchema } } },
     },
     responses: {
-        200: { description: 'Cele zaktualizowane' },
-        400: { description: 'Błąd walidacji' },
-        401: { description: 'Brak autoryzacji' },
+        200: {
+            description: 'Goals updated',
+            content: {
+                'application/json': {
+                    schema: z.object({
+                        message: z.string(),
+                        updated: z.object({
+                            id: z.string(),
+                            dailyCaloriesGoal: z.number().nullable(),
+                            dailyProteinGoal: z.number().nullable(),
+                            dailyCarbsGoal: z.number().nullable(),
+                            dailyFatGoal: z.number().nullable(),
+                        }),
+                    }),
+                },
+            },
+        },
+        400: { description: 'Validation error', content: errorContent },
+        401: { description: 'Unauthorized', content: errorContent },
     },
 });
 router.patch('/goals', updateGoals);
@@ -108,11 +171,14 @@ registry.registerPath({
     method: 'delete',
     path: '/users/logout',
     tags: ['Users'],
-    summary: 'Wyloguj użytkownika',
+    summary: 'Logout user',
     security: [{ cookieAuth: [] }],
     responses: {
-        200: { description: 'Wylogowano' },
-        401: { description: 'Brak autoryzacji' },
+        200: {
+            description: 'Logged out',
+            content: { 'application/json': { schema: z.object({ message: z.string() }) } },
+        },
+        401: { description: 'Unauthorized', content: errorContent },
     },
 });
 router.delete('/logout', logout);

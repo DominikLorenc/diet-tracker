@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Apple } from "lucide-react";
-import { apiClient, ApiError } from "@/app/lib/apiClient";
+import { apiClient } from "@/app/lib/apiClient";
 
 type NavbarProps = {
   variant: "public" | "dashboard";
@@ -13,11 +13,7 @@ export default function Navbar({ variant }: NavbarProps) {
   const router = useRouter();
 
   const handleLogout = async () => {
-    try {
-      await apiClient.delete("/users/logout");
-    } catch (error) {
-      if (!(error instanceof ApiError)) throw error;
-    }
+    await apiClient.DELETE("/users/logout");
     router.push("/login");
   };
 

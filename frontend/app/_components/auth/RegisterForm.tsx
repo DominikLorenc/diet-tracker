@@ -6,27 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { apiClient, ApiError } from "@/app/lib/apiClient";
+import { apiClient } from "@/app/lib/apiClient";
 import { Mail, Lock, Eye, EyeOff, User, Loader2 } from "lucide-react";
-
-type User = {
-  id: string;
-  createdAt: Date;
-  username: string;
-  email: string;
-  role: string;
-  updatedAt: Date;
-  dailyCaloriesGoal: number | null;
-  dailyProteinGoal: number | null;
-  dailyCarbsGoal: number | null;
-  dailyFatGoal: number | null;
-  imageUrl: string;
-};
-
-type UserDataResponse = {
-  message: string;
-  user: User;
-};
 
 type Inputs = z.infer<typeof registerSchema>;
 
@@ -48,21 +29,19 @@ export const RegisterForm = () => {
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     setIsLoading(true);
     setError("");
-    try {
-      const { username, email, password } = data;
-      await apiClient.post<UserDataResponse, Omit<Inputs, "passwordConfirm">>(
-        `/users/register`,
-        { username, email, password },
-      );
-      router.push("/login");
-    } catch (error) {
-      if (error instanceof ApiError) {
-        if (error.status === 401) setError("Nieprawidłowy email lub hasło");
-        else setError("Coś poszło nie tak, spróbuj ponownie");
-      }
-    } finally {
+
+    const { username, email, password } = data;
+    const { error } = await apiClient.POST("/users/register", {
+      body: { username, email, password },
+    });
+
+    if (error) {
+      setError(error.message ?? "Coś poszło nie tak, spróbuj ponownie");
       setIsLoading(false);
+      return;
     }
+
+    router.push("/login");
   };
 
   return (
