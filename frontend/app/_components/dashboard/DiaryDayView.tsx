@@ -7,6 +7,7 @@ import { Modal } from "../shared/Modal";
 import { Search } from "../search/Search";
 import Link from "next/link";
 import Image from "next/image";
+import { useToastStore } from "@/store/useToastStore";
 
 export type MealType = "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
 
@@ -121,6 +122,7 @@ export const DiaryDayView = () => {
     fetchData();
   }, [date]);
 
+  const showToast = useToastStore((state) => state.showToast);
   const [openModal, setOpenModal] = useState(false);
 
   const handleDeleteItem = (id: string) => {
@@ -138,19 +140,21 @@ export const DiaryDayView = () => {
         const data = await response.json();
         throw new Error(data.message);
       })
-      .then((data) => {
-        console.log(data);
+      .then(() => {
         setEntries(
-          entries.map((entry) => {
-            return {
-              ...entry,
-              items: entry.items.filter((item) => item.id !== id),
-            };
-          }),
+          entries.map((entry) => ({
+            ...entry,
+            items: entry.items.filter((item) => item.id !== id),
+          })),
         );
+        showToast("error", "Wpis usunięty");
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        showToast(
+          "error",
+          "Nie udało się usunąć wpisu",
+          "Spróbuj ponownie lub odśwież stronę",
+        );
       });
   };
 

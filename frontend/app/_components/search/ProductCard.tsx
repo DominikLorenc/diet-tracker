@@ -26,7 +26,7 @@ export const ProductCard = ({
   canBeEdited?: boolean;
   handleEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
-  addProductToDiary?: (id: string, quantity: number) => void;
+  addProductToDiary?: (product: Product, quantity: number) => void;
   onProductSelect?: (product: Product) => void;
 }) => {
   const [quantity, setQuantity] = useState(0);
@@ -87,7 +87,7 @@ export const ProductCard = ({
               onChange={(e) => handleOnChange(e)}
               className="text-gray-500 hover:text-red-400 transition-colors"
             />
-            <button onClick={() => addProductToDiary?.(product.id, quantity)}>
+            <button onClick={() => addProductToDiary?.(product, quantity)}>
               Dodaj
             </button>
           </div>

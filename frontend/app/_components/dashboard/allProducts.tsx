@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { ProductCard } from "../search/ProductCard";
 import { Modal } from "../shared/Modal";
 import { ProductForm } from "../shared/ProductForm";
+import { useToastStore } from "@/store/useToastStore";
 
 type Product = {
   name: string;
@@ -21,6 +22,7 @@ export const AllProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [openModal, setOpenModal] = useState(false);
   const [productToEdit, setProductToEdit] = useState<Product | null>(null);
+  const showToast = useToastStore((state) => state.showToast);
 
   const handleEdit = (id: string) => {
     const product = products.find((product) => product.id === id);
@@ -60,11 +62,12 @@ export const AllProducts = () => {
         const data = await response.json();
         throw new Error(data.message);
       })
-      .then((data) => {
+      .then(() => {
         setProducts(products.filter((product) => product.id !== id));
+        showToast("error", "Produkt usunięty");
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        showToast("error", "Nie udało się usunąć produktu", "Spróbuj ponownie");
       });
   };
 

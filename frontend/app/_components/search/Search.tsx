@@ -9,6 +9,7 @@ import { ProductCard } from "./ProductCard";
 import { ProductForm } from "@/app/_components/shared/ProductForm";
 import { Modal } from "@/app/_components/shared/Modal";
 import { useSearchParams } from "next/navigation";
+import { useToastStore } from "@/store/useToastStore";
 
 type Product = {
   name: string;
@@ -47,6 +48,7 @@ export const Search = ({
   });
 
   const searchParams = useSearchParams();
+  const showToast = useToastStore((state) => state.showToast);
 
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setIsSearched] = useState(false);
@@ -104,7 +106,7 @@ export const Search = ({
       });
   };
 
-  const handleAddProductToDiary = (id: string, quantity: number) => {
+  const handleAddProductToDiary = (product: Product, quantity: number) => {
     const currentDate = new Date();
     const mealType = searchParams.get("mealType");
     const date = searchParams.get("date");
@@ -122,7 +124,7 @@ export const Search = ({
       body: JSON.stringify({
         userId: searchParams.get("userId"),
         date: currentDate.toISOString().split("T")[0],
-        productId: id,
+        productId: product.id,
         quantity,
         mealType,
       }),
@@ -134,14 +136,15 @@ export const Search = ({
         const data = await response.json();
         throw new Error(data.message);
       })
-      .then((data) => {
-        console.log(data);
+      .then(() => {
+        const kcal = ((quantity / 100) * product.calories).toFixed(0);
+        showToast("success", "Wpis dodany!", `${product.name} · ${kcal} kcal`);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        showToast("error", "Nie udało się dodać wpisu", "Spróbuj ponownie");
       });
 
-    handleAddProductToRecentSearches(id);
+    handleAddProductToRecentSearches(product.id);
   };
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
