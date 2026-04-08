@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Navbar from "../_components/shared/Navbar";
+import { Toast } from "../_components/shared/Toast";
 
 export default function DashboardLayout({
   children,
@@ -43,6 +44,7 @@ export default function DashboardLayout({
           {children}
         </main>
       </div>
+      <Toast />
     </div>
   );
 }

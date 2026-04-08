@@ -5,8 +5,8 @@ import { productSchema } from "@/schemas/productSchem";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState } from "react";
-import { ProductCard } from "../search/ProductCard";
 import { uploadImage } from "@/utils/uploadImage";
+import { useToastStore } from "@/store/useToastStore";
 
 type Inputs = z.infer<typeof productSchema>;
 
@@ -49,9 +49,8 @@ export const ProductForm = ({
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
-  const [product, setProduct] = useState<Product | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const showToast = useToastStore((state) => state.showToast);
 
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -83,8 +82,12 @@ export const ProductForm = ({
         product: Product;
       };
       if (response.ok) {
-        setSuccess(true);
-        setProduct(responseJson.product);
+        showToast(
+          "success",
+          "Produkt dodany!",
+          `${responseJson.product.calories} kcal | B: ${responseJson.product.protein}g W: ${responseJson.product.carbs}g T: ${responseJson.product.fat}g`,
+        );
+        closeModal();
       } else {
         console.log(responseJson.message);
         if (responseJson.message === "Product already exists") {
@@ -123,8 +126,12 @@ export const ProductForm = ({
         product: Product;
       };
       if (response.ok) {
-        setSuccess(true);
-        setProduct(responseJson.product);
+        showToast(
+          "success",
+          "Produkt zaktualizowany!",
+          `${responseJson.product.calories} kcal | B: ${responseJson.product.protein}g W: ${responseJson.product.carbs}g T: ${responseJson.product.fat}g`,
+        );
+        closeModal();
       } else {
         console.log(responseJson.message);
         if (responseJson.message === "Product already exists") {
@@ -145,26 +152,7 @@ export const ProductForm = ({
     return await addProduct(data);
   };
 
-  const successMessage = productToEdit
-    ? "Produkt został zaktualizowany pomyślnie"
-    : "Produkt został dodany pomyślnie";
-
   const submitButtonText = productToEdit ? "Zaktualizuj" : "Dodaj produkt";
-
-  if (success) {
-    return (
-      <div className="flex flex-col gap-4">
-        <span className="text-green-400">{successMessage}</span>
-        {product && <ProductCard product={product} />}
-        <button
-          onClick={closeModal}
-          className="bg-indigo-600 hover:bg-indigo-700 transition-colors px-5 py-2 rounded-lg text-white font-medium"
-        >
-          Zamknij
-        </button>
-      </div>
-    );
-  }
 
   const inputClass =
     "block w-full rounded-md bg-white/5 px-3 py-2 text-sm text-white ring-1 ring-inset ring-white/10 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500";
