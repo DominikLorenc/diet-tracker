@@ -118,6 +118,8 @@ model DiaryEntry {
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   items DiaryEntryItem[]  
+
+  @@index([userId])
 }
 
 model DiaryEntryItem {
