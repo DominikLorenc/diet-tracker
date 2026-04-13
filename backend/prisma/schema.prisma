@@ -44,9 +44,9 @@ model User {
     updatedAt DateTime @updatedAt
     date      DateTime
     weight    Decimal
-    waist    Decimal
-    hips    Decimal
-    arm    Decimal
+    waist     Decimal
+    hips      Decimal
+    arm     Decimal
   }
 
   model UserGoal {

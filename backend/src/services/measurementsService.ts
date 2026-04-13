@@ -1,0 +1,95 @@
+import { BodyMeasurement } from '../generated/prisma';
+import prisma from '../lib/prisma';
+import { AppError } from '../utils/AppError';
+
+export const createNewMeasurement = async (
+    userId: string,
+    weight: number,
+    waist: number,
+    hips: number,
+    arm: number,
+): Promise<BodyMeasurement> => {
+    const newMeasurement = await prisma.bodyMeasurement.create({
+        data: {
+            userId,
+            weight,
+            waist,
+            hips,
+            arm,
+            date: new Date(),
+        },
+    });
+    return newMeasurement;
+};
+
+export const getMeasurementsByUserId = async (userId: string): Promise<BodyMeasurement[]> => {
+    const measurements = await prisma.bodyMeasurement.findMany({
+        where: {
+            userId,
+        },
+    });
+    return measurements;
+};
+
+export const getMeasurementById = async (id: string, userId: string): Promise<BodyMeasurement> => {
+    const measurement = await prisma.bodyMeasurement.findFirst({
+        where: {
+            id,
+            userId,
+        },
+    });
+    if (!measurement) {
+        throw new AppError('Measurement not found', 404);
+    }
+    return measurement;
+};
+
+export const updateMeasurement = async (
+    id: string,
+    userId: string,
+    data: {
+        weight?: number;
+        waist?: number;
+        hips?: number;
+        arm?: number;
+    },
+): Promise<BodyMeasurement> => {
+    const existingMeasurement = await prisma.bodyMeasurement.findFirst({
+        where: {
+            id,
+            userId,
+        },
+    });
+
+    if (!existingMeasurement) {
+        throw new AppError('Measurement not found', 404);
+    }
+
+    const updated = await prisma.bodyMeasurement.update({
+        where: {
+            id,
+        },
+        data,
+    });
+    return updated;
+};
+
+export const deleteMeasurement = async (id: string, userId: string): Promise<BodyMeasurement> => {
+    const existingMeasurement = await prisma.bodyMeasurement.findFirst({
+        where: {
+            id,
+            userId,
+        },
+    });
+
+    if (!existingMeasurement) {
+        throw new AppError('Measurement not found', 404);
+    }
+
+    const deleted = await prisma.bodyMeasurement.delete({
+        where: {
+            id,
+        },
+    });
+    return deleted;
+};
