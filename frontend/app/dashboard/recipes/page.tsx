@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { apiClient } from "@/app/lib/apiClient";
 
 export interface Product {
   id: string;
@@ -35,55 +36,32 @@ export default function Recipes() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    })
-      .then(async (response) => {
-        if (response.ok) return response.json();
-        const data = await response.json();
-        throw new Error(data.message);
-      })
-      .then((data) => setRecipes(data.recipes))
-      .catch((error) => console.log(error));
+    const fetchRecipes = async () => {
+      const { data, error } = await apiClient.GET("/recipes");
+      if (error) {
+        console.log(error);
+      } else if (data) {
+        setRecipes(data.recipes as Recipe[]);
+      }
+    };
+    fetchRecipes();
   }, []);
 
-  const handleAddProductToDiary = (id: string, quantity: number) => {
+  const handleAddProductToDiary = async (id: string, quantity: number) => {
     const currentDate = new Date();
-    const mealType = "BREAKFAST";
-    const date = currentDate.toISOString().split("T")[0];
 
-    if (!mealType || !date) {
-      return;
-    }
-
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/diary`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({
+    const { error } = await apiClient.POST("/diary", {
+      body: {
         date: currentDate.toISOString().split("T")[0],
         recipeId: id,
         quantity,
-        mealType,
-      }),
-    })
-      .then(async (response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        const data = await response.json();
-        throw new Error(data.message);
-      })
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+        mealType: "BREAKFAST",
+      },
+    });
+
+    if (error) {
+      console.log(error);
+    }
   };
 
   return (

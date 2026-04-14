@@ -4,6 +4,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { goalsSchema, GoalsInputs } from "@/schemas/goalsSchema";
+import { apiClient } from "@/app/lib/apiClient";
 
 type Props = {
   onSuccess: () => void;
@@ -37,27 +38,18 @@ export const SetGoalsForm = ({ onSuccess }: Props) => {
   const onSubmit: SubmitHandler<GoalsInputs> = async (data) => {
     setIsLoading(true);
     setError("");
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/users/goals`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify(data),
-        },
-      );
 
-      if (response.ok) {
-        onSuccess();
-      } else {
-        setError("Nie udało się zapisać celów. Spróbuj ponownie.");
-      }
-    } catch {
-      setError("Błąd połączenia z serwerem.");
-    } finally {
-      setIsLoading(false);
+    const { error: patchError } = await apiClient.PATCH("/users/goals", {
+      body: data,
+    });
+
+    if (patchError) {
+      setError("Nie udało się zapisać celów. Spróbuj ponownie.");
+    } else {
+      onSuccess();
     }
+
+    setIsLoading(false);
   };
 
   return (

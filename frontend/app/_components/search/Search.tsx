@@ -10,11 +10,12 @@ import { ProductForm } from "@/app/_components/shared/ProductForm";
 import { Modal } from "@/app/_components/shared/Modal";
 import { useSearchParams } from "next/navigation";
 import { useToastStore } from "@/store/useToastStore";
+import { apiClient } from "@/app/lib/apiClient";
 
 type Product = {
   name: string;
   id: string;
-  createdAt: Date;
+  createdAt: string;
   calories: number;
   carbs: number;
   protein: number;
@@ -106,7 +107,10 @@ export const Search = ({
       });
   };
 
-  const handleAddProductToDiary = (product: Product, quantity: number) => {
+  const handleAddProductToDiary = async (
+    product: Product,
+    quantity: number,
+  ) => {
     const currentDate = new Date();
     const mealType = searchParams.get("mealType");
     const date = searchParams.get("date");
@@ -115,68 +119,44 @@ export const Search = ({
       return;
     }
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/diary`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({
-        userId: searchParams.get("userId"),
+    const { error: diaryError } = await apiClient.POST("/diary", {
+      body: {
         date: currentDate.toISOString().split("T")[0],
         productId: product.id,
         quantity,
-        mealType,
-      }),
-    })
-      .then(async (response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        const data = await response.json();
-        throw new Error(data.message);
-      })
-      .then(() => {
-        const kcal = ((quantity / 100) * product.calories).toFixed(0);
-        showToast("success", "Wpis dodany!", `${product.name} · ${kcal} kcal`);
-      })
-      .catch(() => {
-        showToast("error", "Nie udało się dodać wpisu", "Spróbuj ponownie");
-      });
+        mealType: mealType as "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK",
+      },
+    });
+
+    if (diaryError) {
+      showToast("error", "Nie udało się dodać wpisu", "Spróbuj ponownie");
+    } else {
+      const kcal = ((quantity / 100) * product.calories).toFixed(0);
+      showToast("success", "Wpis dodany!", `${product.name} · ${kcal} kcal`);
+    }
 
     handleAddProductToRecentSearches(product.id);
   };
 
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+  const onSubmit: SubmitHandler<Inputs> = async (formData) => {
     setIsLoading(true);
     setError("");
 
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/products/search?q=${data.search}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        },
-      );
+    const { data, error: searchError } = await apiClient.GET(
+      "/products/search",
+      {
+        params: { query: { search: formData.search } },
+      },
+    );
 
-      if (response.ok) {
-        const responseJson = (await response.json()) as { products: Product[] };
-        setResults(responseJson.products);
-        setIsSearched(true);
-      } else {
-        setError("Coś poszło nie tak");
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      }
-    } finally {
-      setIsLoading(false);
+    if (searchError) {
+      setError("Coś poszło nie tak");
+    } else if (data) {
+      setResults(data.products as Product[]);
+      setIsSearched(true);
     }
+
+    setIsLoading(false);
   };
 
   return (

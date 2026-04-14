@@ -14,6 +14,7 @@ export default function DashboardLayout({
 
   const navigation = [
     { name: "📋 Dziennik", href: "/dashboard" },
+    { name: "📈 Postępy", href: "/dashboard/progress" },
     { name: "🥗 Produkty", href: "/dashboard/products" },
     { name: "👤 Profil", href: "/dashboard/profile" },
     { name: "🥩 Wszystkie Produkty", href: "/dashboard/all" },

@@ -6,7 +6,7 @@ import {
     deleteMeasurement,
     getMeasurementById,
 } from '../services/measurementsService';
-import { createMeasurementsSchema, measurementsIdSchema } from '../schemas/measurements';
+import { measurementsSchema, measurementsIdSchema } from '../schemas/measurements';
 
 export const createMeasurementController = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -16,7 +16,7 @@ export const createMeasurementController = async (req: Request, res: Response, n
             return;
         }
 
-        const result = createMeasurementsSchema.safeParse(req.body);
+        const result = measurementsSchema.safeParse(req.body);
         if (!result.success) {
             res.status(400).json({ message: result.error.issues });
             return;
@@ -87,7 +87,7 @@ export const updateMeasurementController = async (req: Request, res: Response, n
             return;
         }
 
-        const bodyResult = createMeasurementsSchema.partial().safeParse(req.body);
+        const bodyResult = measurementsSchema.partial().safeParse(req.body);
         if (!bodyResult.success) {
             res.status(400).json({ message: bodyResult.error.issues });
             return;

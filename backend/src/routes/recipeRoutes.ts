@@ -11,6 +11,17 @@ router.use(authMiddleware);
 
 const errorContent = { 'application/json': { schema: errorSchema } };
 
+const productSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    calories: z.string(),
+    carbs: z.string(),
+    protein: z.string(),
+    fat: z.string(),
+    imageUrl: z.string(),
+    createdAt: z.string(),
+});
+
 const recipeResponseSchema = z.object({
     id: z.string(),
     name: z.string(),
@@ -18,9 +29,11 @@ const recipeResponseSchema = z.object({
     products: z.array(
         z.object({
             id: z.string(),
-            quantity: z.number(),
+            quantity: z.string(),
             productId: z.string(),
             recipeId: z.string(),
+            createdAt: z.string(),
+            product: productSchema,
         }),
     ),
 });

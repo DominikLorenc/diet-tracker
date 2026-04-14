@@ -1,19 +1,26 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { apiClient } from "@/app/lib/apiClient";
 import { SetGoalsForm } from "./SetGoalsForm";
 
-type User = {
+type UserGoals = {
   id: string;
-  createdAt: Date;
-  username: string;
-  email: string;
-  role: string;
-  updatedAt: Date;
   dailyCaloriesGoal: number | null;
   dailyProteinGoal: number | null;
   dailyCarbsGoal: number | null;
   dailyFatGoal: number | null;
+};
+
+type User = {
+  id: string;
+  username: string;
+  email: string;
+  role: string;
+  imageUrl: string | null;
+  createdAt: string;
+  updatedAt: string;
+  userGoals: UserGoals | null;
 };
 
 type MacroCardProps = {
@@ -45,28 +52,19 @@ export const UserInfo = ({ refreshKey = 0 }: Props) => {
     message: "",
   });
 
-  const fetchUser = () => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((json) => setData(json));
+  const fetchUser = async () => {
+    const { data: responseData } = await apiClient.GET("/users/me");
+    if (responseData) {
+      setData({
+        user: responseData.user as User,
+        message: responseData.message,
+      });
+    }
   };
-
-  useEffect(() => {
-    fetchUser();
-  }, [refreshKey]);
 
   const { user } = data;
 
-  const goalsNotSet =
-    user !== null &&
-    user?.dailyCaloriesGoal === null &&
-    user?.dailyProteinGoal === null &&
-    user?.dailyCarbsGoal === null &&
-    user?.dailyFatGoal === null;
+  const goalsNotSet = user !== null && user.userGoals === null;
 
   const today = new Date().toLocaleDateString("pl-PL", {
     weekday: "long",
@@ -96,7 +94,7 @@ export const UserInfo = ({ refreshKey = 0 }: Props) => {
           Kalorie
         </span>
         <span className="text-5xl font-extrabold text-white">
-          {user?.dailyCaloriesGoal ?? "—"}
+          {user?.userGoals?.dailyCaloriesGoal ?? "—"}
         </span>
         <span className="text-sm text-white/40">kcal / dzień</span>
       </div>
@@ -105,19 +103,19 @@ export const UserInfo = ({ refreshKey = 0 }: Props) => {
       <div className="grid grid-cols-3 gap-3">
         <MacroCard
           label="Białko"
-          value={user?.dailyProteinGoal ?? null}
+          value={user?.userGoals?.dailyProteinGoal ?? null}
           unit="g"
           color="text-blue-400"
         />
         <MacroCard
           label="Węgle"
-          value={user?.dailyCarbsGoal ?? null}
+          value={user?.userGoals?.dailyCarbsGoal ?? null}
           unit="g"
           color="text-amber-400"
         />
         <MacroCard
           label="Tłuszcze"
-          value={user?.dailyFatGoal ?? null}
+          value={user?.userGoals?.dailyFatGoal ?? null}
           unit="g"
           color="text-rose-400"
         />

@@ -11,6 +11,4 @@ export const measurementsSchema = registry.register(
     }),
 );
 
-export const createMeasurementsSchema = measurementsSchema;
-
 export const measurementsIdSchema = z.uuid();

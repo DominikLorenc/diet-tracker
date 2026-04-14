@@ -1,4 +1,4 @@
-import { BodyMeasurement } from '../generated/prisma';
+import { BodyMeasurement, Prisma } from '../generated/prisma';
 import prisma from '../lib/prisma';
 import { AppError } from '../utils/AppError';
 
@@ -54,42 +54,32 @@ export const updateMeasurement = async (
         arm?: number;
     },
 ): Promise<BodyMeasurement> => {
-    const existingMeasurement = await prisma.bodyMeasurement.findFirst({
-        where: {
-            id,
-            userId,
-        },
-    });
-
-    if (!existingMeasurement) {
-        throw new AppError('Measurement not found', 404);
+    try {
+        return await prisma.bodyMeasurement.update({
+            where: { id, userId },
+            data,
+        });
+    } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === 'P2025') {
+                throw new AppError('Measurement not found', 404);
+            }
+        }
+        throw error;
     }
-
-    const updated = await prisma.bodyMeasurement.update({
-        where: {
-            id,
-        },
-        data,
-    });
-    return updated;
 };
 
 export const deleteMeasurement = async (id: string, userId: string): Promise<BodyMeasurement> => {
-    const existingMeasurement = await prisma.bodyMeasurement.findFirst({
-        where: {
-            id,
-            userId,
-        },
-    });
-
-    if (!existingMeasurement) {
-        throw new AppError('Measurement not found', 404);
+    try {
+        return await prisma.bodyMeasurement.delete({
+            where: { id, userId },
+        });
+    } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === 'P2025') {
+                throw new AppError('Measurement not found', 404);
+            }
+        }
+        throw error;
     }
-
-    const deleted = await prisma.bodyMeasurement.delete({
-        where: {
-            id,
-        },
-    });
-    return deleted;
 };

@@ -6,11 +6,12 @@ import { ProductCard } from "../search/ProductCard";
 import { Modal } from "../shared/Modal";
 import { ProductForm } from "../shared/ProductForm";
 import { useToastStore } from "@/store/useToastStore";
+import { apiClient } from "@/app/lib/apiClient";
 
 type Product = {
   name: string;
   id: string;
-  createdAt: Date;
+  createdAt: string;
   calories: number;
   carbs: number;
   protein: number;
@@ -34,41 +35,25 @@ export const AllProducts = () => {
   };
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setProducts(data.products);
-      });
+    const fetchProducts = async () => {
+      const { data } = await apiClient.GET("/products");
+      if (data) {
+        setProducts(data.products as Product[]);
+      }
+    };
+    fetchProducts();
   }, []);
 
-  const onDelete = (id: string) => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    })
-      .then(async (response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        const data = await response.json();
-        throw new Error(data.message);
-      })
-      .then(() => {
-        setProducts(products.filter((product) => product.id !== id));
-        showToast("error", "Produkt usunięty");
-      })
-      .catch(() => {
-        showToast("error", "Nie udało się usunąć produktu", "Spróbuj ponownie");
-      });
+  const onDelete = async (id: string) => {
+    const { error } = await apiClient.DELETE("/products/{id}", {
+      params: { path: { id } },
+    });
+    if (error) {
+      showToast("error", "Nie udało się usunąć produktu", "Spróbuj ponownie");
+    } else {
+      setProducts(products.filter((product) => product.id !== id));
+      showToast("error", "Produkt usunięty");
+    }
   };
 
   return (

@@ -11,14 +11,38 @@ router.use(authMiddleware);
 
 const errorContent = { 'application/json': { schema: errorSchema } };
 
+const productSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    calories: z.string(),
+    carbs: z.string(),
+    protein: z.string(),
+    fat: z.string(),
+    imageUrl: z.string(),
+    createdAt: z.string(),
+});
+
 const diaryItemSchema = z.object({
     id: z.string(),
     diaryEntryId: z.string(),
     productId: z.string().nullable(),
     recipeId: z.string().nullable(),
     mealType: z.enum(['BREAKFAST', 'LUNCH', 'DINNER', 'SNACK']),
-    quantity: z.number(),
+    quantity: z.string(),
     createdAt: z.string(),
+    product: productSchema.nullable(),
+    recipe: z
+        .object({
+            id: z.string(),
+            name: z.string(),
+            products: z.array(
+                z.object({
+                    quantity: z.string(),
+                    product: productSchema,
+                }),
+            ),
+        })
+        .nullable(),
 });
 
 const diaryEntryResponseSchema = z.object({

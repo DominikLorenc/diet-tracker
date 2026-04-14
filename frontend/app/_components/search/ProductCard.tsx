@@ -4,7 +4,7 @@ import Image from "next/image";
 type Product = {
   name: string;
   id: string;
-  createdAt: Date;
+  createdAt: string;
   calories: number;
   carbs: number;
   protein: number;

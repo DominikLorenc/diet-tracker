@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { apiClient } from "@/app/lib/apiClient";
 import { Search } from "@/app/_components/search/Search";
 
 type Product = {
@@ -61,25 +62,21 @@ export default function RecipeBuilder() {
       setError("Brak składników");
       return;
     }
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
+    const { data, error } = await apiClient.POST("/recipes", {
+      body: {
         name,
         products: ingredients.map((ingredient) => ({
           productId: ingredient.productId,
           quantity: ingredient.quantity,
         })),
-      }),
-    })
-      .then(async (response) => {
-        if (response.ok) return response.json();
-        const data = await response.json();
-        throw new Error(data.message);
-      })
-      .then((data) => console.log(data))
-      .catch((error) => console.log(error));
+      },
+    });
+
+    if (error) {
+      console.log(error);
+    } else {
+      console.log(data);
+    }
   };
 
   const onChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {

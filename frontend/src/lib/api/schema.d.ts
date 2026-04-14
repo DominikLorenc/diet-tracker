@@ -819,8 +819,35 @@ export interface paths {
                   recipeId: string | null;
                   /** @enum {string} */
                   mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
-                  quantity: number;
+                  quantity: string;
                   createdAt: string;
+                  product: {
+                    id: string;
+                    name: string;
+                    calories: string;
+                    carbs: string;
+                    protein: string;
+                    fat: string;
+                    imageUrl: string;
+                    createdAt: string;
+                  } | null;
+                  recipe: {
+                    id: string;
+                    name: string;
+                    products: {
+                      quantity: string;
+                      product: {
+                        id: string;
+                        name: string;
+                        calories: string;
+                        carbs: string;
+                        protein: string;
+                        fat: string;
+                        imageUrl: string;
+                        createdAt: string;
+                      };
+                    }[];
+                  } | null;
                 }[];
               }[];
             };
@@ -874,8 +901,35 @@ export interface paths {
                   recipeId: string | null;
                   /** @enum {string} */
                   mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
-                  quantity: number;
+                  quantity: string;
                   createdAt: string;
+                  product: {
+                    id: string;
+                    name: string;
+                    calories: string;
+                    carbs: string;
+                    protein: string;
+                    fat: string;
+                    imageUrl: string;
+                    createdAt: string;
+                  } | null;
+                  recipe: {
+                    id: string;
+                    name: string;
+                    products: {
+                      quantity: string;
+                      product: {
+                        id: string;
+                        name: string;
+                        calories: string;
+                        carbs: string;
+                        protein: string;
+                        fat: string;
+                        imageUrl: string;
+                        createdAt: string;
+                      };
+                    }[];
+                  } | null;
                 }[];
               };
             };
@@ -953,8 +1007,35 @@ export interface paths {
                   recipeId: string | null;
                   /** @enum {string} */
                   mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
-                  quantity: number;
+                  quantity: string;
                   createdAt: string;
+                  product: {
+                    id: string;
+                    name: string;
+                    calories: string;
+                    carbs: string;
+                    protein: string;
+                    fat: string;
+                    imageUrl: string;
+                    createdAt: string;
+                  } | null;
+                  recipe: {
+                    id: string;
+                    name: string;
+                    products: {
+                      quantity: string;
+                      product: {
+                        id: string;
+                        name: string;
+                        calories: string;
+                        carbs: string;
+                        protein: string;
+                        fat: string;
+                        imageUrl: string;
+                        createdAt: string;
+                      };
+                    }[];
+                  } | null;
                 }[];
               };
             };
@@ -1026,8 +1107,35 @@ export interface paths {
                 recipeId: string | null;
                 /** @enum {string} */
                 mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
-                quantity: number;
+                quantity: string;
                 createdAt: string;
+                product: {
+                  id: string;
+                  name: string;
+                  calories: string;
+                  carbs: string;
+                  protein: string;
+                  fat: string;
+                  imageUrl: string;
+                  createdAt: string;
+                } | null;
+                recipe: {
+                  id: string;
+                  name: string;
+                  products: {
+                    quantity: string;
+                    product: {
+                      id: string;
+                      name: string;
+                      calories: string;
+                      carbs: string;
+                      protein: string;
+                      fat: string;
+                      imageUrl: string;
+                      createdAt: string;
+                    };
+                  }[];
+                } | null;
               };
             };
           };
@@ -1091,9 +1199,20 @@ export interface paths {
                 createdAt: string;
                 products: {
                   id: string;
-                  quantity: number;
+                  quantity: string;
                   productId: string;
                   recipeId: string;
+                  createdAt: string;
+                  product: {
+                    id: string;
+                    name: string;
+                    calories: string;
+                    carbs: string;
+                    protein: string;
+                    fat: string;
+                    imageUrl: string;
+                    createdAt: string;
+                  };
                 }[];
               }[];
             };
@@ -1141,9 +1260,20 @@ export interface paths {
                 createdAt: string;
                 products: {
                   id: string;
-                  quantity: number;
+                  quantity: string;
                   productId: string;
                   recipeId: string;
+                  createdAt: string;
+                  product: {
+                    id: string;
+                    name: string;
+                    calories: string;
+                    carbs: string;
+                    protein: string;
+                    fat: string;
+                    imageUrl: string;
+                    createdAt: string;
+                  };
                 }[];
               };
             };
@@ -1211,9 +1341,20 @@ export interface paths {
                 createdAt: string;
                 products: {
                   id: string;
-                  quantity: number;
+                  quantity: string;
                   productId: string;
                   recipeId: string;
+                  createdAt: string;
+                  product: {
+                    id: string;
+                    name: string;
+                    calories: string;
+                    carbs: string;
+                    protein: string;
+                    fat: string;
+                    imageUrl: string;
+                    createdAt: string;
+                  };
                 }[];
               };
             };
@@ -1271,9 +1412,20 @@ export interface paths {
                 createdAt: string;
                 products: {
                   id: string;
-                  quantity: number;
+                  quantity: string;
                   productId: string;
                   recipeId: string;
+                  createdAt: string;
+                  product: {
+                    id: string;
+                    name: string;
+                    calories: string;
+                    carbs: string;
+                    protein: string;
+                    fat: string;
+                    imageUrl: string;
+                    createdAt: string;
+                  };
                 }[];
               };
             };
@@ -1341,9 +1493,20 @@ export interface paths {
                 createdAt: string;
                 products: {
                   id: string;
-                  quantity: number;
+                  quantity: string;
                   productId: string;
                   recipeId: string;
+                  createdAt: string;
+                  product: {
+                    id: string;
+                    name: string;
+                    calories: string;
+                    carbs: string;
+                    protein: string;
+                    fat: string;
+                    imageUrl: string;
+                    createdAt: string;
+                  };
                 }[];
               };
             };
@@ -1384,6 +1547,128 @@ export interface paths {
         };
       };
     };
+    trace?: never;
+  };
+  "/recent-searches": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get recent searches for the logged-in user */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description List of recent searches */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              recentSearches: {
+                id: string;
+                userId: string;
+                productId: string;
+                createdAt: string;
+                product: {
+                  id: string;
+                  name: string;
+                  calories: number;
+                  carbs: number;
+                  protein: number;
+                  fat: number;
+                  imageUrl: string;
+                  createdAt: string;
+                } | null;
+              }[];
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    put?: never;
+    /** Add a product to recent searches */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: {
+        content: {
+          "application/json": {
+            /** Format: uuid */
+            productId: string;
+          };
+        };
+      };
+      responses: {
+        /** @description Recent search added */
+        201: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              newRecentSearch: {
+                id: string;
+                userId: string;
+                productId: string;
+                createdAt: string;
+              };
+            };
+          };
+        };
+        /** @description Invalid product ID */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
     trace?: never;
   };
   "/measurements": {

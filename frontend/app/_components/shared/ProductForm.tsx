@@ -7,13 +7,14 @@ import { z } from "zod";
 import { useState } from "react";
 import { uploadImage } from "@/utils/uploadImage";
 import { useToastStore } from "@/store/useToastStore";
+import { apiClient } from "@/app/lib/apiClient";
 
 type Inputs = z.infer<typeof productSchema>;
 
 type Product = {
   name: string;
   id: string;
-  createdAt: Date;
+  createdAt: string;
   calories: number;
   carbs: number;
   protein: number;
@@ -63,38 +64,31 @@ export const ProductForm = ({
 
     try {
       const imageUrl = imageFile ? await uploadImage(imageFile) : null;
-
       const preparedData = imageUrl ? { ...data, imageUrl } : data;
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/products`,
+
+      const { data: responseData, error: postError } = await apiClient.POST(
+        "/products",
         {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(preparedData),
+          body: preparedData,
         },
       );
 
-      const responseJson = (await response.json()) as {
-        message: string;
-        product: Product;
-      };
-      if (response.ok) {
+      if (postError) {
+        if (postError.message === "Product already exists") {
+          setError("Produkt już istnieje");
+        } else {
+          setError("Coś poszło nie tak");
+        }
+      } else if (responseData) {
+        const { product } = responseData;
         showToast(
           "success",
           "Produkt dodany!",
-          `${responseJson.product.calories} kcal | B: ${responseJson.product.protein}g W: ${responseJson.product.carbs}g T: ${responseJson.product.fat}g`,
+          `${product.calories} kcal | B: ${product.protein}g W: ${product.carbs}g T: ${product.fat}g`,
         );
         closeModal();
-      } else {
-        console.log(responseJson.message);
-        if (responseJson.message === "Product already exists") {
-          setError("Produkt już istnieje");
-        }
       }
-    } catch (error) {
+    } catch {
       setError("Coś poszło nie tak");
     } finally {
       setIsLoading(false);
@@ -104,41 +98,35 @@ export const ProductForm = ({
   const editProduct = async (data: Inputs) => {
     setIsLoading(true);
     setError("");
+
     try {
       const imageUrl = imageFile ? await uploadImage(imageFile) : null;
-
       const preparedData = imageUrl ? { ...data, imageUrl } : data;
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/products/${productToEdit?.id}`,
+      const { data: responseData, error: patchError } = await apiClient.PATCH(
+        "/products/{id}",
         {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(preparedData),
+          params: { path: { id: productToEdit!.id } },
+          body: preparedData,
         },
       );
 
-      const responseJson = (await response.json()) as {
-        message: string;
-        product: Product;
-      };
-      if (response.ok) {
+      if (patchError) {
+        if (patchError.message === "Product already exists") {
+          setError("Produkt już istnieje");
+        } else {
+          setError("Coś poszło nie tak");
+        }
+      } else if (responseData) {
+        const { product } = responseData;
         showToast(
           "success",
           "Produkt zaktualizowany!",
-          `${responseJson.product.calories} kcal | B: ${responseJson.product.protein}g W: ${responseJson.product.carbs}g T: ${responseJson.product.fat}g`,
+          `${product.calories} kcal | B: ${product.protein}g W: ${product.carbs}g T: ${product.fat}g`,
         );
         closeModal();
-      } else {
-        console.log(responseJson.message);
-        if (responseJson.message === "Product already exists") {
-          setError("Produkt już istnieje");
-        }
       }
-    } catch (error) {
+    } catch {
       setError("Coś poszło nie tak");
     } finally {
       setIsLoading(false);

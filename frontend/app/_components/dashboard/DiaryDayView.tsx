@@ -8,6 +8,7 @@ import { Search } from "../search/Search";
 import Link from "next/link";
 import Image from "next/image";
 import { useToastStore } from "@/store/useToastStore";
+import { apiClient } from "@/app/lib/apiClient";
 
 export type MealType = "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
 
@@ -105,18 +106,13 @@ export const DiaryDayView = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/diary?date=${date.toISOString().split("T")[0]}`,
-          {
-            method: "GET",
-            credentials: "include",
-          },
-        );
-        const data = await response.json();
-        setEntries(data.diaryEntries as DiaryEntriesResponse);
-      } catch {
+      const { data, error: fetchError } = await apiClient.GET("/diary", {
+        params: { query: { date: date.toISOString().split("T")[0] } },
+      });
+      if (fetchError) {
         setError("Błąd pobierania danych");
+      } else if (data) {
+        setEntries(data.diaryEntries);
       }
     };
     fetchData();
@@ -125,37 +121,25 @@ export const DiaryDayView = () => {
   const showToast = useToastStore((state) => state.showToast);
   const [openModal, setOpenModal] = useState(false);
 
-  const handleDeleteItem = (id: string) => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/diary/${id}/item`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    })
-      .then(async (response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        const data = await response.json();
-        throw new Error(data.message);
-      })
-      .then(() => {
-        setEntries(
-          entries.map((entry) => ({
-            ...entry,
-            items: entry.items.filter((item) => item.id !== id),
-          })),
-        );
-        showToast("error", "Wpis usunięty");
-      })
-      .catch(() => {
-        showToast(
-          "error",
-          "Nie udało się usunąć wpisu",
-          "Spróbuj ponownie lub odśwież stronę",
-        );
-      });
+  const handleDeleteItem = async (id: string) => {
+    const { error: deleteError } = await apiClient.DELETE("/diary/{id}/item", {
+      params: { path: { id } },
+    });
+    if (deleteError) {
+      showToast(
+        "error",
+        "Nie udało się usunąć wpisu",
+        "Spróbuj ponownie lub odśwież stronę",
+      );
+    } else {
+      setEntries(
+        entries.map((entry) => ({
+          ...entry,
+          items: entry.items.filter((item) => item.id !== id),
+        })),
+      );
+      showToast("error", "Wpis usunięty");
+    }
   };
 
   console.log(allItems);
