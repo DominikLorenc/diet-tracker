@@ -6,16 +6,16 @@ type Props = {
 };
 
 export const ModeToggle = ({ mode, onChange }: Props) => (
-  <div className="flex gap-1 p-0.5 bg-indigo-50 border border-indigo-100 rounded-full">
+  <div className="flex gap-1 p-0.5 bg-[#0F1A10] border border-dash-border rounded-full">
     {(["auto", "manual"] as Mode[]).map((m) => (
       <button
         key={m}
         type="button"
         onClick={() => onChange(m)}
-        className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
+        className={`px-3 py-1 rounded-full text-xs font-semibold font-sans transition-opacity ${
           mode === m
-            ? "bg-indigo-500 text-white shadow-sm"
-            : "text-indigo-500 hover:text-indigo-700"
+            ? "bg-gradient-green text-white shadow-green-glow"
+            : "text-dash-fg-muted hover:opacity-80"
         }`}
       >
         {m === "auto" ? "Auto" : "Ręcznie"}

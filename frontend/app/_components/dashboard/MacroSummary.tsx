@@ -23,16 +23,12 @@ type User = {
   userGoals: UserGoals | null;
 };
 
-type Props = {
-  items: DiaryItem[];
-};
-
 type MacroBarProps = {
   label: string;
   eaten: number;
   goal: number;
   unit: string;
-  textColor: string;
+  color: string;
   barColor: string;
 };
 
@@ -41,49 +37,61 @@ const MacroBar = ({
   eaten,
   goal,
   unit,
-  textColor,
+  color,
   barColor,
 }: MacroBarProps) => {
   const percent = goal > 0 ? Math.min((eaten / goal) * 100, 100) : 0;
-  const left = Math.max(goal - eaten, 0);
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <div className="flex items-center justify-between text-xs">
-        <span
-          className={`font-semibold uppercase tracking-widest ${textColor}`}
-        >
-          {label}
-        </span>
-        <span className="text-white/40">
-          {eaten.toFixed(0)} / {goal} {unit}
-        </span>
-      </div>
-      <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
+    <div className="flex flex-col gap-1">
+      <span
+        className="text-[10px] font-bold tracking-wider"
+        style={{
+          color,
+          fontFamily: "var(--font-ibm-plex-mono)",
+          letterSpacing: "0.1em",
+        }}
+      >
+        {label}
+      </span>
+      <div
+        className="h-1.5 rounded-full overflow-hidden"
+        style={{ background: "#162E1C" }}
+      >
         <div
-          className={`h-full rounded-full transition-all duration-500 ${barColor}`}
-          style={{ width: `${percent}%` }}
+          className="h-full rounded-full transition-all duration-500"
+          style={{ width: `${percent}%`, background: barColor }}
         />
       </div>
-      <span className="text-xs text-white/30">
-        pozostało: {left.toFixed(0)} {unit}
+      <span
+        className="text-[10px] font-medium"
+        style={{ color, fontFamily: "var(--font-ibm-plex-mono)" }}
+      >
+        {eaten.toFixed(0)} / {goal} {unit}
       </span>
     </div>
   );
 };
 
-export const MacroSummary = ({ items }: Props) => {
-  const [user, setUser] = useState<User | null>(null);
+type Props = {
+  items: DiaryItem[];
+  user?: User | null;
+};
 
+export const MacroSummary = ({ items, user: userProp }: Props) => {
+  const [fetchedUser, setFetchedUser] = useState<User | null>(null);
+
+  /* jeśli user przekazany z rodzica, nie fetchujemy ponownie */
   useEffect(() => {
+    if (userProp !== undefined) return;
     const fetchUser = async () => {
       const { data } = await apiClient.GET("/users/me");
-      if (data) {
-        setUser(data.user as User);
-      }
+      if (data) setFetchedUser(data.user as User);
     };
     fetchUser();
-  }, []);
+  }, [userProp]);
+
+  const user = userProp !== undefined ? userProp : fetchedUser;
 
   const eaten = items.reduce(
     (sum, item) => {
@@ -112,63 +120,88 @@ export const MacroSummary = ({ items }: Props) => {
       : 0;
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5 overflow-hidden">
-      {/* Kalorie - główna sekcja */}
-      <div className="px-4 py-4 border-b border-white/10">
-        <div className="flex items-end justify-between mb-3">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-indigo-400 mb-1">
-              Kalorie
-            </p>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-3xl font-extrabold text-white">
-                {eaten.calories.toFixed(0)}
-              </span>
-              <span className="text-sm text-white/40">
-                / {goal.calories} kcal
-              </span>
-            </div>
-          </div>
-          <div className="text-right">
-            <p className="text-xs text-white/30">pozostało</p>
-            <p className="text-lg font-bold text-white">
-              {caloriesLeft.toFixed(0)} kcal
-            </p>
-          </div>
-        </div>
-        <div className="h-2 rounded-full bg-white/10 overflow-hidden">
-          <div
-            className="h-full rounded-full bg-indigo-500 transition-all duration-500"
-            style={{ width: `${caloriesPercent}%` }}
-          />
+    <div
+      className="rounded-2xl flex flex-col gap-2.5 p-4"
+      style={{
+        background: "#1A2420",
+        border: "1px solid #1E3322",
+        boxShadow: "0 1px 20px rgba(34,197,94,0.09)",
+      }}
+    >
+      {/* Kalorie — etykieta */}
+      <span
+        className="text-xs font-bold tracking-widest"
+        style={{
+          color: "#4ADE80",
+          fontFamily: "var(--font-ibm-plex-mono)",
+          letterSpacing: "0.15em",
+        }}
+      >
+        KALORIE
+      </span>
+
+      {/* Kalorie — wartość + pozostało */}
+      <div className="flex items-end justify-between">
+        <span
+          className="text-4xl sm:text-[46px] font-bold leading-none"
+          style={{ color: "#F3F7FF", fontFamily: "var(--font-ibm-plex-mono)" }}
+        >
+          {eaten.calories.toFixed(0)}{" "}
+          <span className="text-xl sm:text-2xl" style={{ color: "#94A3B8" }}>
+            / {goal.calories} kcal
+          </span>
+        </span>
+        <div
+          className="text-right text-sm font-semibold leading-snug"
+          style={{ color: "#94A3B8" }}
+        >
+          pozostało
+          <br />
+          <span style={{ color: "#F3F7FF" }}>
+            {caloriesLeft.toFixed(0)} kcal
+          </span>
         </div>
       </div>
 
-      {/* Makro - paski */}
-      <div className="grid grid-cols-3 gap-4 px-4 py-4">
+      {/* Pasek postępu kalorii */}
+      <div
+        className="h-2.5 rounded-full overflow-hidden"
+        style={{ background: "#162E1C" }}
+      >
+        <div
+          className="h-full rounded-full transition-all duration-700"
+          style={{
+            width: `${caloriesPercent}%`,
+            background: "linear-gradient(90deg, #15803D 0%, #4ADE80 100%)",
+          }}
+        />
+      </div>
+
+      {/* Makroskładniki */}
+      <div className="grid grid-cols-3 gap-3 pt-1">
         <MacroBar
-          label="Białko"
+          label="BIAŁKO"
           eaten={eaten.protein}
           goal={goal.protein}
           unit="g"
-          textColor="text-blue-400"
-          barColor="bg-blue-400"
+          color="#7DB5FF"
+          barColor="#7DB5FF"
         />
         <MacroBar
-          label="Węgle"
+          label="WĘGLE"
           eaten={eaten.carbs}
           goal={goal.carbs}
           unit="g"
-          textColor="text-amber-400"
-          barColor="bg-amber-400"
+          color="#F4C65D"
+          barColor="#F4C65D"
         />
         <MacroBar
-          label="Tłuszcze"
+          label="TŁUSZCZE"
           eaten={eaten.fat}
           goal={goal.fat}
           unit="g"
-          textColor="text-rose-400"
-          barColor="bg-rose-400"
+          color="#F18FA3"
+          barColor="#F18FA3"
         />
       </div>
     </div>

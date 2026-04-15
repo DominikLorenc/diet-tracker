@@ -1,8 +1,56 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0F1A10;
+  --foreground: #F3F7FF;
+}
+
+@theme inline {
+  --font-sans: var(--font-jakarta);
+  --font-mono: var(--font-ibm-plex-mono);
+  --font-newsreader: var(--font-newsreader);
+
+  --animate-fade-in-up: fadeInUp 0.6s ease-out both;
+  --animate-fade-in-right: fadeInRight 0.7s ease-out both;
+  --animate-float: float 4s ease-in-out infinite;
+  --animate-scale-in: scaleIn 0.5s ease-out both;
+
+  /* Brand (landing page) */
+  --color-brand-primary: #ff6b6b;
+  --color-brand-secondary: #6366f1;
+  --color-surface-muted: #f6f7f8;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #6b7280;
+  --color-text-muted: #9ca3af;
+
+  /* Dashboard */
+  --color-dash-surface: #162218;
+  --color-dash-surface-alt: #1A2B1F;
+  --color-dash-border: #1E3322;
+  --color-dash-fg: #F3F7FF;
+  --color-dash-fg-secondary: #94A3B8;
+  --color-dash-fg-muted: #8FA0B8;
+  --color-dash-green: #4ADE80;
+  --color-dash-green-mid: #22C55E;
+
+  /* Macros — kolory zgodne z designem */
+  --color-macro-protein: #7DB5FF;
+  --color-macro-carbs: #F4C65D;
+  --color-macro-fat: #F18FA3;
+  --color-macro-calories: #4ADE80;
+  --color-macro-track: #162E1C;
+}
+
+@layer utilities {
+  .bg-gradient-green {
+    background: linear-gradient(180deg, #16A34A 0%, #15803D 100%);
+  }
+  .shadow-green-glow {
+    box-shadow: 0 2px 10px rgba(34, 197, 94, 0.25);
+  }
+  .ring-avatar-green {
+    box-shadow: 0 0 0 3px #1E3322, 0 4px 16px rgba(34, 197, 94, 0.3);
+  }
 }
 
 @keyframes fadeInUp {
@@ -24,47 +72,3 @@
   from { opacity: 0; transform: scale(0.85); }
   to   { opacity: 1; transform: scale(1); }
 }
-
-@theme inline {
-  --animate-fade-in-up: fadeInUp 0.6s ease-out both;
-  --animate-fade-in-right: fadeInRight 0.7s ease-out both;
-  --animate-float: float 4s ease-in-out infinite;
-  --animate-scale-in: scaleIn 0.5s ease-out both;
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-
-  /* Brand */
-  --color-brand-primary: #ff6b6b;
-  --color-brand-secondary: #6366f1;
-
-  /* Makroskładniki */
-  --color-macro-carbs: #6366f1;
-  --color-macro-protein: #22c55e;
-  --color-macro-fat: #fcd34d;
-
-  /* Powierzchnie */
-  --color-surface: #ffffff;
-  --color-surface-muted: #f6f7f8;
-  --color-surface-dark: #1a1a1a;
-  --color-surface-dark-card: #2a2a2a;
-
-  /* Tekst */
-  --color-text-primary: #1a1a1a;
-  --color-text-secondary: #6b7280;
-  --color-text-muted: #9ca3af;
-}
-
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-} */

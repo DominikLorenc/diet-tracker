@@ -3,8 +3,6 @@
 import { useState, useEffect } from "react";
 import { DateNavigator } from "./DateNavigator";
 import { MacroSummary } from "./MacroSummary";
-import { Modal } from "../shared/Modal";
-import { Search } from "../search/Search";
 import Link from "next/link";
 import Image from "next/image";
 import { useToastStore } from "@/store/useToastStore";
@@ -88,21 +86,57 @@ export interface DiaryEntry {
 
 export type DiaryEntriesResponse = DiaryEntry[];
 
+type UserGoals = {
+  id: string;
+  dailyCaloriesGoal: number | null;
+  dailyProteinGoal: number | null;
+  dailyCarbsGoal: number | null;
+  dailyFatGoal: number | null;
+};
+
+type User = {
+  id: string;
+  username: string;
+  email: string;
+  role: string;
+  imageUrl: string | null;
+  createdAt: string;
+  updatedAt: string;
+  userGoals: UserGoals | null;
+};
+
 const MEAL_TYPES: MealType[] = ["BREAKFAST", "LUNCH", "DINNER", "SNACK"];
 
-const MEAL_CONFIG: Record<MealType, string> = {
-  BREAKFAST: "Śniadanie",
-  LUNCH: "Obiad",
-  DINNER: "Kolacja",
-  SNACK: "Przekąska",
+const MEAL_CONFIG: Record<MealType, { label: string; emoji: string }> = {
+  BREAKFAST: { label: "ŚNIADANIE", emoji: "🌅" },
+  LUNCH: { label: "OBIAD", emoji: "☀️" },
+  DINNER: { label: "KOLACJA", emoji: "🌙" },
+  SNACK: { label: "PRZEKĄSKA", emoji: "🍎" },
 };
 
 export const DiaryDayView = () => {
   const [date, setDate] = useState(new Date());
   const [entries, setEntries] = useState<DiaryEntry[]>([]);
+  const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const allItems = entries[0]?.items ?? [];
+  const showToast = useToastStore((state) => state.showToast);
+
+  const today = new Date().toLocaleDateString("pl-PL", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data } = await apiClient.GET("/users/me");
+      if (data) setUser(data.user as User);
+    };
+    fetchUser();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -117,9 +151,6 @@ export const DiaryDayView = () => {
     };
     fetchData();
   }, [date]);
-
-  const showToast = useToastStore((state) => state.showToast);
-  const [openModal, setOpenModal] = useState(false);
 
   const handleDeleteItem = async (id: string) => {
     const { error: deleteError } = await apiClient.DELETE("/diary/{id}/item", {
@@ -142,101 +173,175 @@ export const DiaryDayView = () => {
     }
   };
 
-  console.log(allItems);
-
   return (
-    <div className="flex flex-col gap-4 p-6 w-full max-w-3xl">
-      {error && <p className="text-sm text-red-400">{error}</p>}
+    <div
+      className="flex flex-col gap-4 p-5 sm:p-7 min-h-full"
+      style={{ fontFamily: "var(--font-jakarta)" }}
+    >
+      {/* ── Nagłówek ─────────────────────────────────────────────── */}
+      <div className="flex flex-col gap-1">
+        <p
+          className="text-sm font-medium capitalize"
+          style={{ color: "#8FA0B8" }}
+        >
+          {today}
+        </p>
+        <h1
+          className="text-[42px] sm:text-[56px] font-bold leading-tight"
+          style={{
+            color: "#F3F7FF",
+            fontFamily: "var(--font-newsreader)",
+          }}
+        >
+          Cześć, {user?.username ?? "…"}
+        </h1>
+      </div>
+
+      {/* ── Podsumowanie kalorii + makro ─────────────────────────── */}
+      <MacroSummary items={allItems} user={user} />
+
+      {/* ── Nawigacja dat ────────────────────────────────────────── */}
       <DateNavigator date={date} onDateChange={setDate} />
-      {MEAL_TYPES.map((mealType) => {
-        const items = allItems.filter((item) => item.mealType === mealType);
-        return (
-          <div
-            key={mealType}
-            className="rounded-xl border border-white/10 bg-white/5 overflow-hidden"
-          >
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
-              <h2 className="text-sm font-semibold uppercase tracking-widest text-white/50">
-                {MEAL_CONFIG[mealType]}
-              </h2>
-              <div className="flex items-center gap-3">
-                {items.length > 0 && (
-                  <span className="text-sm font-semibold text-yellow-400">
-                    {items
-                      .reduce(
-                        (sum, item) => sum + getItemMacros(item).calories,
-                        0,
-                      )
-                      .toFixed(0)}{" "}
-                    kcal
-                  </span>
-                )}
-                <Link
-                  href={`/dashboard/add?mealType=${mealType}&date=${date.toISOString().split("T")[0]}`}
-                  className="w-6 h-6 rounded-full bg-indigo-600 hover:bg-indigo-500 transition-colors flex items-center justify-center text-white text-sm font-bold"
+
+      {error && (
+        <p className="text-sm px-1" style={{ color: "#F18FA3" }}>
+          {error}
+        </p>
+      )}
+
+      {/* ── Posiłki ──────────────────────────────────────────────── */}
+      <div className="flex flex-col gap-3 pb-4">
+        {MEAL_TYPES.map((mealType) => {
+          const items = allItems.filter((item) => item.mealType === mealType);
+          const mealKcal = items.reduce(
+            (sum, item) => sum + getItemMacros(item).calories,
+            0,
+          );
+          const config = MEAL_CONFIG[mealType];
+
+          return (
+            <div
+              key={mealType}
+              className="rounded-xl overflow-hidden"
+              style={{
+                background: "#162218",
+                border: "1px solid #1E3322",
+              }}
+            >
+              {/* Nagłówek posiłku */}
+              <div
+                className="flex items-center justify-between px-4 h-[46px]"
+                style={{
+                  borderBottom: items.length > 0 ? "1px solid #1E3322" : "none",
+                }}
+              >
+                <span
+                  className="text-sm font-bold tracking-wider"
+                  style={{
+                    color: "#D6DFEC",
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    letterSpacing: "0.08em",
+                  }}
                 >
-                  +
-                </Link>
-              </div>
-            </div>
-            <div className="flex flex-col divide-y divide-white/5">
-              {items.length === 0 ? (
-                <p className="px-4 py-3 text-sm text-white/20">Brak wpisów</p>
-              ) : (
-                items.map((item) => {
-                  const macros = getItemMacros(item);
-                  const name = item.recipe
-                    ? item.recipe.name
-                    : item.product?.name;
-
-                  const imageUrl = item.product?.imageUrl;
-
-                  return (
-                    <div
-                      key={item.id}
-                      className="flex items-center gap-4 px-4 py-3"
+                  {config.label}
+                </span>
+                <div className="flex items-center gap-3">
+                  {items.length > 0 && (
+                    <span
+                      className="text-sm font-bold"
+                      style={{
+                        color: "#F4C65D",
+                        fontFamily: "var(--font-ibm-plex-mono)",
+                      }}
                     >
-                      {imageUrl ? (
-                        <Image
-                          src={imageUrl}
-                          alt={name ?? "product"}
-                          width={50}
-                          height={50}
-                        />
-                      ) : (
-                        <div className="w-10 h-10 rounded-lg bg-gray-700 shrink-0" />
-                      )}
-                      <div className="flex flex-col flex-1 gap-1">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-white">
-                            {name}
+                      {mealKcal.toFixed(0)} kcal
+                    </span>
+                  )}
+                  <Link
+                    href={`/dashboard/add?mealType=${mealType}&date=${date.toISOString().split("T")[0]}`}
+                    className="text-xl font-bold leading-none w-7 h-7 flex items-center justify-center rounded-lg transition-opacity hover:opacity-70"
+                    style={{ color: "#22C55E" }}
+                  >
+                    +
+                  </Link>
+                </div>
+              </div>
+
+              {/* Elementy posiłku */}
+              {items.map((item, idx) => {
+                const macros = getItemMacros(item);
+                const name = item.recipe
+                  ? item.recipe.name
+                  : item.product?.name;
+                const imageUrl = item.product?.imageUrl;
+
+                return (
+                  <div
+                    key={item.id}
+                    className="flex items-center gap-3 px-4 h-[50px]"
+                    style={{
+                      background: "#1A2B1F",
+                      borderTop: idx > 0 ? "1px solid #1E3322" : undefined,
+                    }}
+                  >
+                    {/* Zdjęcie lub placeholder */}
+                    {imageUrl ? (
+                      <Image
+                        src={imageUrl}
+                        alt={name ?? "produkt"}
+                        width={32}
+                        height={32}
+                        className="rounded-lg object-cover shrink-0"
+                      />
+                    ) : (
+                      <div
+                        className="w-8 h-8 rounded-lg shrink-0"
+                        style={{ background: "#162E1C" }}
+                      />
+                    )}
+
+                    {/* Nazwa + makro */}
+                    <div className="flex items-center flex-1 gap-2 min-w-0">
+                      <span
+                        className="text-sm font-medium truncate flex-1"
+                        style={{ color: "#D6DFEC" }}
+                      >
+                        {name}
+                      </span>
+                      <div className="flex items-center gap-2 shrink-0">
+                        {!item.recipe && (
+                          <span
+                            className="text-xs"
+                            style={{ color: "#9FB0C7" }}
+                          >
+                            {item.quantity}g
                           </span>
-                          <span className="text-sm font-semibold text-yellow-400 shrink-0">
-                            {macros.calories.toFixed(0)} kcal
-                          </span>
-                        </div>
-                        <div className="flex gap-4 text-xs text-white/40">
-                          {!item.recipe && <span>{item.quantity} g</span>}
-                          <span>B: {macros.protein.toFixed(1)}g</span>
-                          <span>W: {macros.carbs.toFixed(1)}g</span>
-                          <span>T: {macros.fat.toFixed(1)}g</span>
-                          <button onClick={() => handleDeleteItem(item.id)}>
-                            🗑️
-                          </button>
-                        </div>
+                        )}
+                        <span
+                          className="text-sm font-bold"
+                          style={{
+                            color: "#F4C65D",
+                            fontFamily: "var(--font-ibm-plex-mono)",
+                          }}
+                        >
+                          {macros.calories.toFixed(0)} kcal
+                        </span>
+                        <button
+                          onClick={() => handleDeleteItem(item.id)}
+                          className="text-xs opacity-40 hover:opacity-80 transition-opacity ml-1"
+                          style={{ color: "#F18FA3" }}
+                        >
+                          ✕
+                        </button>
                       </div>
                     </div>
-                  );
-                })
-              )}
+                  </div>
+                );
+              })}
             </div>
-          </div>
-        );
-      })}
-      <MacroSummary items={allItems} />
-      <Modal open={openModal} onClose={() => setOpenModal(false)}>
-        <Search />
-      </Modal>
+          );
+        })}
+      </div>
     </div>
   );
 };

@@ -24,7 +24,6 @@ export function CustomSelect<T extends string | number>({
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Zamknij dropdown po kliknięciu poza komponentem
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {
@@ -43,25 +42,23 @@ export function CustomSelect<T extends string | number>({
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className={`w-full flex items-center justify-between px-3.5 py-2.5 text-sm bg-white border rounded-xl transition-colors ${
-          open
-            ? "border-indigo-400 ring-1 ring-indigo-400"
-            : "border-gray-200 hover:border-gray-300"
-        }`}
+        className={`w-full flex items-center justify-between px-3.5 py-2.5 text-sm rounded-xl transition-opacity hover:opacity-80 font-sans border ${
+          open ? "border-dash-green-mid/40" : "border-dash-border"
+        } bg-dash-surface-alt`}
       >
-        <span className={selected ? "text-text-primary" : "text-text-muted"}>
+        <span className={selected ? "text-dash-fg" : "text-dash-fg-muted"}>
           {selected ? selected.label : placeholder}
         </span>
         {open ? (
-          <ChevronUp className="w-4 h-4 text-indigo-400 shrink-0" />
+          <ChevronUp className="w-4 h-4 text-dash-green shrink-0" />
         ) : (
-          <ChevronDown className="w-4 h-4 text-text-muted shrink-0" />
+          <ChevronDown className="w-4 h-4 text-dash-fg-muted shrink-0" />
         )}
       </button>
 
       {/* Lista opcji */}
       {open && (
-        <ul className="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
+        <ul className="absolute z-50 mt-1 w-full bg-dash-surface-alt border border-dash-border rounded-xl overflow-hidden shadow-lg">
           {options.map((option) => {
             const isSelected = option.value === value;
             return (
@@ -71,14 +68,14 @@ export function CustomSelect<T extends string | number>({
                   onChange(option.value);
                   setOpen(false);
                 }}
-                className={`flex items-center gap-2 px-3.5 py-2.5 text-sm cursor-pointer transition-colors ${
+                className={`flex items-center gap-2 px-3.5 py-2.5 text-sm cursor-pointer transition-opacity font-sans ${
                   isSelected
-                    ? "bg-indigo-50 text-indigo-500 font-medium"
-                    : "text-text-primary hover:bg-gray-50"
+                    ? "bg-macro-track text-macro-calories font-medium"
+                    : "text-dash-fg hover:opacity-70"
                 }`}
               >
                 <Check
-                  className={`w-3.5 h-3.5 shrink-0 ${isSelected ? "opacity-100 text-indigo-500" : "opacity-0"}`}
+                  className={`w-3.5 h-3.5 shrink-0 text-macro-calories ${isSelected ? "opacity-100" : "opacity-0"}`}
                 />
                 {option.label}
               </li>

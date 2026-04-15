@@ -8,44 +8,59 @@ type MacroGoalsProps = {
   dailyFatGoal: number | null;
 };
 
+const macroConfig = [
+  {
+    key: "carbs",
+    label: "Węglowodany",
+    colorClass: "text-macro-carbs",
+    barClass: "bg-macro-carbs",
+  },
+  {
+    key: "protein",
+    label: "Białko",
+    colorClass: "text-macro-protein",
+    barClass: "bg-macro-protein",
+  },
+  {
+    key: "fat",
+    label: "Tłuszcze",
+    colorClass: "text-macro-fat",
+    barClass: "bg-macro-fat",
+  },
+] as const;
+
 export function MacroGoals({
   dailyCaloriesGoal,
   dailyProteinGoal,
   dailyCarbsGoal,
   dailyFatGoal,
 }: MacroGoalsProps) {
-  const caloriesFromCarbs = dailyCarbsGoal ? dailyCarbsGoal * 4 : 0;
-  const caloriesFromProtein = dailyProteinGoal ? dailyProteinGoal * 4 : 0;
-  const caloriesFromFat = dailyFatGoal ? dailyFatGoal * 9 : 0;
   const totalCalories = dailyCaloriesGoal ?? 0;
 
   const macros = [
     {
-      name: "Węglowodany",
+      ...macroConfig[0],
+      grams: dailyCarbsGoal ?? 0,
       percent:
-        caloriesFromCarbs > 0
-          ? Math.round((caloriesFromCarbs / totalCalories) * 100)
+        dailyCarbsGoal && totalCalories
+          ? Math.round(((dailyCarbsGoal * 4) / totalCalories) * 100)
           : 0,
-      grams: `${dailyCarbsGoal ?? 0}g`,
-      color: "bg-brand-primary",
     },
     {
-      name: "Białko",
+      ...macroConfig[1],
+      grams: dailyProteinGoal ?? 0,
       percent:
-        caloriesFromProtein > 0
-          ? Math.round((caloriesFromProtein / totalCalories) * 100)
+        dailyProteinGoal && totalCalories
+          ? Math.round(((dailyProteinGoal * 4) / totalCalories) * 100)
           : 0,
-      grams: `${dailyProteinGoal ?? 0}g`,
-      color: "bg-macro-protein",
     },
     {
-      name: "Tłuszcze",
+      ...macroConfig[2],
+      grams: dailyFatGoal ?? 0,
       percent:
-        caloriesFromFat > 0
-          ? Math.round((caloriesFromFat / totalCalories) * 100)
+        dailyFatGoal && totalCalories
+          ? Math.round(((dailyFatGoal * 9) / totalCalories) * 100)
           : 0,
-      grams: `${dailyFatGoal ?? 0}g`,
-      color: "bg-macro-fat",
     },
   ];
 
@@ -54,35 +69,42 @@ export function MacroGoals({
       <SectionHeader title="Cele kaloryczne i makro" />
 
       <div className="flex items-center justify-between">
-        <span className="text-sm text-text-secondary">Dzienny cel kalorii</span>
-        <span className="text-sm font-semibold text-text-primary">
+        <span className="text-sm text-dash-fg-muted font-sans">
+          Dzienny cel kalorii
+        </span>
+        <span className="text-sm font-semibold text-macro-calories font-mono">
           {dailyCaloriesGoal} kcal
         </span>
       </div>
 
-      <h3 className="text-sm font-medium text-text-primary">
+      <h3 className="text-sm font-medium text-dash-fg-secondary font-sans">
         Rozkład makroskładników
       </h3>
+
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {macros.map((macro) => (
           <div
-            key={macro.name}
-            className="flex flex-col gap-2 border border-gray-100 rounded-xl p-3"
+            key={macro.key}
+            className="flex flex-col gap-2 bg-dash-surface-alt border border-dash-border rounded-xl p-3"
           >
             <div className="flex justify-between text-sm">
-              <span className="font-medium text-text-primary">
-                {macro.name}
+              <span
+                className={`font-bold font-mono text-xs uppercase tracking-widest ${macro.colorClass}`}
+              >
+                {macro.label}
               </span>
-              <span className="text-text-muted">{macro.percent}%</span>
+              <span className="text-dash-fg-muted font-mono text-xs">
+                {macro.percent}%
+              </span>
             </div>
-            <div className="h-1.5 bg-gray-100 rounded-full">
+            <div className="h-[7px] bg-macro-track rounded-full">
               <div
-                className={`h-full rounded-full ${macro.color}`}
+                className={`h-full rounded-full ${macro.barClass}`}
                 style={{ width: `${macro.percent}%` }}
               />
             </div>
-            <span className="text-sm font-semibold text-text-primary">
-              {macro.grams}
+            <span className="text-sm font-semibold text-dash-fg font-mono">
+              {macro.grams}g
             </span>
           </div>
         ))}

@@ -10,28 +10,36 @@ const stats = [
   {
     value: "1400",
     label: "kcal today",
-    color: "text-brand-primary",
-    bg: "bg-red-50",
+    colorClass: "text-macro-calories",
+    bg: "bg-dash-surface-alt",
   },
   {
     value: "7",
     label: "day streak",
-    color: "text-macro-protein",
-    bg: "bg-green-50",
+    colorClass: "text-macro-carbs",
+    bg: "bg-dash-surface",
   },
   {
     value: "142",
     label: "meals logged",
-    color: "text-macro-carbs",
-    bg: "bg-indigo-50",
+    colorClass: "text-macro-protein",
+    bg: "bg-dash-surface-alt",
   },
   {
     value: "3.2",
     label: "kg lost",
-    color: "text-macro-fat",
-    bg: "bg-yellow-50",
+    colorClass: "text-dash-green",
+    bg: "bg-dash-surface",
   },
 ];
+
+type UserGoal = {
+  id: string;
+  dailyCaloriesGoal: number | null;
+  dailyProteinGoal: number | null;
+  dailyCarbsGoal: number | null;
+  dailyFatGoal: number | null;
+};
 
 type User = {
   id: string;
@@ -44,14 +52,6 @@ type User = {
   imageUrl: string | null;
 };
 
-type UserGoal = {
-  id: string;
-  dailyCaloriesGoal: number | null;
-  dailyProteinGoal: number | null;
-  dailyCarbsGoal: number | null;
-  dailyFatGoal: number | null;
-};
-
 export default function Profile() {
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState("");
@@ -60,35 +60,28 @@ export default function Profile() {
   useEffect(() => {
     const fetchUser = async () => {
       setIsLoading(true);
-
       const { data, error } = await apiClient.GET("/users/me");
-
       if (error) {
         setError(error.message ?? "Coś poszło nie tak");
       } else if (data?.user) {
         setUser(data.user);
       }
-
       setIsLoading(false);
     };
-
     fetchUser();
   }, []);
 
   if (isLoading) {
-    return <div>Ładowanie...</div>;
+    return <div className="text-dash-fg-muted font-sans p-6">Ładowanie...</div>;
   }
 
   if (error) {
-    return <div>Błąd: {error}</div>;
+    return <div className="text-red-400 font-sans p-6">Błąd: {error}</div>;
   }
 
-  if (!user) {
-    return;
-  }
+  if (!user) return;
 
   const { username, email, imageUrl } = user;
-
   const { dailyCaloriesGoal, dailyProteinGoal, dailyCarbsGoal, dailyFatGoal } =
     user.userGoals ?? {
       dailyCaloriesGoal: 0,
@@ -97,57 +90,18 @@ export default function Profile() {
       dailyFatGoal: 0,
     };
 
-  const caloriesFromCarbs = dailyCarbsGoal ? dailyCarbsGoal * 4 : 0;
-  const caloriesFromProtein = dailyProteinGoal ? dailyProteinGoal * 4 : 0;
-  const caloriesFromFat = dailyFatGoal ? dailyFatGoal * 9 : 0;
-
-  const totalCalories = dailyCaloriesGoal ?? 0;
-
-  const macros = [
-    {
-      name: "Carbs",
-      percent:
-        caloriesFromCarbs > 0
-          ? Math.round((caloriesFromCarbs / totalCalories) * 100)
-          : 0,
-      grams: `${dailyCarbsGoal}g`,
-      color: "bg-brand-primary",
-    },
-    {
-      name: "Protein",
-      percent:
-        caloriesFromProtein > 0
-          ? Math.round((caloriesFromProtein / totalCalories) * 100)
-          : 0,
-      grams: `${dailyProteinGoal}g`,
-      color: "bg-macro-protein",
-    },
-    {
-      name: "Fat",
-      percent:
-        caloriesFromFat > 0
-          ? Math.round((caloriesFromFat / totalCalories) * 100)
-          : 0,
-      grams: `${dailyFatGoal}g`,
-      color: "bg-macro-fat",
-    },
-  ];
-
   return (
-    <div className="px-4 py-6 max-w-6xl mx-auto flex flex-col gap-6">
+    <div className="px-4 py-6 max-w-6xl mx-auto flex flex-col gap-6 font-sans">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-bold text-text-primary">Profile</h1>
-        <p className="text-sm text-text-secondary">
-          Manage your account and goals
-        </p>
+        <h1 className="text-xl font-bold text-dash-fg">Profil</h1>
+        <p className="text-sm text-dash-fg-muted">Zarządzaj kontem i celami</p>
       </div>
 
-      {/* Główny layout: 1 kolumna mobile, 2 kolumny desktop */}
       <div className="flex flex-col lg:flex-row gap-6 items-start">
         {/* Lewa kolumna — avatar + stats */}
         <div className="flex flex-col gap-4 w-full lg:w-72 shrink-0">
-          <div className="bg-surface rounded-2xl shadow-sm">
+          <div className="bg-dash-surface border border-dash-border rounded-2xl">
             <AvatarCard
               name={username}
               email={email}
@@ -156,16 +110,21 @@ export default function Profile() {
           </div>
 
           <div>
-            <h2 className="text-sm font-semibold text-text-primary mb-3">
+            <h2 className="text-sm font-semibold text-dash-fg-secondary mb-3 font-sans">
               Quick Stats
             </h2>
             <div className="grid grid-cols-2 gap-3">
               {stats.map((stat) => (
-                <div key={stat.label} className={`${stat.bg} rounded-2xl p-4`}>
-                  <p className={`text-2xl font-bold ${stat.color}`}>
+                <div
+                  key={stat.label}
+                  className={`${stat.bg} border border-dash-border rounded-2xl p-4`}
+                >
+                  <p
+                    className={`text-2xl font-bold font-mono ${stat.colorClass}`}
+                  >
                     {stat.value}
                   </p>
-                  <p className="text-xs text-text-secondary mt-0.5">
+                  <p className="text-xs text-dash-fg-muted mt-0.5 font-sans">
                     {stat.label}
                   </p>
                 </div>
@@ -174,7 +133,7 @@ export default function Profile() {
           </div>
         </div>
 
-        {/* Prawa kolumna — formularz + cele */}
+        {/* Prawa kolumna — kalkulator + cele */}
         <div className="flex flex-col gap-4 flex-1 w-full">
           <MacroCalculator onSuccess={() => window.location.reload()} />
           <MacroGoals

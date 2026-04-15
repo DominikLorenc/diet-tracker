@@ -52,19 +52,22 @@ export const UserInfo = ({ refreshKey = 0 }: Props) => {
     message: "",
   });
 
-  const fetchUser = async () => {
-    const { data: responseData } = await apiClient.GET("/users/me");
-    if (responseData) {
-      setData({
-        user: responseData.user as User,
-        message: responseData.message,
-      });
-    }
-  };
-
   const { user } = data;
 
-  const goalsNotSet = user !== null && user.userGoals === null;
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: responseData } = await apiClient.GET("/users/me");
+      if (responseData) {
+        setData({
+          user: responseData.user as User,
+          message: responseData.message,
+        });
+      }
+    };
+    fetchUser();
+  }, [refreshKey]);
+
+  // const goalsNotSet = user !== null && user.userGoals === null;
 
   const today = new Date().toLocaleDateString("pl-PL", {
     weekday: "long",
@@ -73,9 +76,9 @@ export const UserInfo = ({ refreshKey = 0 }: Props) => {
     day: "numeric",
   });
 
-  if (goalsNotSet) {
-    return <SetGoalsForm onSuccess={fetchUser} />;
-  }
+  // if (goalsNotSet) {
+  //   return <SetGoalsForm onSuccess={fetchUser} />;
+  // }
 
   return (
     <div className="w-full max-w-2xl flex flex-col gap-6">

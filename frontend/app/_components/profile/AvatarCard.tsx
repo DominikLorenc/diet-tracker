@@ -49,7 +49,7 @@ export const AvatarCard = ({ name, email, imageUrl }: AvatarCardProps) => {
   return (
     <div className="flex flex-col items-center gap-3 py-6">
       {/* Avatar */}
-      <div className="w-20 h-20 rounded-full bg-brand-primary flex items-center justify-center shrink-0">
+      <div className="w-20 h-20 rounded-full bg-gradient-green ring-avatar-green flex items-center justify-center shrink-0">
         {userImage ? (
           <Image
             src={userImage}
@@ -61,15 +61,20 @@ export const AvatarCard = ({ name, email, imageUrl }: AvatarCardProps) => {
             loader={({ src }) => `${src}?w=80&h=80&fit=crop`}
           />
         ) : (
-          <span className="text-white text-3xl font-semibold">{initial}</span>
+          <span className="text-white text-3xl font-semibold font-sans">
+            {initial}
+          </span>
         )}
       </div>
 
       <div className="flex flex-col items-center gap-1">
-        <h2 className="text-lg font-bold text-text-primary">{name}</h2>
-        {email && <p className="text-sm text-text-secondary">{email}</p>}
+        <h2 className="text-lg font-bold text-dash-fg font-sans">{name}</h2>
+        {email && (
+          <p className="text-sm text-dash-fg-muted font-sans">{email}</p>
+        )}
       </div>
-      <label className="flex items-center gap-2 px-5 py-2 rounded-xl border border-gray-200 text-sm text-text-secondary bg-surface hover:bg-surface-muted transition-colors cursor-pointer">
+
+      <label className="flex items-center gap-2 px-5 py-2 rounded-xl border border-dash-border bg-dash-surface-alt text-sm text-dash-fg-muted font-sans transition-opacity hover:opacity-80 cursor-pointer">
         <span>🖼</span>
         <span>Change Photo</span>
         <input
@@ -79,7 +84,8 @@ export const AvatarCard = ({ name, email, imageUrl }: AvatarCardProps) => {
           className="hidden"
         />
       </label>
-      {error && <p className="text-sm text-red-400">{error}</p>}
+
+      {error && <p className="text-sm text-red-400 font-sans">{error}</p>}
     </div>
   );
 };

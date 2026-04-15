@@ -13,7 +13,7 @@ import { apiClient } from "@/app/lib/apiClient";
 import { Button } from "@/app/_components/ui/Button";
 
 const inputClass =
-  "border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-brand-primary bg-white w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
+  "bg-dash-surface-alt border border-dash-border rounded-xl px-3 py-2.5 text-sm text-dash-fg focus:outline-none w-full font-sans [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
 
 const numberFields = [
   { name: "weight" as const, label: "Waga", unit: "kg", placeholder: "np. 80" },
@@ -80,7 +80,9 @@ export const AutoForm = ({ onSuccess }: Props) => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {numberFields.map((field) => (
           <div key={field.name} className="flex flex-col gap-1">
-            <label className="text-xs text-text-secondary">{field.label}</label>
+            <label className="text-xs text-dash-fg-muted font-sans">
+              {field.label}
+            </label>
             <div className="flex items-center gap-1">
               <input
                 type="number"
@@ -89,12 +91,12 @@ export const AutoForm = ({ onSuccess }: Props) => {
                 className={inputClass}
                 {...register(field.name, { valueAsNumber: true })}
               />
-              <span className="text-xs text-text-muted shrink-0">
+              <span className="text-xs text-dash-fg-muted shrink-0 font-sans">
                 {field.unit}
               </span>
             </div>
             {errors[field.name] && (
-              <p className="text-xs text-red-500">
+              <p className="text-xs text-red-500 font-sans">
                 {errors[field.name]?.message}
               </p>
             )}
@@ -104,7 +106,7 @@ export const AutoForm = ({ onSuccess }: Props) => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="flex flex-col gap-1">
-          <label className="text-xs text-text-secondary">Płeć</label>
+          <label className="text-xs text-dash-fg-muted font-sans">Płeć</label>
           <Controller
             name="gender"
             control={control}
@@ -121,7 +123,7 @@ export const AutoForm = ({ onSuccess }: Props) => {
           />
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-xs text-text-secondary">Cel</label>
+          <label className="text-xs text-dash-fg-muted font-sans">Cel</label>
           <Controller
             name="goal"
             control={control}
@@ -141,7 +143,7 @@ export const AutoForm = ({ onSuccess }: Props) => {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-xs text-text-secondary">
+        <label className="text-xs text-dash-fg-muted font-sans">
           Aktywność fizyczna
         </label>
         <Controller
@@ -162,59 +164,61 @@ export const AutoForm = ({ onSuccess }: Props) => {
         />
       </div>
 
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && <p className="text-sm text-red-500 font-sans">{error}</p>}
 
       {!result && (
-        <Button type="submit" variant="secondary" className="w-full">
+        <Button type="submit" variant="primary" className="w-full">
           Oblicz zapotrzebowanie
         </Button>
       )}
 
       {result && (
-        <div className="flex flex-col gap-3 rounded-xl border border-indigo-100 bg-indigo-50/60 p-4">
-          <p className="text-xs font-semibold uppercase tracking-widest text-indigo-400">
+        <div className="flex flex-col gap-3 bg-dash-surface-alt border border-dash-green-mid/25 rounded-xl p-4">
+          <p className="text-xs font-bold uppercase tracking-widest text-macro-calories font-mono">
             ✦ Twoje zapotrzebowanie
           </p>
-          <div className="bg-white rounded-xl border border-indigo-100 px-5 py-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-text-primary">
+          <div className="bg-dash-surface border border-dash-border rounded-xl px-5 py-3 flex items-baseline gap-2">
+            <span className="text-3xl font-extrabold text-dash-fg font-mono">
               {result.calories}
             </span>
-            <span className="text-sm text-text-secondary">kcal / dzień</span>
+            <span className="text-sm text-dash-fg-muted font-sans">
+              kcal / dzień
+            </span>
           </div>
           <div className="grid grid-cols-3 gap-2">
-            <div className="rounded-xl bg-white border border-gray-100 p-3 flex flex-col gap-0.5">
-              <span className="text-xs font-semibold uppercase tracking-widest text-macro-protein">
+            <div className="bg-dash-surface border border-dash-border rounded-xl p-3 flex flex-col gap-0.5">
+              <span className="text-xs font-bold uppercase tracking-widest text-macro-protein font-mono">
                 Białko
               </span>
-              <span className="text-xl font-bold text-text-primary">
+              <span className="text-xl font-bold text-dash-fg font-mono">
                 {result.protein}g
               </span>
             </div>
-            <div className="rounded-xl bg-white border border-gray-100 p-3 flex flex-col gap-0.5">
-              <span className="text-xs font-semibold uppercase tracking-widest text-macro-carbs">
+            <div className="bg-dash-surface border border-dash-border rounded-xl p-3 flex flex-col gap-0.5">
+              <span className="text-xs font-bold uppercase tracking-widest text-macro-carbs font-mono">
                 Węgle
               </span>
-              <span className="text-xl font-bold text-text-primary">
+              <span className="text-xl font-bold text-dash-fg font-mono">
                 {result.carbs}g
               </span>
             </div>
-            <div className="rounded-xl bg-white border border-gray-100 p-3 flex flex-col gap-0.5">
-              <span className="text-xs font-semibold uppercase tracking-widest text-macro-fat">
+            <div className="bg-dash-surface border border-dash-border rounded-xl p-3 flex flex-col gap-0.5">
+              <span className="text-xs font-bold uppercase tracking-widest text-macro-fat font-mono">
                 Tłuszcze
               </span>
-              <span className="text-xl font-bold text-text-primary">
+              <span className="text-xl font-bold text-dash-fg font-mono">
                 {result.fat}g
               </span>
             </div>
           </div>
           {success ? (
-            <p className="text-sm text-center text-green-600 font-medium">
+            <p className="text-sm text-center font-medium text-macro-calories font-sans">
               ✓ Cel zaktualizowany!
             </p>
           ) : (
             <Button
               type="button"
-              variant="secondary"
+              variant="primary"
               isLoading={isLoading}
               onClick={handleSave}
               className="w-full"

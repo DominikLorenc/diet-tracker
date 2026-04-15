@@ -94,7 +94,9 @@ export const deleteProduct = async (req: Request, res: Response, next: NextFunct
 };
 
 export const searchProducts = async (req: Request, res: Response, next: NextFunction) => {
-    const result = searchProductSchema.safeParse({ search: req.query.q });
+    const result = searchProductSchema.safeParse({ search: req.query.search });
+
+    console.log(result);
     if (!result.success) {
         res.status(400).json({ message: result.error.issues });
         return;

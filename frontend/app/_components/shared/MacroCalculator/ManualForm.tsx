@@ -11,19 +11,19 @@ type ManualInputs = MacroValues & { kcal: number };
 const MACRO_ROWS = [
   {
     label: "Białko",
-    color: "text-blue-500",
+    colorClass: "text-macro-protein",
     gField: "protein_g",
     pctField: "protein_pct",
   },
   {
     label: "Tłuszcze",
-    color: "text-red-500",
+    colorClass: "text-macro-fat",
     gField: "fat_g",
     pctField: "fat_pct",
   },
   {
     label: "Węglowodany",
-    color: "text-yellow-500",
+    colorClass: "text-macro-carbs",
     gField: "carbs_g",
     pctField: "carbs_pct",
   },
@@ -40,11 +40,11 @@ const MANUAL_DEFAULTS: ManualInputs = {
 };
 
 const inputBase =
-  "border rounded-lg px-2 py-1.5 text-sm font-medium text-text-primary text-right focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
+  "bg-dash-surface-alt border border-dash-border rounded-lg px-2 py-1.5 text-sm font-medium text-dash-fg text-right focus:outline-none font-mono [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
 
-const inputGrams = `${inputBase} w-20 border-gray-200 focus:border-brand-primary`;
-const inputPct = `${inputBase} w-16 border-indigo-200 bg-indigo-50 text-indigo-600 font-semibold focus:border-brand-primary`;
-const inputKcal = `${inputBase} w-24 border-brand-primary font-semibold`;
+const inputGrams = `${inputBase} w-20`;
+const inputPct = `${inputBase} w-16`;
+const inputKcal = `${inputBase} w-24 border-macro-calories/40 text-macro-calories`;
 
 type Props = {
   onSuccess?: () => void;
@@ -97,15 +97,21 @@ export const ManualForm = ({ onSuccess }: Props) => {
   return (
     <form onSubmit={handleSubmit(handleSave)} className="flex flex-col">
       <div className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-2 pb-2 px-1">
-        <span className="text-xs text-text-muted">Makroskładnik</span>
-        <span className="text-xs text-text-muted w-20 text-center">g</span>
-        <span className="text-xs text-text-muted w-4" />
-        <span className="text-xs text-text-muted w-16 text-center">%</span>
-        <span className="text-xs text-text-muted w-4" />
+        <span className="text-xs text-dash-fg-muted font-sans">
+          Makroskładnik
+        </span>
+        <span className="text-xs text-dash-fg-muted w-20 text-center font-sans">
+          g
+        </span>
+        <span className="text-xs w-4" />
+        <span className="text-xs text-dash-fg-muted w-16 text-center font-sans">
+          %
+        </span>
+        <span className="text-xs w-4" />
       </div>
 
-      <div className="flex items-center gap-2 py-3 border-t border-gray-100">
-        <span className="flex-1 text-sm font-semibold text-text-primary">
+      <div className="flex items-center gap-2 py-3 border-t border-dash-border">
+        <span className="flex-1 text-sm font-semibold text-macro-calories font-mono">
           Kalorie
         </span>
         <Controller
@@ -124,17 +130,19 @@ export const ManualForm = ({ onSuccess }: Props) => {
             />
           )}
         />
-        <span className="text-xs text-text-muted w-4">kcal</span>
+        <span className="text-xs text-dash-fg-muted w-4 font-sans">kcal</span>
         <span className="w-16" />
         <span className="w-4" />
       </div>
 
-      {MACRO_ROWS.map(({ label, color, gField, pctField }) => (
+      {MACRO_ROWS.map(({ label, colorClass, gField, pctField }) => (
         <div
           key={gField}
-          className="flex items-center gap-2 py-3 border-t border-gray-100"
+          className="flex items-center gap-2 py-3 border-t border-dash-border"
         >
-          <span className={`flex-1 text-sm font-semibold ${color}`}>
+          <span
+            className={`flex-1 text-sm font-semibold font-mono ${colorClass}`}
+          >
             {label}
           </span>
 
@@ -154,7 +162,7 @@ export const ManualForm = ({ onSuccess }: Props) => {
               />
             )}
           />
-          <span className="text-xs text-text-muted w-4">g</span>
+          <span className="text-xs text-dash-fg-muted w-4 font-sans">g</span>
 
           <Controller
             name={pctField}
@@ -172,29 +180,31 @@ export const ManualForm = ({ onSuccess }: Props) => {
               />
             )}
           />
-          <span className="text-xs text-text-muted w-4">%</span>
+          <span className="text-xs text-dash-fg-muted w-4 font-sans">%</span>
         </div>
       ))}
 
-      <div className="flex items-center justify-between py-2.5 px-1 border-t border-gray-100 rounded-b-lg bg-gray-50">
-        <span className="text-sm font-semibold text-text-secondary">Razem</span>
+      <div className="flex items-center justify-between py-2.5 px-1 border-t border-dash-border rounded-b-lg bg-[#0F1A10]">
+        <span className="text-sm font-semibold text-dash-fg-secondary font-sans">
+          Razem
+        </span>
         <span
-          className={`text-sm font-bold ${isValid ? "text-green-500" : "text-red-500"}`}
+          className={`text-sm font-bold font-mono ${isValid ? "text-macro-calories" : "text-red-400"}`}
         >
           {total} %
         </span>
       </div>
 
-      {error && <p className="text-sm text-red-500 mt-2">{error}</p>}
+      {error && <p className="text-sm text-red-500 mt-2 font-sans">{error}</p>}
 
       {success ? (
-        <p className="text-sm text-center text-green-600 font-medium mt-3">
+        <p className="text-sm text-center text-macro-calories font-medium mt-3 font-sans">
           ✓ Cel zaktualizowany!
         </p>
       ) : (
         <Button
           type="submit"
-          variant="secondary"
+          variant="primary"
           isLoading={isLoading}
           disabled={!isValid}
           className="w-full mt-4"
