@@ -26,9 +26,9 @@ type Product = {
 type RecentSearch = {
   id: string;
   userId: string;
-  createdAt: Date;
+  createdAt: string;
   productId: string;
-  product: Product;
+  product: Product | null;
 };
 
 type Inputs = z.infer<typeof searchSchema>;
@@ -55,56 +55,36 @@ export const Search = ({
   const [hasSearched, setIsSearched] = useState(false);
   const [error, setError] = useState("");
   const [results, setResults] = useState<Product[]>([]);
-  const [openMoadl, setOpenModal] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([]);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/recent-searches`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    })
-      .then(async (response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        const data = await response.json();
-        throw new Error(data.message);
-      })
-      .then((data) => {
-        setRecentSearches(data.recentSearches);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+    const fetchRecentSearches = async () => {
+      const { data, error: fetchError } =
+        await apiClient.GET("/recent-searches");
 
-  const handleAddProductToRecentSearches = (id: string) => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/recent-searches`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({
+      if (data) {
+        setRecentSearches(data.recentSearches);
+      }
+
+      if (fetchError) {
+        showToast(
+          "error",
+          "Nie udało się pobrać ostatnich wyszukiwań",
+          "Spróbuj ponownie",
+        );
+      }
+    };
+
+    fetchRecentSearches();
+  }, [showToast]);
+
+  const handleAddProductToRecentSearches = async (id: string) => {
+    await apiClient.POST("/recent-searches", {
+      body: {
         productId: id,
-      }),
-    })
-      .then(async (response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        const data = await response.json();
-        throw new Error(data.message);
-      })
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      },
+    });
   };
 
   const handleAddProductToDiary = async (
@@ -135,7 +115,7 @@ export const Search = ({
       showToast("success", "Wpis dodany!", `${product.name} · ${kcal} kcal`);
     }
 
-    handleAddProductToRecentSearches(product.id);
+    await handleAddProductToRecentSearches(product.id);
   };
 
   const onSubmit: SubmitHandler<Inputs> = async (formData) => {
@@ -246,7 +226,7 @@ export const Search = ({
         </div>
       )}
 
-      <Modal open={openMoadl} onClose={() => setOpenModal(false)}>
+      <Modal open={openModal} onClose={() => setOpenModal(false)}>
         <ProductForm closeModal={() => setOpenModal(false)} />
       </Modal>
     </div>

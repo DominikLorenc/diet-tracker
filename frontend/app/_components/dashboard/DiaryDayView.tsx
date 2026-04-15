@@ -169,7 +169,7 @@ export const DiaryDayView = () => {
           items: entry.items.filter((item) => item.id !== id),
         })),
       );
-      showToast("error", "Wpis usunięty");
+      showToast("success", "Wpis usunięty");
     }
   };
 
@@ -296,7 +296,7 @@ export const DiaryDayView = () => {
                     ) : (
                       <div
                         className="w-8 h-8 rounded-lg shrink-0"
-                        style={{ background: "#162E1C" }}
+                        style={{ background: "#334155" }}
                       />
                     )}
 

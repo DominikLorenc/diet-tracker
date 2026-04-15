@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import Image from "next/image";
 
 type Product = {
@@ -21,7 +21,7 @@ export const ProductCard = ({
   addProductToDiary,
   onProductSelect,
 }: {
-  product: Product;
+  product: Product | null;
   canBeDeleted?: boolean;
   canBeEdited?: boolean;
   handleEdit?: (id: string) => void;
@@ -30,6 +30,8 @@ export const ProductCard = ({
   onProductSelect?: (product: Product) => void;
 }) => {
   const [quantity, setQuantity] = useState(0);
+
+  if (!product) return <Fragment />;
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuantity(parseFloat(e.target.value));

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { apiClient } from "@/app/lib/apiClient";
 import { Search } from "@/app/_components/search/Search";
+import Image from "next/image";
 
 type Product = {
   id: string;
@@ -11,12 +12,14 @@ type Product = {
   carbs: number;
   protein: number;
   fat: number;
+  imageUrl: string;
 };
 
 type Ingredient = {
   productId: string;
   name: string;
   quantity: number;
+  imageUrl: string;
 };
 
 export default function RecipeBuilder() {
@@ -32,7 +35,12 @@ export default function RecipeBuilder() {
 
     setIngredients([
       ...ingredients,
-      { productId: product.id, name: product.name, quantity: 100 },
+      {
+        productId: product.id,
+        name: product.name,
+        quantity: 100,
+        imageUrl: product?.imageUrl ?? "",
+      },
     ]);
   };
 
@@ -89,8 +97,10 @@ export default function RecipeBuilder() {
     setName(e.target.value);
   };
 
+  console.log(ingredients);
+
   return (
-    <div className="flex flex-col gap-4 p-6 w-full max-w-3xl">
+    <div className="flex flex-col gap-4 p-6 w-full ">
       <h2 className="text-2xl font-bold text-white">Nowy przepis</h2>
 
       {/* Nazwa przepisu */}
@@ -142,7 +152,20 @@ export default function RecipeBuilder() {
                 key={ingredient.productId}
                 className="flex items-center gap-4 px-4 py-3"
               >
-                <div className="w-10 h-10 rounded-lg bg-white/5 shrink-0" />
+                {ingredient.imageUrl ? (
+                  <Image
+                    src={ingredient.imageUrl}
+                    alt={ingredient.name}
+                    width={32}
+                    height={32}
+                    className="rounded-lg  shrink-0 w-10 h-10"
+                  />
+                ) : (
+                  <div
+                    className="w-10 h-10 rounded-lg bg-white/5 shrink-0"
+                    style={{ background: "#334155" }}
+                  />
+                )}
                 <div className="flex flex-col flex-1 gap-1">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-white">
