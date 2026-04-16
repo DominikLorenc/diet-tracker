@@ -34,6 +34,28 @@ model User {
     recentSearches RecentSearch[]
     userGoals UserGoal?
     bodyMeasurements BodyMeasurement[]
+    productFavorites ProductFavorite[]
+    recipeFavorites  RecipeFavorite[]
+  }
+
+  model ProductFavorite {
+    id        String   @id @default(uuid())
+    userId    String
+    user      User     @relation(fields: [userId], references: [id])
+    createdAt DateTime @default(now())
+    productId String
+    product   Product  @relation(fields: [productId], references: [id])
+    @@unique([userId, productId])
+  }
+
+  model RecipeFavorite {
+    id        String   @id @default(uuid())
+    userId    String
+    user      User     @relation(fields: [userId], references: [id])
+    createdAt DateTime @default(now())
+    recipeId String
+    recipe   Recipe   @relation(fields: [recipeId], references: [id])
+    @@unique([userId, recipeId])
   }
 
   model BodyMeasurement {
@@ -73,6 +95,7 @@ model Product {
   diaryEntriesItems DiaryEntryItem[]
   recipeIngredient RecipeIngredient[]
   recentSearches RecentSearch[]
+  productFavorites ProductFavorite[]
 }
 
 model RecentSearch {
@@ -99,6 +122,7 @@ enum MealType {
     createdAt    DateTime      @default(now())
     products RecipeIngredient[]
     diaryEntriesItems DiaryEntryItem[]
+    recipeFavorites RecipeFavorite[]
   }
 
   model RecipeIngredient {
