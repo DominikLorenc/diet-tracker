@@ -5,6 +5,7 @@ import diaryRouter from './diaryRouter';
 import recipeRoutes from './recipeRoutes';
 import recentSearchesRoute from './recentSearchesRoute';
 import measurementsRoute from './measurements';
+import favoritesRoutes from './favoritesRoutes';
 
 const router = Router();
 
@@ -14,5 +15,6 @@ router.use('/diary', diaryRouter);
 router.use('/recipes', recipeRoutes);
 router.use('/recent-searches', recentSearchesRoute);
 router.use('/measurements', measurementsRoute);
+router.use('/favorites', favoritesRoutes);
 
 export default router;

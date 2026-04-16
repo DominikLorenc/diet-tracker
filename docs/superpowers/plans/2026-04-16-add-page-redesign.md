@@ -152,7 +152,7 @@ git commit -m "feat: add ProductFavorite and RecipeFavorite prisma models"
 **Files:**
 - Create: `backend/src/services/favoritesService.ts`
 
-- [ ] **Step 1: Utwórz plik serwisu**
+- [x] **Step 1: Utwórz plik serwisu**
 
 Utwórz `backend/src/services/favoritesService.ts`:
 
