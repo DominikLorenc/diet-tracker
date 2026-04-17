@@ -28,7 +28,7 @@ Cztery karty bento w układzie 2 kolumny (desktop) / 1 kolumna (mobile). Każda 
 
 - Etykieta IBM Plex Mono u góry (np. `WAGA`)
 - Aktualna wartość dużym fontem (IBM Plex Mono, `#F3F7FF`)
-- Delta od pierwszego pomiaru małym tekstem — zielona jeśli poprawa, czerwona jeśli pogorszenie
+- Delta od pierwszego pomiaru małym tekstem — neutralny kolor `#94A3B8`, strzałka ↑/↓ bez oceniania kierunku (użytkownik może być na masie, redukcji lub utrzymaniu)
 - `LineChart` z Recharts: oś X to daty, oś Y to wartości
 
 Kolory linii wykresów (spójne z design systemem makr):
