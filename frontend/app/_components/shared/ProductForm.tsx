@@ -23,10 +23,12 @@ type Product = {
 };
 
 export const ProductForm = ({
-  closeModal,
+  closeModal = () => {},
+  onSuccess,
   productToEdit,
 }: {
-  closeModal: () => void;
+  closeModal?: () => void;
+  onSuccess?: (product: Product) => void;
   productToEdit?: Product | null;
 }) => {
   const initialValues = {
@@ -86,6 +88,7 @@ export const ProductForm = ({
           "Produkt dodany!",
           `${product.calories} kcal | B: ${product.protein}g W: ${product.carbs}g T: ${product.fat}g`,
         );
+        onSuccess?.(product as Product);
         closeModal();
       }
     } catch {
@@ -143,8 +146,9 @@ export const ProductForm = ({
   const submitButtonText = productToEdit ? "Zaktualizuj" : "Dodaj produkt";
 
   const inputClass =
-    "block w-full rounded-md bg-white/5 px-3 py-2 text-sm text-white ring-1 ring-inset ring-white/10 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500";
-  const labelClass = "block text-sm font-medium text-gray-300";
+    "block w-full rounded-xl bg-[#0F1A10] border border-[#1E3322] px-3 py-2.5 text-sm text-white placeholder:text-[#4A5A4A] focus:outline-none focus:border-[#22C55E] transition-colors";
+  const labelClass =
+    "block text-xs font-bold text-[#8FA0B8] uppercase tracking-wider font-mono";
 
   return (
     <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
@@ -250,7 +254,7 @@ export const ProductForm = ({
       <button
         type="submit"
         disabled={isLoading}
-        className="flex items-center justify-center gap-2 w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        className="flex items-center justify-center gap-2 w-full rounded-xl bg-[#16A34A] hover:bg-[#15803D] px-3 py-3 text-sm font-semibold text-white shadow-sm disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
       >
         {isLoading && (
           <svg

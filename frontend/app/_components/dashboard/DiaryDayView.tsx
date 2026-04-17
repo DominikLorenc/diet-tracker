@@ -60,7 +60,11 @@ export function getItemMacros(item: DiaryItem) {
       },
       { calories: 0, protein: 0, carbs: 0, fat: 0 },
     );
-    const multiplier = qty / 100;
+    const productsGrams = item.recipe.products.reduce(
+      (sum, rp) => sum + parseFloat(rp.quantity),
+      0,
+    );
+    const multiplier = qty / productsGrams;
     return {
       calories: totals.calories * multiplier,
       protein: totals.protein * multiplier,
@@ -103,6 +107,21 @@ type User = {
   createdAt: string;
   updatedAt: string;
   userGoals: UserGoals | null;
+};
+
+const formatPortion = (value: number): string => {
+  const display = value % 1 === 0 ? String(value) : value.toFixed(1);
+  let label: string;
+  if (value % 1 !== 0) {
+    label = "porcji";
+  } else if (value === 1) {
+    label = "porcja";
+  } else if (value >= 2 && value <= 4) {
+    label = "porcje";
+  } else {
+    label = "porcji";
+  }
+  return `${display} ${label}`;
 };
 
 const MEAL_TYPES: MealType[] = ["BREAKFAST", "LUNCH", "DINNER", "SNACK"];
@@ -309,7 +328,20 @@ export const DiaryDayView = () => {
                         {name}
                       </span>
                       <div className="flex items-center gap-2 shrink-0">
-                        {!item.recipe && (
+                        {item.recipe ? (
+                          <span
+                            className="text-xs"
+                            style={{ color: "#9FB0C7" }}
+                          >
+                            {formatPortion(
+                              parseFloat(item.quantity) /
+                                item.recipe.products.reduce(
+                                  (sum, rp) => sum + parseFloat(rp.quantity),
+                                  0,
+                                ),
+                            )}
+                          </span>
+                        ) : (
                           <span
                             className="text-xs"
                             style={{ color: "#9FB0C7" }}

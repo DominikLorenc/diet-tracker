@@ -44,7 +44,11 @@ export const removeFavoriteProductService = async (userId: string, productId: st
 export const getFavoriteRecipesService = async (userId: string): Promise<(RecipeFavorite & { recipe: Recipe })[]> => {
     return prisma.recipeFavorite.findMany({
         where: { userId },
-        include: { recipe: true },
+        include: {
+            recipe: {
+                include: { products: { include: { product: true } } },
+            },
+        },
         orderBy: { createdAt: 'desc' },
         take: 5,
     });
