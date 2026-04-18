@@ -8,6 +8,7 @@ export const createNewMeasurement = async (
     waist: number,
     hips: number,
     arm: number,
+    date?: Date,
 ): Promise<BodyMeasurement> => {
     const newMeasurement = await prisma.bodyMeasurement.create({
         data: {
@@ -16,7 +17,7 @@ export const createNewMeasurement = async (
             waist,
             hips,
             arm,
-            date: new Date(),
+            date: date ?? new Date(),
         },
     });
     return newMeasurement;

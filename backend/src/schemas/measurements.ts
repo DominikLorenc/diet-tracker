@@ -4,6 +4,7 @@ import { registry } from '../swagger';
 export const measurementsSchema = registry.register(
     'Measurements',
     z.object({
+        date: z.coerce.date().optional(),
         weight: z.coerce.number().nonnegative(),
         waist: z.coerce.number().nonnegative(),
         hips: z.coerce.number().nonnegative(),

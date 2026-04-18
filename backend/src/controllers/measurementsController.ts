@@ -22,9 +22,9 @@ export const createMeasurementController = async (req: Request, res: Response, n
             return;
         }
 
-        const { weight, waist, hips, arm } = result.data;
+        const { date, weight, waist, hips, arm } = result.data;
 
-        const measurement = await createNewMeasurement(userId, weight, waist, hips, arm);
+        const measurement = await createNewMeasurement(userId, weight, waist, hips, arm, date);
 
         res.status(201).json({ message: 'Measurement created', measurement });
     } catch (error) {
