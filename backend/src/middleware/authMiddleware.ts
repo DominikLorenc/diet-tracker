@@ -13,6 +13,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
             return res.status(401).json({ message: 'Unauthorized' });
         }
         req.userId = decoded.id;
+        req.role = decoded.role;
 
         next();
     } catch (error) {

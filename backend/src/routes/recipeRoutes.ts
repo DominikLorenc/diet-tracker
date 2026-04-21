@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { createRecipe, getRecipes, getRecipe, updateRecipe, deleteRecipe } from '../controllers/recipeController';
 import { authMiddleware } from '../middleware/authMiddleware';
+import { requireAdmin } from '../middleware/requireAdmin';
 import { registry, errorSchema } from '../swagger';
 import { recipeSchema } from '../schemas/recipeSchema';
 import { z } from 'zod';
@@ -58,7 +59,7 @@ registry.registerPath({
         401: { description: 'Unauthorized', content: errorContent },
     },
 });
-router.post('/', createRecipe);
+router.post('/', requireAdmin, createRecipe);
 
 registry.registerPath({
     method: 'get',
@@ -116,7 +117,7 @@ registry.registerPath({
         401: { description: 'Unauthorized', content: errorContent },
     },
 });
-router.patch('/:id', updateRecipe);
+router.patch('/:id', requireAdmin, updateRecipe);
 
 registry.registerPath({
     method: 'delete',
@@ -138,6 +139,6 @@ registry.registerPath({
         401: { description: 'Unauthorized', content: errorContent },
     },
 });
-router.delete('/:id', deleteRecipe);
+router.delete('/:id', requireAdmin, deleteRecipe);
 
 export default router;
