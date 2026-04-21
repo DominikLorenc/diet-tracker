@@ -2,15 +2,6 @@ import { Prisma, DiaryEntry, DiaryEntryItem, MealType } from '../generated/prism
 import prisma from '../lib/prisma';
 import { AppError } from '../utils/AppError';
 
-// const diaryExists = async (id: string): Promise<boolean> => {
-//     const diary = await prisma.diaryEntry.findUnique({
-//         where: {
-//             id,
-//         },
-//     });
-//     return !!diary;
-// };
-
 const findDiaryItemById = async (id: string): Promise<DiaryEntryItem | null> => {
     const diaryItem = await prisma.diaryEntryItem.findUnique({
         where: {
@@ -88,7 +79,7 @@ export const addDiaryService = async (entry: AddDiaryEntryInput): Promise<DiaryE
     return newDiaryEntry;
 };
 
-export const getDiaryServiceByDate = async (date: Date): Promise<DiaryEntry[]> => {
+export const getDiaryServiceByDate = async (date: Date, userId: string): Promise<DiaryEntry[]> => {
     const startOfDay = new Date(date);
     startOfDay.setUTCHours(0, 0, 0, 0);
 
@@ -97,6 +88,7 @@ export const getDiaryServiceByDate = async (date: Date): Promise<DiaryEntry[]> =
 
     const diaryEntries = await prisma.diaryEntry.findMany({
         where: {
+            userId,
             date: {
                 gte: startOfDay,
                 lte: endOfDay,
@@ -122,11 +114,12 @@ export const getDiaryServiceByDate = async (date: Date): Promise<DiaryEntry[]> =
     return diaryEntries;
 };
 
-export const deleteDiaryService = async (id: string): Promise<DiaryEntry> => {
+export const deleteDiaryService = async (id: string, userId: string): Promise<DiaryEntry> => {
     try {
         const deleted = await prisma.diaryEntry.delete({
             where: {
                 id,
+                userId,
             },
         });
         return deleted;
@@ -136,7 +129,7 @@ export const deleteDiaryService = async (id: string): Promise<DiaryEntry> => {
     }
 };
 
-export const deleteDiaryItemProductService = async (id: string): Promise<DiaryEntryItem> => {
+export const deleteDiaryItemProductService = async (id: string, userId: string): Promise<DiaryEntryItem> => {
     const diaryItem = await findDiaryItemById(id);
     if (!diaryItem) {
         throw new AppError('Diary entry not found', 404);
@@ -146,6 +139,9 @@ export const deleteDiaryItemProductService = async (id: string): Promise<DiaryEn
         const deleted = await prisma.diaryEntryItem.delete({
             where: {
                 id,
+                diaryEntry: {
+                    userId,
+                },
             },
         });
         return deleted;
