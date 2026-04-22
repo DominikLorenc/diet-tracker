@@ -164,10 +164,10 @@ export const RecipeCard = ({
             disabled={copying || isCopied}
             className={`shrink-0 text-xs font-semibold px-2 py-1 rounded-md transition-colors border ${
               isCopied
-                ? "bg-[#1A2420] text-[#4A5A4A] border-[#1E3322] cursor-default"
+                ? "bg-[#1A2420] text-[#4A5A4A] border-dash-border cursor-default"
                 : copying
                   ? "bg-[#1A2820] text-[#4ADE80] border-[#22C55E30] opacity-60"
-                  : "bg-[#1A2820] text-[#4ADE80] border-[#22C55E30] hover:border-[#22C55E] hover:bg-[#1E3322]"
+                  : "bg-[#1A2820] text-[#4ADE80] border-[#22C55E30] hover:border-dash-green-mid hover:bg-dash-border"
             }`}
           >
             {copying ? "..." : isCopied ? "Skopiowany" : "Kopiuj"}
