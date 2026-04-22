@@ -36,6 +36,7 @@ model User {
     bodyMeasurements BodyMeasurement[]
     productFavorites ProductFavorite[]
     recipeFavorites  RecipeFavorite[]
+    userRecipes UserRecipe[]
   }
 
   model ProductFavorite {
@@ -83,6 +84,30 @@ model User {
     dailyFatGoal      Int?
   }
 
+  model UserRecipe {
+    id        String   @id @default(uuid())
+    userId    String
+    user      User     @relation(fields: [userId], references: [id])
+    createdAt DateTime @default(now())
+    sourceRecipeId String?
+    recipe   Recipe?   @relation(fields: [sourceRecipeId], references: [id])
+    name String 
+    userRecipeIngredients UserRecipeIngredient[]
+    @@unique([userId, name])
+  }
+
+  model UserRecipeIngredient {
+    id        String   @id @default(uuid())
+    userRecipeId String
+    userRecipe UserRecipe @relation(fields: [userRecipeId], references: [id], onDelete: Cascade)
+    productId String
+    product   Product  @relation(fields: [productId], references: [id])
+    quantity  Decimal
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+  }
+
 model Product {
   id           String        @id @default(uuid())
   name         String        @unique
@@ -96,6 +121,7 @@ model Product {
   recipeIngredient RecipeIngredient[]
   recentSearches RecentSearch[]
   productFavorites ProductFavorite[]
+  UserRecipeIngredient UserRecipeIngredient[]
 }
 
 model RecentSearch {
@@ -123,6 +149,7 @@ enum MealType {
     products RecipeIngredient[]
     diaryEntriesItems DiaryEntryItem[]
     recipeFavorites RecipeFavorite[]
+    userRecipes UserRecipe[]
   }
 
   model RecipeIngredient {
