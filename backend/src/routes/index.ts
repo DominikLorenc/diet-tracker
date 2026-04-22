@@ -6,6 +6,7 @@ import recipeRoutes from './recipeRoutes';
 import recentSearchesRoute from './recentSearchesRoute';
 import measurementsRoute from './measurements';
 import favoritesRoutes from './favoritesRoutes';
+import userRecipeRoutes from './userRecipeRoutes';
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use('/recipes', recipeRoutes);
 router.use('/recent-searches', recentSearchesRoute);
 router.use('/measurements', measurementsRoute);
 router.use('/favorites', favoritesRoutes);
+router.use('/user-recipes', userRecipeRoutes);
 
 export default router;

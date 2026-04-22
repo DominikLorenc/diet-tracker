@@ -48,3 +48,29 @@ export const updateGoalsSchema = z.object({
 export const updateImageUrlSchema = z.object({
     imageUrl: z.string().min(1, 'Image URL is required'),
 });
+
+export const createUserRecipeSchema = z.object({
+    name: z.string().min(1, 'Name is required'),
+    products: z.array(
+        z.object({
+            productId: z.uuid(),
+            quantity: z.number().int().min(1),
+        }),
+    ),
+});
+
+export const updateUserRecipeSchema = z.object({
+    name: z.string().min(1, 'Name is required'),
+    products: z.array(
+        z.object({
+            productId: z.uuid(),
+            quantity: z.number().int().min(1),
+        }),
+    ),
+});
+
+export const copyRecipeSchema = z.object({
+    sourceRecipeId: z.uuid(),
+});
+
+export const UUIDScheme = z.uuid();

@@ -4,157 +4,14 @@
  */
 
 export interface paths {
-  "/users/register": {
+  "/recipes": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    get?: never;
-    put?: never;
-    /** Register a new user */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: {
-        content: {
-          "application/json": components["schemas"]["User"];
-        };
-      };
-      responses: {
-        /** @description User registered */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-              user: {
-                id: string;
-                username: string;
-                email: string;
-              };
-            };
-          };
-        };
-        /** @description Validation error */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-        /** @description Email or username already exists */
-        409: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/users/login": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Login user */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: {
-        content: {
-          "application/json": {
-            /** Format: email */
-            email: string;
-            password: string;
-          };
-        };
-      };
-      responses: {
-        /** @description Logged in, token set in cookie */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-              user: {
-                id: string;
-                username: string;
-                email: string;
-                role: string;
-              };
-            };
-          };
-        };
-        /** @description Validation error */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-        /** @description Invalid credentials */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/users/me": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get current user */
+    /** Get all recipes */
     get: {
       parameters: {
         query?: never;
@@ -164,152 +21,95 @@ export interface paths {
       };
       requestBody?: never;
       responses: {
-        /** @description User data */
+        /** @description List of recipes */
         200: {
           headers: {
             [name: string]: unknown;
           };
           content: {
             "application/json": {
-              message: string;
-              user: components["schemas"]["UserProfile"];
-            };
-          };
-        };
-        /** @description Unauthorized */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/users/image": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    /** Update profile image */
-    patch: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: {
-        content: {
-          "application/json": {
-            imageUrl: string;
-          };
-        };
-      };
-      responses: {
-        /** @description Image updated */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-              updated: string;
-            };
-          };
-        };
-        /** @description Validation error */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-        /** @description Unauthorized */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-      };
-    };
-    trace?: never;
-  };
-  "/users/goals": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    /** Update nutrition goals */
-    patch: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: {
-        content: {
-          "application/json": {
-            dailyCaloriesGoal: number;
-            dailyProteinGoal: number;
-            dailyCarbsGoal: number;
-            dailyFatGoal: number;
-          };
-        };
-      };
-      responses: {
-        /** @description Goals updated */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-              updated: {
+              recipes: {
                 id: string;
-                dailyCaloriesGoal: number | null;
-                dailyProteinGoal: number | null;
-                dailyCarbsGoal: number | null;
-                dailyFatGoal: number | null;
+                name: string;
+                createdAt: string;
+                products: {
+                  id: string;
+                  quantity: string;
+                  productId: string;
+                  recipeId: string;
+                  createdAt: string;
+                  product: {
+                    id: string;
+                    name: string;
+                    calories: string;
+                    carbs: string;
+                    protein: string;
+                    fat: string;
+                    imageUrl: string;
+                    createdAt: string;
+                  };
+                }[];
+              }[];
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    put?: never;
+    /** Create a recipe */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["Recipe"];
+        };
+      };
+      responses: {
+        /** @description Recipe created */
+        201: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              recipe: {
+                id: string;
+                name: string;
+                createdAt: string;
+                products: {
+                  id: string;
+                  quantity: string;
+                  productId: string;
+                  recipeId: string;
+                  createdAt: string;
+                  product: {
+                    id: string;
+                    name: string;
+                    calories: string;
+                    carbs: string;
+                    protein: string;
+                    fat: string;
+                    imageUrl: string;
+                    createdAt: string;
+                  };
+                }[];
               };
             };
           };
@@ -338,30 +138,217 @@ export interface paths {
         };
       };
     };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
     trace?: never;
   };
-  "/users/logout": {
+  "/recipes/{id}": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    get?: never;
-    put?: never;
-    post?: never;
-    /** Logout user */
-    delete: {
+    /** Get recipe by ID */
+    get: {
       parameters: {
         query?: never;
         header?: never;
-        path?: never;
+        path: {
+          id: string;
+        };
         cookie?: never;
       };
       requestBody?: never;
       responses: {
-        /** @description Logged out */
+        /** @description Recipe */
         200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              recipe: {
+                id: string;
+                name: string;
+                createdAt: string;
+                products: {
+                  id: string;
+                  quantity: string;
+                  productId: string;
+                  recipeId: string;
+                  createdAt: string;
+                  product: {
+                    id: string;
+                    name: string;
+                    calories: string;
+                    carbs: string;
+                    protein: string;
+                    fat: string;
+                    imageUrl: string;
+                    createdAt: string;
+                  };
+                }[];
+              };
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Recipe not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    /** Delete recipe */
+    delete: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Recipe deleted */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              deleted: {
+                id: string;
+                name: string;
+                createdAt: string;
+                products: {
+                  id: string;
+                  quantity: string;
+                  productId: string;
+                  recipeId: string;
+                  createdAt: string;
+                  product: {
+                    id: string;
+                    name: string;
+                    calories: string;
+                    carbs: string;
+                    protein: string;
+                    fat: string;
+                    imageUrl: string;
+                    createdAt: string;
+                  };
+                }[];
+              };
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Recipe not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    options?: never;
+    head?: never;
+    /** Update recipe */
+    patch: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: {
+        content: {
+          "application/json": {
+            name?: string;
+            products?: {
+              /** Format: uuid */
+              productId: string;
+              quantity: number;
+            }[];
+          };
+        };
+      };
+      responses: {
+        /** @description Recipe updated */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              recipe: {
+                id: string;
+                name: string;
+                createdAt: string;
+                products: {
+                  id: string;
+                  quantity: string;
+                  productId: string;
+                  recipeId: string;
+                  createdAt: string;
+                  product: {
+                    id: string;
+                    name: string;
+                    calories: string;
+                    carbs: string;
+                    protein: string;
+                    fat: string;
+                    imageUrl: string;
+                    createdAt: string;
+                  };
+                }[];
+              };
+            };
+          };
+        };
+        /** @description Validation error */
+        400: {
           headers: {
             [name: string]: unknown;
           };
@@ -373,6 +360,403 @@ export interface paths {
         };
         /** @description Unauthorized */
         401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Recipe not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    trace?: never;
+  };
+  "/diary": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get user diary */
+    get: {
+      parameters: {
+        query?: {
+          date?: string;
+        };
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Diary entries */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              diaryEntries: {
+                id: string;
+                date: string;
+                userId: string;
+                createdAt: string;
+                items: {
+                  id: string;
+                  diaryEntryId: string;
+                  productId: string | null;
+                  recipeId: string | null;
+                  /** @enum {string} */
+                  mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
+                  quantity: string;
+                  createdAt: string;
+                  product: {
+                    id: string;
+                    name: string;
+                    calories: string;
+                    carbs: string;
+                    protein: string;
+                    fat: string;
+                    imageUrl: string;
+                    createdAt: string;
+                  } | null;
+                  recipe: {
+                    id: string;
+                    name: string;
+                    products: {
+                      quantity: string;
+                      product: {
+                        id: string;
+                        name: string;
+                        calories: string;
+                        carbs: string;
+                        protein: string;
+                        fat: string;
+                        imageUrl: string;
+                        createdAt: string;
+                      };
+                    }[];
+                  } | null;
+                }[];
+              }[];
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    put?: never;
+    /** Add diary entry */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["DiaryEntry"];
+        };
+      };
+      responses: {
+        /** @description Entry added */
+        201: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              newDiaryEntry: {
+                id: string;
+                date: string;
+                userId: string;
+                createdAt: string;
+                items: {
+                  id: string;
+                  diaryEntryId: string;
+                  productId: string | null;
+                  recipeId: string | null;
+                  /** @enum {string} */
+                  mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
+                  quantity: string;
+                  createdAt: string;
+                  product: {
+                    id: string;
+                    name: string;
+                    calories: string;
+                    carbs: string;
+                    protein: string;
+                    fat: string;
+                    imageUrl: string;
+                    createdAt: string;
+                  } | null;
+                  recipe: {
+                    id: string;
+                    name: string;
+                    products: {
+                      quantity: string;
+                      product: {
+                        id: string;
+                        name: string;
+                        calories: string;
+                        carbs: string;
+                        protein: string;
+                        fat: string;
+                        imageUrl: string;
+                        createdAt: string;
+                      };
+                    }[];
+                  } | null;
+                }[];
+              };
+            };
+          };
+        };
+        /** @description Validation error */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/diary/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Delete diary entry */
+    delete: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Entry deleted */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              deleted: {
+                id: string;
+                date: string;
+                userId: string;
+                createdAt: string;
+                items: {
+                  id: string;
+                  diaryEntryId: string;
+                  productId: string | null;
+                  recipeId: string | null;
+                  /** @enum {string} */
+                  mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
+                  quantity: string;
+                  createdAt: string;
+                  product: {
+                    id: string;
+                    name: string;
+                    calories: string;
+                    carbs: string;
+                    protein: string;
+                    fat: string;
+                    imageUrl: string;
+                    createdAt: string;
+                  } | null;
+                  recipe: {
+                    id: string;
+                    name: string;
+                    products: {
+                      quantity: string;
+                      product: {
+                        id: string;
+                        name: string;
+                        calories: string;
+                        carbs: string;
+                        protein: string;
+                        fat: string;
+                        imageUrl: string;
+                        createdAt: string;
+                      };
+                    }[];
+                  } | null;
+                }[];
+              };
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Entry not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/diary/{id}/item": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Delete diary item */
+    delete: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Item deleted */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              deleted: {
+                id: string;
+                diaryEntryId: string;
+                productId: string | null;
+                recipeId: string | null;
+                /** @enum {string} */
+                mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
+                quantity: string;
+                createdAt: string;
+                product: {
+                  id: string;
+                  name: string;
+                  calories: string;
+                  carbs: string;
+                  protein: string;
+                  fat: string;
+                  imageUrl: string;
+                  createdAt: string;
+                } | null;
+                recipe: {
+                  id: string;
+                  name: string;
+                  products: {
+                    quantity: string;
+                    product: {
+                      id: string;
+                      name: string;
+                      calories: string;
+                      carbs: string;
+                      protein: string;
+                      fat: string;
+                      imageUrl: string;
+                      createdAt: string;
+                    };
+                  }[];
+                } | null;
+              };
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Item not found */
+        404: {
           headers: {
             [name: string]: unknown;
           };
@@ -780,897 +1164,6 @@ export interface paths {
     };
     trace?: never;
   };
-  "/diary": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get user diary */
-    get: {
-      parameters: {
-        query?: {
-          date?: string;
-        };
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Diary entries */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-              diaryEntries: {
-                id: string;
-                date: string;
-                userId: string;
-                createdAt: string;
-                items: {
-                  id: string;
-                  diaryEntryId: string;
-                  productId: string | null;
-                  recipeId: string | null;
-                  /** @enum {string} */
-                  mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
-                  quantity: string;
-                  createdAt: string;
-                  product: {
-                    id: string;
-                    name: string;
-                    calories: string;
-                    carbs: string;
-                    protein: string;
-                    fat: string;
-                    imageUrl: string;
-                    createdAt: string;
-                  } | null;
-                  recipe: {
-                    id: string;
-                    name: string;
-                    products: {
-                      quantity: string;
-                      product: {
-                        id: string;
-                        name: string;
-                        calories: string;
-                        carbs: string;
-                        protein: string;
-                        fat: string;
-                        imageUrl: string;
-                        createdAt: string;
-                      };
-                    }[];
-                  } | null;
-                }[];
-              }[];
-            };
-          };
-        };
-        /** @description Unauthorized */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-      };
-    };
-    put?: never;
-    /** Add diary entry */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: {
-        content: {
-          "application/json": components["schemas"]["DiaryEntry"];
-        };
-      };
-      responses: {
-        /** @description Entry added */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-              newDiaryEntry: {
-                id: string;
-                date: string;
-                userId: string;
-                createdAt: string;
-                items: {
-                  id: string;
-                  diaryEntryId: string;
-                  productId: string | null;
-                  recipeId: string | null;
-                  /** @enum {string} */
-                  mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
-                  quantity: string;
-                  createdAt: string;
-                  product: {
-                    id: string;
-                    name: string;
-                    calories: string;
-                    carbs: string;
-                    protein: string;
-                    fat: string;
-                    imageUrl: string;
-                    createdAt: string;
-                  } | null;
-                  recipe: {
-                    id: string;
-                    name: string;
-                    products: {
-                      quantity: string;
-                      product: {
-                        id: string;
-                        name: string;
-                        calories: string;
-                        carbs: string;
-                        protein: string;
-                        fat: string;
-                        imageUrl: string;
-                        createdAt: string;
-                      };
-                    }[];
-                  } | null;
-                }[];
-              };
-            };
-          };
-        };
-        /** @description Validation error */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-        /** @description Unauthorized */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/diary/{id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    /** Delete diary entry */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Entry deleted */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-              deleted: {
-                id: string;
-                date: string;
-                userId: string;
-                createdAt: string;
-                items: {
-                  id: string;
-                  diaryEntryId: string;
-                  productId: string | null;
-                  recipeId: string | null;
-                  /** @enum {string} */
-                  mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
-                  quantity: string;
-                  createdAt: string;
-                  product: {
-                    id: string;
-                    name: string;
-                    calories: string;
-                    carbs: string;
-                    protein: string;
-                    fat: string;
-                    imageUrl: string;
-                    createdAt: string;
-                  } | null;
-                  recipe: {
-                    id: string;
-                    name: string;
-                    products: {
-                      quantity: string;
-                      product: {
-                        id: string;
-                        name: string;
-                        calories: string;
-                        carbs: string;
-                        protein: string;
-                        fat: string;
-                        imageUrl: string;
-                        createdAt: string;
-                      };
-                    }[];
-                  } | null;
-                }[];
-              };
-            };
-          };
-        };
-        /** @description Unauthorized */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-        /** @description Entry not found */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/diary/{id}/item": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    /** Delete diary item */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Item deleted */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-              deleted: {
-                id: string;
-                diaryEntryId: string;
-                productId: string | null;
-                recipeId: string | null;
-                /** @enum {string} */
-                mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
-                quantity: string;
-                createdAt: string;
-                product: {
-                  id: string;
-                  name: string;
-                  calories: string;
-                  carbs: string;
-                  protein: string;
-                  fat: string;
-                  imageUrl: string;
-                  createdAt: string;
-                } | null;
-                recipe: {
-                  id: string;
-                  name: string;
-                  products: {
-                    quantity: string;
-                    product: {
-                      id: string;
-                      name: string;
-                      calories: string;
-                      carbs: string;
-                      protein: string;
-                      fat: string;
-                      imageUrl: string;
-                      createdAt: string;
-                    };
-                  }[];
-                } | null;
-              };
-            };
-          };
-        };
-        /** @description Unauthorized */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-        /** @description Item not found */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/recipes": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get all recipes */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description List of recipes */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              recipes: {
-                id: string;
-                name: string;
-                createdAt: string;
-                products: {
-                  id: string;
-                  quantity: string;
-                  productId: string;
-                  recipeId: string;
-                  createdAt: string;
-                  product: {
-                    id: string;
-                    name: string;
-                    calories: string;
-                    carbs: string;
-                    protein: string;
-                    fat: string;
-                    imageUrl: string;
-                    createdAt: string;
-                  };
-                }[];
-              }[];
-            };
-          };
-        };
-        /** @description Unauthorized */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-      };
-    };
-    put?: never;
-    /** Create a recipe */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: {
-        content: {
-          "application/json": components["schemas"]["Recipe"];
-        };
-      };
-      responses: {
-        /** @description Recipe created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-              recipe: {
-                id: string;
-                name: string;
-                createdAt: string;
-                products: {
-                  id: string;
-                  quantity: string;
-                  productId: string;
-                  recipeId: string;
-                  createdAt: string;
-                  product: {
-                    id: string;
-                    name: string;
-                    calories: string;
-                    carbs: string;
-                    protein: string;
-                    fat: string;
-                    imageUrl: string;
-                    createdAt: string;
-                  };
-                }[];
-              };
-            };
-          };
-        };
-        /** @description Validation error */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-        /** @description Unauthorized */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/recipes/{id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get recipe by ID */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Recipe */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              recipe: {
-                id: string;
-                name: string;
-                createdAt: string;
-                products: {
-                  id: string;
-                  quantity: string;
-                  productId: string;
-                  recipeId: string;
-                  createdAt: string;
-                  product: {
-                    id: string;
-                    name: string;
-                    calories: string;
-                    carbs: string;
-                    protein: string;
-                    fat: string;
-                    imageUrl: string;
-                    createdAt: string;
-                  };
-                }[];
-              };
-            };
-          };
-        };
-        /** @description Unauthorized */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-        /** @description Recipe not found */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    /** Delete recipe */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Recipe deleted */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-              deleted: {
-                id: string;
-                name: string;
-                createdAt: string;
-                products: {
-                  id: string;
-                  quantity: string;
-                  productId: string;
-                  recipeId: string;
-                  createdAt: string;
-                  product: {
-                    id: string;
-                    name: string;
-                    calories: string;
-                    carbs: string;
-                    protein: string;
-                    fat: string;
-                    imageUrl: string;
-                    createdAt: string;
-                  };
-                }[];
-              };
-            };
-          };
-        };
-        /** @description Unauthorized */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-        /** @description Recipe not found */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    /** Update recipe */
-    patch: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: {
-        content: {
-          "application/json": {
-            name?: string;
-            products?: {
-              /** Format: uuid */
-              productId: string;
-              quantity: number;
-            }[];
-          };
-        };
-      };
-      responses: {
-        /** @description Recipe updated */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              recipe: {
-                id: string;
-                name: string;
-                createdAt: string;
-                products: {
-                  id: string;
-                  quantity: string;
-                  productId: string;
-                  recipeId: string;
-                  createdAt: string;
-                  product: {
-                    id: string;
-                    name: string;
-                    calories: string;
-                    carbs: string;
-                    protein: string;
-                    fat: string;
-                    imageUrl: string;
-                    createdAt: string;
-                  };
-                }[];
-              };
-            };
-          };
-        };
-        /** @description Validation error */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-        /** @description Unauthorized */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-        /** @description Recipe not found */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-      };
-    };
-    trace?: never;
-  };
-  "/recent-searches": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get recent searches for the logged-in user */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description List of recent searches */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-              recentSearches: {
-                id: string;
-                userId: string;
-                productId: string;
-                createdAt: string;
-                product: {
-                  id: string;
-                  name: string;
-                  calories: number;
-                  carbs: number;
-                  protein: number;
-                  fat: number;
-                  imageUrl: string;
-                  createdAt: string;
-                } | null;
-              }[];
-            };
-          };
-        };
-        /** @description Unauthorized */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-      };
-    };
-    put?: never;
-    /** Add a product to recent searches */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: {
-        content: {
-          "application/json": {
-            /** Format: uuid */
-            productId: string;
-          };
-        };
-      };
-      responses: {
-        /** @description Recent search added */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-              newRecentSearch: {
-                id: string;
-                userId: string;
-                productId: string;
-                createdAt: string;
-              };
-            };
-          };
-        };
-        /** @description Invalid product ID */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-        /** @description Unauthorized */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              message: string;
-            };
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   "/measurements": {
     parameters: {
       query?: never;
@@ -1950,6 +1443,8 @@ export interface paths {
       requestBody?: {
         content: {
           "application/json": {
+            /** Format: date-time */
+            date?: string | null;
             weight?: number | null;
             waist?: number | null;
             hips?: number | null;
@@ -2442,6 +1937,949 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/users/register": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Register a new user */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: {
+        content: {
+          "application/json": components["schemas"]["User"];
+        };
+      };
+      responses: {
+        /** @description User registered */
+        201: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              user: {
+                id: string;
+                username: string;
+                email: string;
+              };
+            };
+          };
+        };
+        /** @description Validation error */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Email or username already exists */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/users/login": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Login user */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: {
+        content: {
+          "application/json": {
+            /** Format: email */
+            email: string;
+            password: string;
+          };
+        };
+      };
+      responses: {
+        /** @description Logged in, token set in cookie */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              user: {
+                id: string;
+                username: string;
+                email: string;
+                role: string;
+              };
+            };
+          };
+        };
+        /** @description Validation error */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Invalid credentials */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/users/me": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get current user */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description User data */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              user: components["schemas"]["UserProfile"];
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/users/image": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Update profile image */
+    patch: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: {
+        content: {
+          "application/json": {
+            imageUrl: string;
+          };
+        };
+      };
+      responses: {
+        /** @description Image updated */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              updated: string;
+            };
+          };
+        };
+        /** @description Validation error */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    trace?: never;
+  };
+  "/users/goals": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Update nutrition goals */
+    patch: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: {
+        content: {
+          "application/json": {
+            dailyCaloriesGoal: number;
+            dailyProteinGoal: number;
+            dailyCarbsGoal: number;
+            dailyFatGoal: number;
+          };
+        };
+      };
+      responses: {
+        /** @description Goals updated */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              updated: {
+                id: string;
+                dailyCaloriesGoal: number | null;
+                dailyProteinGoal: number | null;
+                dailyCarbsGoal: number | null;
+                dailyFatGoal: number | null;
+              };
+            };
+          };
+        };
+        /** @description Validation error */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    trace?: never;
+  };
+  "/users/logout": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Logout user */
+    delete: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Logged out */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/recent-searches": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get recent searches for the logged-in user */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description List of recent searches */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              recentSearches: {
+                id: string;
+                userId: string;
+                productId: string;
+                createdAt: string;
+                product: {
+                  id: string;
+                  name: string;
+                  calories: number;
+                  carbs: number;
+                  protein: number;
+                  fat: number;
+                  imageUrl: string;
+                  createdAt: string;
+                } | null;
+              }[];
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    put?: never;
+    /** Add a product to recent searches */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: {
+        content: {
+          "application/json": {
+            /** Format: uuid */
+            productId: string;
+          };
+        };
+      };
+      responses: {
+        /** @description Recent search added */
+        201: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              newRecentSearch: {
+                id: string;
+                userId: string;
+                productId: string;
+                createdAt: string;
+              };
+            };
+          };
+        };
+        /** @description Invalid product ID */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/user-recipes": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get all user recipes */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description List of user recipes */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              userRecipes: {
+                id: string;
+                userId: string;
+                name: string;
+                sourceRecipeId: string | null;
+                createdAt: string;
+                userRecipeIngredients: {
+                  id: string;
+                  productId: string;
+                  userRecipeId: string;
+                  quantity: string;
+                  createdAt: string;
+                  updatedAt: string;
+                  product: {
+                    id: string;
+                    name: string;
+                    calories: string;
+                    carbs: string;
+                    protein: string;
+                    fat: string;
+                    imageUrl: string;
+                    createdAt: string;
+                  };
+                }[];
+              }[];
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    put?: never;
+    /** Create a user recipe */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: {
+        content: {
+          "application/json": {
+            name: string;
+            products: {
+              /** Format: uuid */
+              productId: string;
+              quantity: number;
+            }[];
+          };
+        };
+      };
+      responses: {
+        /** @description User recipe created */
+        201: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              userRecipe: {
+                id: string;
+                userId: string;
+                name: string;
+                sourceRecipeId: string | null;
+                createdAt: string;
+                userRecipeIngredients: {
+                  id: string;
+                  productId: string;
+                  userRecipeId: string;
+                  quantity: string;
+                  createdAt: string;
+                  updatedAt: string;
+                  product: {
+                    id: string;
+                    name: string;
+                    calories: string;
+                    carbs: string;
+                    protein: string;
+                    fat: string;
+                    imageUrl: string;
+                    createdAt: string;
+                  };
+                }[];
+              };
+            };
+          };
+        };
+        /** @description Validation error */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/user-recipes/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Delete a user recipe */
+    delete: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description User recipe deleted */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              userRecipe: {
+                id: string;
+                userId: string;
+                name: string;
+                sourceRecipeId: string | null;
+                createdAt: string;
+                userRecipeIngredients: {
+                  id: string;
+                  productId: string;
+                  userRecipeId: string;
+                  quantity: string;
+                  createdAt: string;
+                  updatedAt: string;
+                  product: {
+                    id: string;
+                    name: string;
+                    calories: string;
+                    carbs: string;
+                    protein: string;
+                    fat: string;
+                    imageUrl: string;
+                    createdAt: string;
+                  };
+                }[];
+              };
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description User recipe not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    options?: never;
+    head?: never;
+    /** Update a user recipe */
+    patch: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: {
+        content: {
+          "application/json": {
+            name: string;
+            products: {
+              /** Format: uuid */
+              productId: string;
+              quantity: number;
+            }[];
+          };
+        };
+      };
+      responses: {
+        /** @description User recipe updated */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              userRecipe: {
+                id: string;
+                userId: string;
+                name: string;
+                sourceRecipeId: string | null;
+                createdAt: string;
+                userRecipeIngredients: {
+                  id: string;
+                  productId: string;
+                  userRecipeId: string;
+                  quantity: string;
+                  createdAt: string;
+                  updatedAt: string;
+                  product: {
+                    id: string;
+                    name: string;
+                    calories: string;
+                    carbs: string;
+                    protein: string;
+                    fat: string;
+                    imageUrl: string;
+                    createdAt: string;
+                  };
+                }[];
+              };
+            };
+          };
+        };
+        /** @description Validation error */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description User recipe not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    trace?: never;
+  };
+  "/user-recipes/copy": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Copy a global recipe to user recipes */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: {
+        content: {
+          "application/json": {
+            /** Format: uuid */
+            sourceRecipeId: string;
+          };
+        };
+      };
+      responses: {
+        /** @description Recipe copied */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              userRecipe: {
+                id: string;
+                userId: string;
+                name: string;
+                sourceRecipeId: string | null;
+                createdAt: string;
+                userRecipeIngredients: {
+                  id: string;
+                  productId: string;
+                  userRecipeId: string;
+                  quantity: string;
+                  createdAt: string;
+                  updatedAt: string;
+                  product: {
+                    id: string;
+                    name: string;
+                    calories: string;
+                    carbs: string;
+                    protein: string;
+                    fat: string;
+                    imageUrl: string;
+                    createdAt: string;
+                  };
+                }[];
+              };
+            };
+          };
+        };
+        /** @description Validation error */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Source recipe not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2450,22 +2888,6 @@ export interface components {
       username: string;
       email: string;
       password: string;
-    };
-    UserProfile: {
-      id: string;
-      username: string;
-      email: string;
-      role: string;
-      imageUrl: string | null;
-      createdAt: string;
-      updatedAt: string;
-      userGoals: {
-        id: string;
-        dailyCaloriesGoal: number | null;
-        dailyProteinGoal: number | null;
-        dailyCarbsGoal: number | null;
-        dailyFatGoal: number | null;
-      } | null;
     };
     Product: {
       name: string;
@@ -2495,10 +2917,28 @@ export interface components {
       }[];
     };
     Measurements: {
+      /** Format: date-time */
+      date?: string | null;
       weight: number | null;
       waist: number | null;
       hips: number | null;
       arm: number | null;
+    };
+    UserProfile: {
+      id: string;
+      username: string;
+      email: string;
+      role: string;
+      imageUrl: string | null;
+      createdAt: string;
+      updatedAt: string;
+      userGoals: {
+        id: string;
+        dailyCaloriesGoal: number | null;
+        dailyProteinGoal: number | null;
+        dailyCarbsGoal: number | null;
+        dailyFatGoal: number | null;
+      } | null;
     };
   };
   responses: never;

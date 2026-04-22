@@ -9,6 +9,7 @@ import { globalRateLimiter } from './middleware/rateLimiter';
 import { errorHandler } from './middleware/errorHandler';
 import swaggerUi from 'swagger-ui-express';
 import { generateOpenAPIDocument } from './swagger';
+import './docs';
 
 const openApiDocument = generateOpenAPIDocument();
 

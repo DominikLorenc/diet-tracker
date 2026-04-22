@@ -1,4 +1,4 @@
-import { UserRecipe, Prisma } from '../generated/prisma';
+import { Prisma } from '../generated/prisma';
 import prisma from '../lib/prisma';
 import { AppError } from '../utils/AppError';
 
@@ -29,7 +29,11 @@ export const getUserRecipes = async (userId: string): Promise<UserRecipeWithIngr
     return userRecipes;
 };
 
-export const createUserRecipe = async (userId: string, name: string, products: ProductInput[]): Promise<UserRecipe> => {
+export const createUserRecipe = async (
+    userId: string,
+    name: string,
+    products: ProductInput[],
+): Promise<UserRecipeWithIngredients> => {
     const userRecipe = await prisma.userRecipe.create({
         data: {
             userId,
@@ -43,11 +47,16 @@ export const createUserRecipe = async (userId: string, name: string, products: P
                 },
             },
         },
+        include: {
+            userRecipeIngredients: {
+                include: { product: true },
+            },
+        },
     });
     return userRecipe;
 };
 
-export const copyRecipe = async (userId: string, sourceRecipeId: string): Promise<UserRecipe> => {
+export const copyRecipe = async (userId: string, sourceRecipeId: string): Promise<UserRecipeWithIngredients> => {
     const sourceRecipe = await prisma.recipe.findUnique({
         where: {
             id: sourceRecipeId,
@@ -77,6 +86,11 @@ export const copyRecipe = async (userId: string, sourceRecipeId: string): Promis
                 },
             },
         },
+        include: {
+            userRecipeIngredients: {
+                include: { product: true },
+            },
+        },
     });
     return userRecipe;
 };
@@ -86,7 +100,7 @@ export const updateUserRecipe = async (
     userRecipeId: string,
     name: string,
     products: ProductInput[],
-): Promise<UserRecipe> => {
+): Promise<UserRecipeWithIngredients> => {
     const userRecipe = await prisma.userRecipe.update({
         where: {
             id: userRecipeId,
@@ -104,15 +118,25 @@ export const updateUserRecipe = async (
                 },
             },
         },
+        include: {
+            userRecipeIngredients: {
+                include: { product: true },
+            },
+        },
     });
     return userRecipe;
 };
 
-export const deleteUserRecipe = async (userId: string, userRecipeId: string): Promise<UserRecipe> => {
+export const deleteUserRecipe = async (userId: string, userRecipeId: string): Promise<UserRecipeWithIngredients> => {
     const userRecipe = await prisma.userRecipe.delete({
         where: {
             id: userRecipeId,
             userId,
+        },
+        include: {
+            userRecipeIngredients: {
+                include: { product: true },
+            },
         },
     });
     return userRecipe;
