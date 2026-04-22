@@ -32,6 +32,8 @@ type Props = {
   onAddToDiary: (recipe: Recipe, portion: number) => Promise<void>;
   onFavoriteToggle?: (recipeId: string, nowFavorite: boolean) => void;
   defaultExpanded?: boolean;
+  onCopy?: (recipeId: string) => Promise<void>;
+  isCopied?: boolean;
 };
 
 // Liczymy łączne kalorie przepisu ze wszystkich składników
@@ -48,12 +50,22 @@ export const RecipeCard = ({
   onAddToDiary,
   onFavoriteToggle,
   defaultExpanded = false,
+  onCopy,
+  isCopied = false,
 }: Props) => {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const [portion, setPortion] = useState(1);
   const [favorite, setFavorite] = useState(isFavorite);
   const [adding, setAdding] = useState(false);
+  const [copying, setCopying] = useState(false);
   const showToast = useToastStore((state) => state.showToast);
+
+  const handleCopy = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCopying(true);
+    await onCopy?.(recipe.id);
+    setCopying(false);
+  };
 
   const totalKcal = calcTotalKcal(recipe, portion);
 
@@ -145,26 +157,42 @@ export const RecipeCard = ({
           {totalKcal.toFixed(0)} kcal
         </span>
 
-        {/* Przycisk ulubionych */}
-        <button
-          onClick={toggleFavorite}
-          className="shrink-0 transition-colors"
-          aria-label={favorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width={15}
-            height={15}
-            fill={favorite ? "#22C55E" : "none"}
-            stroke={favorite ? "#22C55E" : "#4A5A4A"}
-            strokeWidth={2}
-            strokeLinecap="round"
-            strokeLinejoin="round"
+        {/* Przycisk ulubionych lub kopiowania */}
+        {onCopy ? (
+          <button
+            onClick={handleCopy}
+            disabled={copying || isCopied}
+            className={`shrink-0 text-xs font-semibold px-2 py-1 rounded-md transition-colors border ${
+              isCopied
+                ? "bg-[#1A2420] text-[#4A5A4A] border-[#1E3322] cursor-default"
+                : copying
+                  ? "bg-[#1A2820] text-[#4ADE80] border-[#22C55E30] opacity-60"
+                  : "bg-[#1A2820] text-[#4ADE80] border-[#22C55E30] hover:border-[#22C55E] hover:bg-[#1E3322]"
+            }`}
           >
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-          </svg>
-        </button>
+            {copying ? "..." : isCopied ? "Skopiowany" : "Kopiuj"}
+          </button>
+        ) : (
+          <button
+            onClick={toggleFavorite}
+            className="shrink-0 transition-colors"
+            aria-label={favorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width={15}
+              height={15}
+              fill={favorite ? "#22C55E" : "none"}
+              stroke={favorite ? "#22C55E" : "#4A5A4A"}
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+          </button>
+        )}
 
         {/* Chevron */}
         <svg
