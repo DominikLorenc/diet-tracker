@@ -62,6 +62,27 @@ describe('POST /api/v1/diary', () => {
         });
         expect(res.status).toBe(401);
     });
+
+    it('should accept userRecipeId in body and call service with it', async () => {
+        const userRecipeId = 'e87f94c7-0e0c-46ab-90a2-6537a30fa688';
+        vi.mocked(addDiaryService).mockResolvedValue({
+            id: '1',
+            date: new Date(),
+            userId,
+            createdAt: new Date(),
+        });
+        const res = await request(app)
+            .post('/api/v1/diary')
+            .send({
+                date: new Date().toISOString(),
+                userRecipeId,
+                quantity: 1,
+                mealType: 'BREAKFAST',
+            })
+            .set('Cookie', ['token=' + token]);
+        expect(res.status).toBe(201);
+        expect(addDiaryService).toHaveBeenCalledWith(expect.objectContaining({ userRecipeId }));
+    });
 });
 
 describe('GET /api/v1/diary', () => {

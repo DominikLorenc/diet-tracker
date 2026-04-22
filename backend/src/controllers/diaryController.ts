@@ -15,7 +15,7 @@ export const createDiaryEntry = async (req: Request, res: Response, next: NextFu
             return;
         }
 
-        const { date, productId, recipeId, quantity, mealType } = result.data;
+        const { date, productId, recipeId, userRecipeId, quantity, mealType } = result.data;
 
         const userId = req.userId;
 
@@ -28,6 +28,7 @@ export const createDiaryEntry = async (req: Request, res: Response, next: NextFu
             date,
             productId,
             recipeId,
+            userRecipeId,
             quantity,
             mealType,
             userId,

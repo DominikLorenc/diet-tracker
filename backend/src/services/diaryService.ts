@@ -43,6 +43,7 @@ type AddDiaryEntryInput = {
     date: Date;
     productId?: string;
     recipeId?: string;
+    userRecipeId?: string;
     quantity: number;
     mealType: MealType;
 };
@@ -55,6 +56,7 @@ export const addDiaryService = async (entry: AddDiaryEntryInput): Promise<DiaryE
             diaryEntryId: entryExist.id,
             productId: entry?.productId,
             recipeId: entry?.recipeId,
+            userRecipeId: entry?.userRecipeId,
             quantity: entry.quantity,
             mealType: entry?.mealType,
         });
@@ -70,6 +72,7 @@ export const addDiaryService = async (entry: AddDiaryEntryInput): Promise<DiaryE
                 create: {
                     productId: entry.productId,
                     recipeId: entry.recipeId,
+                    userRecipeId: entry.userRecipeId,
                     quantity: entry.quantity,
                     mealType: entry.mealType,
                 },

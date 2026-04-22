@@ -8,6 +8,7 @@ export const diaryEntrySchema = registry.register(
         mealType: z.enum(['BREAKFAST', 'LUNCH', 'DINNER', 'SNACK']),
         productId: z.uuid().optional(),
         recipeId: z.uuid().optional(),
+        userRecipeId: z.uuid().optional(),
         quantity: z.number().min(0),
     }),
 );
