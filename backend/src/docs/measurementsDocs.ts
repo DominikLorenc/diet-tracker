@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 const errorContent = { 'application/json': { schema: errorSchema } };
 
-const decimalResponseSchema = z.union([z.number(), z.string()]);
+const decimalResponseSchema = z.union([z.number()]);
 const measurementResponseSchema = z.object({
     id: z.uuid(),
     userId: z.uuid(),
