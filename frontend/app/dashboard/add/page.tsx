@@ -204,7 +204,9 @@ function AddPageContent() {
         />
       )}
 
-      {currentTab === "recipes" && <RecipeSearch />}
+      {currentTab === "recipes" && (
+        <RecipeSearch mealType={mealType} date={date} />
+      )}
 
       {currentTab === "new" && (
         <div className="bg-[#111C14] rounded-2xl border border-[#1E3322] p-6">

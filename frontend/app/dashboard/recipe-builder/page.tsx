@@ -27,6 +27,8 @@ function RecipeBuilderContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const editId = searchParams.get("id");
+  const returnMealType = searchParams.get("mealType");
+  const returnDate = searchParams.get("date");
 
   const [name, setName] = useState("");
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
@@ -157,7 +159,10 @@ function RecipeBuilderContent() {
     if (saveError) {
       setError("Nie udało się zapisać przepisu");
     } else {
-      router.push("/dashboard/add?tab=recipes");
+      const params = new URLSearchParams({ tab: "recipes" });
+      if (returnMealType) params.set("mealType", returnMealType);
+      if (returnDate) params.set("date", returnDate);
+      router.push(`/dashboard/add?${params.toString()}`);
     }
   };
 

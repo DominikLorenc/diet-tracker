@@ -109,6 +109,15 @@ export const getDiaryServiceByDate = async (date: Date, userId: string): Promise
                             },
                         },
                     },
+                    userRecipe: {
+                        include: {
+                            userRecipeIngredients: {
+                                include: {
+                                    product: true,
+                                },
+                            },
+                        },
+                    },
                     product: true,
                 },
             },

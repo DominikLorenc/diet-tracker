@@ -32,46 +32,66 @@ interface Recipe {
   products: RecipeProduct[];
 }
 
+interface UserRecipeIngredient {
+  quantity: string;
+  product: Product;
+}
+
+interface UserRecipe {
+  id: string;
+  name: string;
+  userRecipeIngredients: UserRecipeIngredient[];
+}
+
 export interface DiaryItem {
   id: string;
   diaryEntryId: string;
   productId: string | null;
   recipeId: string | null;
+  userRecipeId: string | null;
   mealType: MealType;
   createdAt: string;
   quantity: string;
   product: Product | null;
   recipe: Recipe | null;
+  userRecipe: UserRecipe | null;
+}
+
+function calcRecipeMacros(
+  ingredients: { quantity: string; product: Product }[],
+  qty: number,
+) {
+  const totals = ingredients.reduce(
+    (sum, rp) => {
+      const rpQty = parseFloat(rp.quantity);
+      return {
+        calories:
+          sum.calories + (rpQty / 100) * parseFloat(rp.product.calories),
+        protein: sum.protein + (rpQty / 100) * parseFloat(rp.product.protein),
+        carbs: sum.carbs + (rpQty / 100) * parseFloat(rp.product.carbs),
+        fat: sum.fat + (rpQty / 100) * parseFloat(rp.product.fat),
+      };
+    },
+    { calories: 0, protein: 0, carbs: 0, fat: 0 },
+  );
+  const totalGrams = ingredients.reduce(
+    (sum, rp) => sum + parseFloat(rp.quantity),
+    0,
+  );
+  const multiplier = totalGrams > 0 ? qty / totalGrams : 0;
+  return {
+    calories: totals.calories * multiplier,
+    protein: totals.protein * multiplier,
+    carbs: totals.carbs * multiplier,
+    fat: totals.fat * multiplier,
+  };
 }
 
 export function getItemMacros(item: DiaryItem) {
   const qty = parseFloat(item.quantity);
-  if (item.recipe) {
-    const totals = item.recipe.products.reduce(
-      (sum, rp) => {
-        const rpQty = parseFloat(rp.quantity);
-        return {
-          calories:
-            sum.calories + (rpQty / 100) * parseFloat(rp.product.calories),
-          protein: sum.protein + (rpQty / 100) * parseFloat(rp.product.protein),
-          carbs: sum.carbs + (rpQty / 100) * parseFloat(rp.product.carbs),
-          fat: sum.fat + (rpQty / 100) * parseFloat(rp.product.fat),
-        };
-      },
-      { calories: 0, protein: 0, carbs: 0, fat: 0 },
-    );
-    const productsGrams = item.recipe.products.reduce(
-      (sum, rp) => sum + parseFloat(rp.quantity),
-      0,
-    );
-    const multiplier = qty / productsGrams;
-    return {
-      calories: totals.calories * multiplier,
-      protein: totals.protein * multiplier,
-      carbs: totals.carbs * multiplier,
-      fat: totals.fat * multiplier,
-    };
-  }
+  if (item.recipe) return calcRecipeMacros(item.recipe.products, qty);
+  if (item.userRecipe)
+    return calcRecipeMacros(item.userRecipe.userRecipeIngredients, qty);
   return {
     calories: (qty / 100) * parseFloat(item.product?.calories ?? "0"),
     protein: (qty / 100) * parseFloat(item.product?.protein ?? "0"),
@@ -107,21 +127,6 @@ type User = {
   createdAt: string;
   updatedAt: string;
   userGoals: UserGoals | null;
-};
-
-const formatPortion = (value: number): string => {
-  const display = value % 1 === 0 ? String(value) : value.toFixed(1);
-  let label: string;
-  if (value % 1 !== 0) {
-    label = "porcji";
-  } else if (value === 1) {
-    label = "porcja";
-  } else if (value >= 2 && value <= 4) {
-    label = "porcje";
-  } else {
-    label = "porcji";
-  }
-  return `${display} ${label}`;
 };
 
 const MEAL_TYPES: MealType[] = ["BREAKFAST", "LUNCH", "DINNER", "SNACK"];
@@ -289,9 +294,10 @@ export const DiaryDayView = () => {
               {/* Elementy posiłku */}
               {items.map((item, idx) => {
                 const macros = getItemMacros(item);
-                const name = item.recipe
-                  ? item.recipe.name
-                  : item.product?.name;
+                const name =
+                  item.recipe?.name ??
+                  item.userRecipe?.name ??
+                  item.product?.name;
                 const imageUrl = item.product?.imageUrl;
 
                 return (
@@ -328,20 +334,7 @@ export const DiaryDayView = () => {
                         {name}
                       </span>
                       <div className="flex items-center gap-2 shrink-0">
-                        {item.recipe ? (
-                          <span
-                            className="text-xs"
-                            style={{ color: "#9FB0C7" }}
-                          >
-                            {formatPortion(
-                              parseFloat(item.quantity) /
-                                item.recipe.products.reduce(
-                                  (sum, rp) => sum + parseFloat(rp.quantity),
-                                  0,
-                                ),
-                            )}
-                          </span>
-                        ) : (
+                        {!item.recipe && !item.userRecipe && (
                           <span
                             className="text-xs"
                             style={{ color: "#9FB0C7" }}

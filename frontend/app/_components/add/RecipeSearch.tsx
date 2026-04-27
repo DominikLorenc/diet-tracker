@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { apiClient } from "@/app/lib/apiClient";
 import { useToastStore } from "@/store/useToastStore";
 import { RecipeCard } from "./RecipeCard";
@@ -45,8 +44,12 @@ const calcUserTotalGrams = (recipe: UserRecipe): number =>
     0,
   );
 
-export const RecipeSearch = () => {
-  const searchParams = useSearchParams();
+type Props = {
+  mealType: string;
+  date: string;
+};
+
+export const RecipeSearch = ({ mealType, date }: Props) => {
   const showToast = useToastStore((state) => state.showToast);
 
   const [globalRecipes, setGlobalRecipes] = useState<Recipe[]>([]);
@@ -54,6 +57,8 @@ export const RecipeSearch = () => {
   const [favorites, setFavorites] = useState<RecipeFavorite[]>([]);
   const [copiedIds, setCopiedIds] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
+  const [query, setQuery] = useState("");
+  const [onlyFavorites, setOnlyFavorites] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -75,13 +80,7 @@ export const RecipeSearch = () => {
     load();
   }, []);
 
-  const getMealParams = () => ({
-    mealType: searchParams.get("mealType"),
-    date: searchParams.get("date"),
-  });
-
   const addUserRecipeToDiary = async (recipe: UserRecipe, portion: number) => {
-    const { mealType, date } = getMealParams();
     if (!mealType || !date) {
       showToast(
         "error",
@@ -106,7 +105,6 @@ export const RecipeSearch = () => {
   };
 
   const addGlobalRecipeToDiary = async (recipe: Recipe, portion: number) => {
-    const { mealType, date } = getMealParams();
     if (!mealType || !date) {
       showToast(
         "error",
@@ -188,8 +186,42 @@ export const RecipeSearch = () => {
       .map((ur) => ur.sourceRecipeId as string),
   ]);
 
+  const normalizedQuery = query.toLowerCase();
+  const filteredUserRecipes = userRecipes.filter((r) =>
+    r.name.toLowerCase().includes(normalizedQuery),
+  );
+  const filteredGlobalRecipes = globalRecipes.filter((r) => {
+    if (onlyFavorites && !favoriteIds.has(r.id)) return false;
+    return r.name.toLowerCase().includes(normalizedQuery);
+  });
+
   return (
     <div className="flex flex-col gap-5">
+      {/* ── WYSZUKIWARKA ── */}
+      <div className="relative">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width={15}
+          height={15}
+          fill="none"
+          stroke="#4A5A4A"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Szukaj przepisów..."
+          className="w-full bg-[#111C14] border border-[#1E3322] rounded-xl pl-9 pr-4 py-2.5 text-sm text-[#F3F7FF] placeholder-[#4A5A4A] focus:outline-none focus:border-[#22C55E] transition-colors"
+        />
+      </div>
       {/* ── MOJE PRZEPISY ── */}
       <section className="bg-[#111C14] rounded-xl border border-[#1E3322] p-4">
         <div className="flex items-center justify-between mb-3">
@@ -197,7 +229,7 @@ export const RecipeSearch = () => {
             Moje przepisy
           </h2>
           <Link
-            href="/dashboard/recipe-builder"
+            href={`/dashboard/recipe-builder?mealType=${mealType}&date=${date}`}
             className="flex items-center gap-1 text-xs text-[#4ADE80] hover:text-white transition-colors font-semibold"
           >
             <svg
@@ -226,37 +258,74 @@ export const RecipeSearch = () => {
               Stwórz nowy lub skopiuj globalny.
             </span>
           </p>
+        ) : filteredUserRecipes.length === 0 ? (
+          <p className="text-[#4A5A4A] text-sm text-center py-4">
+            Brak wyników.
+          </p>
         ) : (
-          userRecipes.map((recipe) => (
+          filteredUserRecipes.map((recipe) => (
             <UserRecipeCard
               key={recipe.id}
               recipe={recipe}
               onAddToDiary={addUserRecipeToDiary}
               onDelete={handleDelete}
+              editHref={`/dashboard/recipe-builder?id=${recipe.id}&mealType=${mealType}&date=${date}`}
             />
           ))
         )}
       </section>
 
       {/* ── PRZEPISY GLOBALNE ── */}
-      {globalRecipes.length > 0 && (
-        <section className="bg-[#111C14] rounded-xl border border-[#1E3322] p-4">
-          <h2 className="text-[#4ADE80] font-mono text-xs font-bold tracking-widest uppercase mb-3">
-            Przepisy globalne
-          </h2>
-          {globalRecipes.map((recipe) => (
-            <RecipeCard
-              key={recipe.id}
-              recipe={recipe}
-              isFavorite={favoriteIds.has(recipe.id)}
-              onAddToDiary={addGlobalRecipeToDiary}
-              onFavoriteToggle={handleFavoriteToggle}
-              onCopy={handleCopy}
-              isCopied={alreadyCopiedIds.has(recipe.id)}
-            />
-          ))}
-        </section>
-      )}
+      {(query.trim().length > 0 || onlyFavorites) &&
+        globalRecipes.length > 0 && (
+          <section className="bg-[#111C14] rounded-xl border border-[#1E3322] p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-[#4ADE80] font-mono text-xs font-bold tracking-widest uppercase">
+                Przepisy globalne
+              </h2>
+              <button
+                onClick={() => setOnlyFavorites((v) => !v)}
+                className={`flex items-center gap-1.5 text-xs font-semibold transition-colors ${
+                  onlyFavorites
+                    ? "text-[#22C55E]"
+                    : "text-[#4A5A4A] hover:text-[#8FA0B8]"
+                }`}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  width={13}
+                  height={13}
+                  fill={onlyFavorites ? "#22C55E" : "none"}
+                  stroke={onlyFavorites ? "#22C55E" : "#4A5A4A"}
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+                Ulubione
+              </button>
+            </div>
+            {filteredGlobalRecipes.length === 0 ? (
+              <p className="text-[#4A5A4A] text-sm text-center py-4">
+                {onlyFavorites ? "Brak ulubionych przepisów." : "Brak wyników."}
+              </p>
+            ) : (
+              filteredGlobalRecipes.map((recipe) => (
+                <RecipeCard
+                  key={recipe.id}
+                  recipe={recipe}
+                  isFavorite={favoriteIds.has(recipe.id)}
+                  onAddToDiary={addGlobalRecipeToDiary}
+                  onFavoriteToggle={handleFavoriteToggle}
+                  onCopy={handleCopy}
+                  isCopied={alreadyCopiedIds.has(recipe.id)}
+                />
+              ))
+            )}
+          </section>
+        )}
     </div>
   );
 };

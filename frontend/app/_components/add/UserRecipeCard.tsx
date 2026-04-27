@@ -28,6 +28,7 @@ type Props = {
   recipe: UserRecipe;
   onAddToDiary: (recipe: UserRecipe, portion: number) => Promise<void>;
   onDelete: (recipeId: string) => Promise<void>;
+  editHref?: string;
 };
 
 const calcTotalKcal = (recipe: UserRecipe, portion: number): number =>
@@ -37,7 +38,12 @@ const calcTotalKcal = (recipe: UserRecipe, portion: number): number =>
     return sum + (qty / 100) * kcal * portion;
   }, 0);
 
-export const UserRecipeCard = ({ recipe, onAddToDiary, onDelete }: Props) => {
+export const UserRecipeCard = ({
+  recipe,
+  onAddToDiary,
+  onDelete,
+  editHref,
+}: Props) => {
   const [expanded, setExpanded] = useState(false);
   const [portion, setPortion] = useState(1);
   const [adding, setAdding] = useState(false);
@@ -91,11 +97,6 @@ export const UserRecipeCard = ({ recipe, onAddToDiary, onDelete }: Props) => {
             <p className="text-[#F3F7FF] font-semibold text-sm truncate">
               {recipe.name}
             </p>
-            {recipe.sourceRecipeId && (
-              <span className="text-[10px] text-[#4ADE80] bg-[#1A2820] border border-[#22C55E30] px-1.5 py-0.5 rounded-full shrink-0">
-                skopiowany
-              </span>
-            )}
           </div>
           <p className="text-[#8FA0B8] text-xs">
             {recipe.userRecipeIngredients.length} składników · ~
@@ -110,7 +111,7 @@ export const UserRecipeCard = ({ recipe, onAddToDiary, onDelete }: Props) => {
 
         {/* Link Edytuj */}
         <Link
-          href={`/dashboard/recipe-builder?id=${recipe.id}`}
+          href={editHref ?? `/dashboard/recipe-builder?id=${recipe.id}`}
           onClick={(e) => e.stopPropagation()}
           className="shrink-0 text-[#8FA0B8] hover:text-[#F3F7FF] text-xs transition-colors"
         >

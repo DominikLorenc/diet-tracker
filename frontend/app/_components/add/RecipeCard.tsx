@@ -157,8 +157,8 @@ export const RecipeCard = ({
           {totalKcal.toFixed(0)} kcal
         </span>
 
-        {/* Przycisk ulubionych lub kopiowania */}
-        {onCopy ? (
+        {/* Przycisk kopiowania */}
+        {onCopy && (
           <button
             onClick={handleCopy}
             disabled={copying || isCopied}
@@ -172,27 +172,28 @@ export const RecipeCard = ({
           >
             {copying ? "..." : isCopied ? "Skopiowany" : "Kopiuj"}
           </button>
-        ) : (
-          <button
-            onClick={toggleFavorite}
-            className="shrink-0 transition-colors"
-            aria-label={favorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              width={15}
-              height={15}
-              fill={favorite ? "#22C55E" : "none"}
-              stroke={favorite ? "#22C55E" : "#4A5A4A"}
-              strokeWidth={2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-            </svg>
-          </button>
         )}
+
+        {/* Przycisk ulubionych */}
+        <button
+          onClick={toggleFavorite}
+          className="shrink-0 transition-colors"
+          aria-label={favorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width={15}
+            height={15}
+            fill={favorite ? "#22C55E" : "none"}
+            stroke={favorite ? "#22C55E" : "#4A5A4A"}
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
+        </button>
 
         {/* Chevron */}
         <svg
