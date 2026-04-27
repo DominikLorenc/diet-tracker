@@ -9,6 +9,8 @@ import type {
   Measurement,
   MeasurementFormData,
 } from "@/app/_types/measurements";
+import { apiClient } from "@/app/lib/apiClient";
+import { useToastStore } from "@/store/useToastStore";
 
 const PRESETS = [
   { id: "30d", label: "30 dni", days: 30 },
@@ -36,6 +38,7 @@ export default function ProgressPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingMeasurement, setEditingMeasurement] =
     useState<Measurement | null>(null);
+  const showToast = useToastStore((state) => state.showToast);
 
   const [activePreset, setActivePreset] = useState<PresetId>("30d");
   const [dateFrom, setDateFrom] = useState<string>(() => {
@@ -81,10 +84,40 @@ export default function ProgressPage() {
   };
 
   // TODO(human): wywołaj POST /measurements z data, potem refetch()
-  const handleAdd = async (_data: MeasurementFormData) => {};
+  const handleAdd = async (_data: MeasurementFormData) => {
+    const { error } = await apiClient.POST("/measurements", {
+      body: _data,
+    });
+    if (error) {
+      showToast("error", "Nie udało się dodać pomiaru", "Spróbuj ponownie");
+      return;
+    }
+
+    showToast("success", "Pomiar dodany!", "Pomiar dodany");
+    refetch();
+  };
 
   // TODO(human): wywołaj PATCH /measurements/:editingMeasurement.id z data, potem refetch()
-  const handleEdit = async (_data: MeasurementFormData) => {};
+  const handleEdit = async (_data: MeasurementFormData) => {
+    if (!editingMeasurement) {
+      return;
+    }
+
+    const { error } = await apiClient.PATCH("/measurements/{id}", {
+      params: { path: { id: editingMeasurement.id } },
+      body: _data,
+    });
+    if (error) {
+      showToast("error", "Nie udało się zapisać pomiaru", "Spróbuj ponownie");
+      return;
+    }
+    showToast(
+      "success",
+      "Pomiar został zmodyfikowany!",
+      "Pomiar zmodyfikowany",
+    );
+    refetch();
+  };
 
   const handleSave = async (data: MeasurementFormData) => {
     if (editingMeasurement) {
@@ -94,8 +127,17 @@ export default function ProgressPage() {
     }
   };
 
-  // TODO(human): wywołaj DELETE /measurements/:id, potem refetch()
-  const handleDelete = async (_id: string) => {};
+  const handleDelete = async (_id: string) => {
+    const { error } = await apiClient.DELETE("/measurements/{id}", {
+      params: { path: { id: _id } },
+    });
+    if (error) {
+      showToast("error", "Nie udało się usunąć pomiaru", "Spróbuj ponownie");
+      return;
+    }
+    showToast("success", "Pomiar został usunięty!", "Pomiar usunięty");
+    refetch();
+  };
 
   return (
     <div className="flex min-h-screen flex-col gap-6 bg-[#0F1A10] p-8">

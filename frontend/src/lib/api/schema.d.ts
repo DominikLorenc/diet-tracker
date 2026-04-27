@@ -1196,10 +1196,10 @@ export interface paths {
                 userId: string;
                 /** Format: date-time */
                 date: string;
-                weight: number | string;
-                waist: number | string;
-                hips: number | string;
-                arm: number | string;
+                weight: number;
+                waist: number;
+                hips: number;
+                arm: number;
                 /** Format: date-time */
                 createdAt: string;
                 /** Format: date-time */
@@ -1251,10 +1251,10 @@ export interface paths {
                 userId: string;
                 /** Format: date-time */
                 date: string;
-                weight: number | string;
-                waist: number | string;
-                hips: number | string;
-                arm: number | string;
+                weight: number;
+                waist: number;
+                hips: number;
+                arm: number;
                 /** Format: date-time */
                 createdAt: string;
                 /** Format: date-time */
@@ -1327,10 +1327,10 @@ export interface paths {
                 userId: string;
                 /** Format: date-time */
                 date: string;
-                weight: number | string;
-                waist: number | string;
-                hips: number | string;
-                arm: number | string;
+                weight: number;
+                waist: number;
+                hips: number;
+                arm: number;
                 /** Format: date-time */
                 createdAt: string;
                 /** Format: date-time */
@@ -1392,10 +1392,10 @@ export interface paths {
                 userId: string;
                 /** Format: date-time */
                 date: string;
-                weight: number | string;
-                waist: number | string;
-                hips: number | string;
-                arm: number | string;
+                weight: number;
+                waist: number;
+                hips: number;
+                arm: number;
                 /** Format: date-time */
                 createdAt: string;
                 /** Format: date-time */
@@ -1468,10 +1468,10 @@ export interface paths {
                 userId: string;
                 /** Format: date-time */
                 date: string;
-                weight: number | string;
-                waist: number | string;
-                hips: number | string;
-                arm: number | string;
+                weight: number;
+                waist: number;
+                hips: number;
+                arm: number;
                 /** Format: date-time */
                 createdAt: string;
                 /** Format: date-time */
@@ -2906,6 +2906,8 @@ export interface components {
       productId?: string;
       /** Format: uuid */
       recipeId?: string;
+      /** Format: uuid */
+      userRecipeId?: string;
       quantity: number;
     };
     Recipe: {
