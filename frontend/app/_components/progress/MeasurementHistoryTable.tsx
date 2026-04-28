@@ -27,8 +27,6 @@ export const MeasurementHistoryTable = ({
     );
   }
 
-  console.log(measurements);
-
   return (
     <div className="w-full overflow-x-auto">
       {/* Header */}

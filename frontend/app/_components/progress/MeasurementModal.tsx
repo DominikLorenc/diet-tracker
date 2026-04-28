@@ -9,6 +9,8 @@ import type {
   MeasurementFormData,
 } from "@/app/_types/measurements";
 
+const today = () => new Date().toISOString().split("T")[0];
+
 const positiveNum = (msg: string) =>
   z
     .string()
@@ -17,7 +19,12 @@ const positiveNum = (msg: string) =>
     .transform(Number);
 
 const schema = z.object({
-  date: z.string().min(1, "Wymagana data"),
+  date: z
+    .string()
+    .min(1, "Wymagana data")
+    .refine((date) => {
+      return date <= today();
+    }, "Data nie może być w przyszłości"),
   weight: positiveNum("Musi być > 0"),
   waist: positiveNum("Musi być > 0"),
   hips: positiveNum("Musi być > 0"),
@@ -65,8 +72,6 @@ const NumberField = forwardRef<HTMLInputElement, FieldProps>(
   ),
 );
 NumberField.displayName = "NumberField";
-
-const today = () => new Date().toISOString().split("T")[0];
 
 export const MeasurementModal = ({
   open,
@@ -146,6 +151,7 @@ export const MeasurementModal = ({
                   {...register("date")}
                   type="date"
                   className="flex-1 bg-transparent font-['Funnel_Sans'] text-sm text-[#D6DFEC] outline-none [color-scheme:dark]"
+                  max={today()}
                 />
               </div>
               {errors.date && (
