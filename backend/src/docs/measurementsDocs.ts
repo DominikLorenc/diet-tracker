@@ -1,5 +1,5 @@
 import { registry, errorSchema } from '../swagger';
-import { measurementsSchema } from '../schemas/measurements';
+import { measurementsSchema, dateMeasurementSchema } from '../schemas/measurements';
 import { z } from 'zod';
 
 const errorContent = { 'application/json': { schema: errorSchema } };
@@ -15,6 +15,32 @@ const measurementResponseSchema = z.object({
     arm: decimalResponseSchema,
     createdAt: z.iso.datetime(),
     updatedAt: z.iso.datetime(),
+});
+
+registry.registerPath({
+    method: 'post',
+    path: '/measurements/date',
+    tags: ['Measurements'],
+    summary: 'Get measurements by date range',
+    security: [{ cookieAuth: [] }],
+    request: {
+        body: { content: { 'application/json': { schema: dateMeasurementSchema } } },
+    },
+    responses: {
+        200: {
+            description: 'List of measurements in date range',
+            content: {
+                'application/json': {
+                    schema: z.object({
+                        message: z.string(),
+                        measurements: z.array(measurementResponseSchema),
+                    }),
+                },
+            },
+        },
+        400: { description: 'Validation error', content: errorContent },
+        401: { description: 'Unauthorized', content: errorContent },
+    },
 });
 
 registry.registerPath({

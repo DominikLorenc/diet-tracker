@@ -8,7 +8,7 @@ export const measurementsSchema = registry.register(
             .date()
             .refine((date) => {
                 return date <= new Date();
-            }, 'Data nie może być w przyszłości')
+            }, 'Date cannot be in the future')
             .optional(),
         weight: z.coerce.number().nonnegative(),
         waist: z.coerce.number().nonnegative(),
@@ -16,5 +16,14 @@ export const measurementsSchema = registry.register(
         arm: z.coerce.number().nonnegative(),
     }),
 );
+
+export const dateMeasurementSchema = z
+    .object({
+        startDate: z.coerce.date(),
+        endDate: z.coerce.date(),
+    })
+    .refine(({ startDate, endDate }) => {
+        return startDate <= endDate;
+    }, 'Start date cannot be later than end date');
 
 export const measurementsIdSchema = z.uuid();

@@ -5,8 +5,9 @@ import {
     updateMeasurement,
     deleteMeasurement,
     getMeasurementById,
+    getMeasurementByDate,
 } from '../services/measurementsService';
-import { measurementsSchema, measurementsIdSchema } from '../schemas/measurements';
+import { measurementsSchema, measurementsIdSchema, dateMeasurementSchema } from '../schemas/measurements';
 
 export const createMeasurementController = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -100,6 +101,31 @@ export const updateMeasurementController = async (req: Request, res: Response, n
         const measurement = await updateMeasurement(paramsResult.data, userId, bodyResult.data);
 
         res.status(200).json({ message: 'Measurement updated', measurement });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getMeasurementsByDateController = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userId = req.userId;
+
+        if (!userId) {
+            res.status(401).json({ message: 'Unauthorized' });
+            return;
+        }
+
+        const searchDate = dateMeasurementSchema.safeParse(req.body);
+        if (!searchDate.success) {
+            res.status(400).json({ message: 'Invalid date' });
+            return;
+        }
+
+        const { startDate, endDate } = searchDate.data;
+
+        const measurements = await getMeasurementByDate(startDate, endDate, userId);
+
+        res.status(200).json({ message: 'Measurements', measurements });
     } catch (error) {
         next(error);
     }

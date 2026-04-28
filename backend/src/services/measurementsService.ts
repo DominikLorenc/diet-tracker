@@ -45,6 +45,30 @@ export const getMeasurementById = async (id: string, userId: string): Promise<Bo
     return measurement;
 };
 
+export const getMeasurementByDate = async (
+    startDate: Date,
+    endDate: Date,
+    userId: string,
+): Promise<BodyMeasurement[]> => {
+    const startOfDay = new Date(startDate);
+    startOfDay.setUTCHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(endDate);
+    endOfDay.setUTCHours(23, 59, 59, 999);
+
+    const measurements = await prisma.bodyMeasurement.findMany({
+        where: {
+            userId,
+            date: {
+                gte: startOfDay,
+                lte: endOfDay,
+            },
+        },
+    });
+
+    return measurements;
+};
+
 export const updateMeasurement = async (
     id: string,
     userId: string,
