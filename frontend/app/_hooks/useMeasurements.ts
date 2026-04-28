@@ -1,10 +1,5 @@
-// TODO(human): zaimplementuj ten hook
-// Wzorzec: useState + useEffect + fetch, tak jak w DiaryDayView.tsx
-// Endpoint: GET /measurements → { measurements: Measurement[] }
-// Zwróć: { measurements, loading, error, refetch }
-
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { apiClient } from "@/app/lib/apiClient";
 
 import type { Measurement } from "@/app/_types/measurements";
@@ -16,18 +11,25 @@ export type UseMeasurementsReturn = {
   refetch: () => void;
 };
 
-export const useMeasurements = (): UseMeasurementsReturn => {
-  // TODO(human): zastąp stub prawdziwą implementacją
+export const useMeasurements = (startDate: Date, endDate: Date) => {
   const [measurements, setMeasurements] = useState<Measurement[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchData = async () => {
+  const startDateStr = startDate.toISOString().split("T")[0];
+  const endDateStr = endDate.toISOString().split("T")[0];
+
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const { data, error } = await apiClient.GET("/measurements");
+      const { data, error } = await apiClient.POST("/measurements/date", {
+        body: {
+          startDate: startDateStr,
+          endDate: endDateStr,
+        },
+      });
 
       if (data) {
         setMeasurements(data.measurements);
@@ -37,20 +39,17 @@ export const useMeasurements = (): UseMeasurementsReturn => {
         setError(error.message);
       }
     } catch (error) {
-      // setError(error?.message);
+      if (error instanceof Error) {
+        setError(error.message);
+      }
     } finally {
       setLoading(false);
     }
-  };
+  }, [startDateStr, endDateStr]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
-  return {
-    measurements: measurements,
-    loading: loading,
-    error: error,
-    refetch: fetchData,
-  };
+  return { measurements, loading, error, refetch: fetchData };
 };

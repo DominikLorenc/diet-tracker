@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { use, useMemo, useState } from "react";
 import { MeasurementChart } from "@/app/_components/progress/MeasurementChart";
 import { MeasurementHistoryTable } from "@/app/_components/progress/MeasurementHistoryTable";
 import { MeasurementModal } from "@/app/_components/progress/MeasurementModal";
@@ -11,6 +11,7 @@ import type {
 } from "@/app/_types/measurements";
 import { apiClient } from "@/app/lib/apiClient";
 import { useToastStore } from "@/store/useToastStore";
+import { da } from "zod/locales";
 
 const PRESETS = [
   { id: "30d", label: "30 dni", days: 30 },
@@ -33,20 +34,23 @@ const headerDate = new Date().toLocaleDateString("pl-PL", {
 });
 
 export default function ProgressPage() {
-  const { measurements, loading, error, refetch } = useMeasurements();
-
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editingMeasurement, setEditingMeasurement] =
-    useState<Measurement | null>(null);
-  const showToast = useToastStore((state) => state.showToast);
-
-  const [activePreset, setActivePreset] = useState<PresetId>("30d");
+  const [dateTo, setDateTo] = useState<string>(todayStr);
   const [dateFrom, setDateFrom] = useState<string>(() => {
     const d = new Date();
     d.setDate(d.getDate() - 30);
     return toDateStr(d);
   });
-  const [dateTo, setDateTo] = useState<string>(todayStr);
+  const [activePreset, setActivePreset] = useState<PresetId>("30d");
+
+  const { measurements, loading, error, refetch } = useMeasurements(
+    new Date(dateFrom),
+    new Date(dateTo),
+  );
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingMeasurement, setEditingMeasurement] =
+    useState<Measurement | null>(null);
+  const showToast = useToastStore((state) => state.showToast);
 
   const handlePreset = (preset: (typeof PRESETS)[number]) => {
     setActivePreset(preset.id);
