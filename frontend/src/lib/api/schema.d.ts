@@ -1164,6 +1164,91 @@ export interface paths {
     };
     trace?: never;
   };
+  "/measurements/date": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Get measurements by date range */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: {
+        content: {
+          "application/json": {
+            /** Format: date-time */
+            startDate: string | null;
+            /** Format: date-time */
+            endDate: string | null;
+          };
+        };
+      };
+      responses: {
+        /** @description List of measurements in date range */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              measurements: {
+                /** Format: uuid */
+                id: string;
+                /** Format: uuid */
+                userId: string;
+                /** Format: date-time */
+                date: string;
+                weight: number;
+                waist: number;
+                hips: number;
+                arm: number;
+                /** Format: date-time */
+                createdAt: string;
+                /** Format: date-time */
+                updatedAt: string;
+              }[];
+            };
+          };
+        };
+        /** @description Validation error */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/measurements": {
     parameters: {
       query?: never;
