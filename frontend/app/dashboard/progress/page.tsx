@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { MeasurementChart } from "@/app/_components/progress/MeasurementChart";
 import { MeasurementHistoryTable } from "@/app/_components/progress/MeasurementHistoryTable";
 import { MeasurementModal } from "@/app/_components/progress/MeasurementModal";
@@ -11,7 +11,6 @@ import type {
 } from "@/app/_types/measurements";
 import { apiClient } from "@/app/lib/apiClient";
 import { useToastStore } from "@/store/useToastStore";
-import { da } from "zod/locales";
 
 const PRESETS = [
   { id: "30d", label: "30 dni", days: 30 },

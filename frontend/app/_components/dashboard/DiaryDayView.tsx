@@ -144,6 +144,8 @@ export const DiaryDayView = () => {
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  console.log(entries);
+
   const allItems = entries[0]?.items ?? [];
   const showToast = useToastStore((state) => state.showToast);
 

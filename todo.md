@@ -24,20 +24,6 @@
 
 ---
 
-### 🐛 TODO 2 — Bug: błędny typ toasta przy usunięciu wpisu
-
-**Co:** W `DiaryDayView.tsx` linia 168 — po udanym usunięciu wpisu wywołujesz:
-```ts
-showToast("error", "Wpis usunięty")  // ❌ błędny typ
-```
-Powinno być `"success"`, nie `"error"`.
-
-**Dlaczego ważne:** Użytkownik widzi czerwony toast (błąd) gdy operacja się powiodła — to myląca informacja zwrotna (UX bug).
-
-**Plik:** `frontend/app/_components/dashboard/DiaryDayView.tsx:168`
-
----
-
 ### 🔍 TODO 3 — Przejrzyj i przetestuj stronę /dashboard/add
 
 **Co:** Wejdź na `/dashboard/add` i sprawdź ręcznie jak działa dodawanie posiłku do dziennika.
@@ -51,3 +37,24 @@ Powinno być `"success"`, nie `"error"`.
 - [ ] Czy toast po dodaniu ma właściwy typ (`success`)?
 
 **Jeśli znajdziesz bug** — otwórz issue lub dodaj go do tego pliku jako TODO 4.
+
+---
+
+# Przegląd projektu — 29.04.2026
+
+## Backend — security / jakość kodu
+
+- [ ] **B2** — CORS origins z `.env` zamiast hardcoded `localhost` w `app.ts`
+- [ ] **B3** — Transakcja przy `updateRecipe` — owiń `deleteMany` + `create` w `prisma.$transaction` (`recipeService.ts`)
+- [ ] **B4** — Walidacja XOR w `diarySchema.ts` — wpis musi mieć `productId` LUB `recipeId` (nie oba, nie żadne), użyj `.refine()`
+- [ ] **B5** — Ujednolicić odpowiedzi błędów — klucz `errors` vs `message` w różnych kontrolerach
+- [ ] **B6** — Runtime walidacja JWT payload zamiast `as jwt.JwtPayload` w `authMiddleware.ts`
+
+## Frontend
+
+- [ ] **F1** — Route protection — brak `middleware.ts` w `frontend/` (każdy może wejść na `/dashboard` bez logowania)
+- [ ] **F2** — Statystyki profilu są hardcoded (1400 kcal, 7 streak, itd.) — zastąpić danymi z API (`dashboard/profile/page.tsx`)
+## Testy
+
+- [ ] **T1** — Testy e2e Playwright — brak jakichkolwiek plików
+- [ ] **T2** — Testy integracyjne dla nowych endpointów (UserRecipe, measurements)

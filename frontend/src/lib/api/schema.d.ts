@@ -452,6 +452,32 @@ export interface paths {
                       };
                     }[];
                   } | null;
+                  userRecipeId: string | null;
+                  userRecipe: {
+                    id: string;
+                    userId: string;
+                    createdAt: string;
+                    sourceRecipeId: string;
+                    name: string;
+                    userRecipeIngredients: {
+                      id: string;
+                      userRecipeId: string;
+                      productId: string;
+                      quantity: string;
+                      createdAt: string;
+                      updatedAt: string;
+                      product: {
+                        id: string;
+                        name: string;
+                        calories: string;
+                        carbs: string;
+                        protein: string;
+                        fat: string;
+                        imageUrl: string;
+                        createdAt: string;
+                      };
+                    }[];
+                  } | null;
                 }[];
               }[];
             };
@@ -522,6 +548,32 @@ export interface paths {
                     name: string;
                     products: {
                       quantity: string;
+                      product: {
+                        id: string;
+                        name: string;
+                        calories: string;
+                        carbs: string;
+                        protein: string;
+                        fat: string;
+                        imageUrl: string;
+                        createdAt: string;
+                      };
+                    }[];
+                  } | null;
+                  userRecipeId: string | null;
+                  userRecipe: {
+                    id: string;
+                    userId: string;
+                    createdAt: string;
+                    sourceRecipeId: string;
+                    name: string;
+                    userRecipeIngredients: {
+                      id: string;
+                      userRecipeId: string;
+                      productId: string;
+                      quantity: string;
+                      createdAt: string;
+                      updatedAt: string;
                       product: {
                         id: string;
                         name: string;
@@ -640,6 +692,32 @@ export interface paths {
                       };
                     }[];
                   } | null;
+                  userRecipeId: string | null;
+                  userRecipe: {
+                    id: string;
+                    userId: string;
+                    createdAt: string;
+                    sourceRecipeId: string;
+                    name: string;
+                    userRecipeIngredients: {
+                      id: string;
+                      userRecipeId: string;
+                      productId: string;
+                      quantity: string;
+                      createdAt: string;
+                      updatedAt: string;
+                      product: {
+                        id: string;
+                        name: string;
+                        calories: string;
+                        carbs: string;
+                        protein: string;
+                        fat: string;
+                        imageUrl: string;
+                        createdAt: string;
+                      };
+                    }[];
+                  } | null;
                 }[];
               };
             };
@@ -728,6 +806,32 @@ export interface paths {
                   name: string;
                   products: {
                     quantity: string;
+                    product: {
+                      id: string;
+                      name: string;
+                      calories: string;
+                      carbs: string;
+                      protein: string;
+                      fat: string;
+                      imageUrl: string;
+                      createdAt: string;
+                    };
+                  }[];
+                } | null;
+                userRecipeId: string | null;
+                userRecipe: {
+                  id: string;
+                  userId: string;
+                  createdAt: string;
+                  sourceRecipeId: string;
+                  name: string;
+                  userRecipeIngredients: {
+                    id: string;
+                    userRecipeId: string;
+                    productId: string;
+                    quantity: string;
+                    createdAt: string;
+                    updatedAt: string;
                     product: {
                       id: string;
                       name: string;

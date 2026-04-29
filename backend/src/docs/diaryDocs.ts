@@ -36,6 +36,27 @@ const diaryItemSchema = z.object({
             ),
         })
         .nullable(),
+    userRecipeId: z.string().nullable(),
+    userRecipe: z
+        .object({
+            id: z.string(),
+            userId: z.string(),
+            createdAt: z.string(),
+            sourceRecipeId: z.string(),
+            name: z.string(),
+            userRecipeIngredients: z.array(
+                z.object({
+                    id: z.string(),
+                    userRecipeId: z.string(),
+                    productId: z.string(),
+                    quantity: z.string(),
+                    createdAt: z.string(),
+                    updatedAt: z.string(),
+                    product: productSchema,
+                }),
+            ),
+        })
+        .nullable(),
 });
 
 const diaryEntryResponseSchema = z.object({

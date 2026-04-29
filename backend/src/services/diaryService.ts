@@ -135,8 +135,7 @@ export const deleteDiaryService = async (id: string, userId: string): Promise<Di
             },
         });
         return deleted;
-    } catch (error) {
-        console.log(error);
+    } catch (_error) {
         throw new AppError('Diary entry not found', 404);
     }
 };
@@ -157,8 +156,7 @@ export const deleteDiaryItemProductService = async (id: string, userId: string):
             },
         });
         return deleted;
-    } catch (error) {
-        console.log(error);
+    } catch (_error) {
         throw new AppError('Diary entry not found', 404);
     }
 };
