@@ -4,38 +4,64 @@ import Navbar from "./_components/shared/Navbar";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-white font-sans overflow-x-hidden">
-      {/* Navbar */}
+    <main
+      className="min-h-screen overflow-x-hidden"
+      style={{ background: "#0F1A10", fontFamily: "var(--font-jakarta)" }}
+    >
       <Navbar variant="public" />
 
       {/* Hero */}
-      <section className="flex flex-col lg:flex-row items-center justify-between min-h-[640px] px-4 md:px-20 py-16 gap-12 bg-linear-to-br from-[#fff8f8] to-[#f3f4ff]">
+      <section className="flex flex-col lg:flex-row items-center justify-between min-h-[640px] px-4 md:px-20 py-16 gap-12">
         <div className="flex flex-col gap-8 max-w-[580px]">
           <div
-            className="flex items-center gap-2 w-fit max-w-full px-3.5 py-1.5 rounded-full bg-[#fff0f0] animate-fade-in-up"
-            style={{ animationDelay: "100ms" }}
+            className="flex items-center gap-2 w-fit px-3.5 py-1.5 rounded-full animate-fade-in-up"
+            style={{
+              background: "#162218",
+              border: "1px solid #1E3322",
+              animationDelay: "100ms",
+            }}
           >
-            <div className="w-2 h-2 shrink-0 rounded-full bg-brand-primary" />
-            <span className="text-[13px] font-semibold text-brand-primary leading-snug">
+            <div
+              className="w-2 h-2 shrink-0 rounded-full"
+              style={{ background: "#22C55E" }}
+            />
+            <span
+              className="text-[13px] font-semibold"
+              style={{ color: "#4ADE80" }}
+            >
               Darmowy tracker kalorii i makroskładników
             </span>
           </div>
 
           <div
-            className="flex flex-col gap-2 animate-fade-in-up"
+            className="flex flex-col gap-1 animate-fade-in-up"
             style={{ animationDelay: "200ms" }}
           >
-            <h1 className="text-[60px] font-extrabold leading-[1.1] text-text-primary">
+            <h1
+              className="text-[60px] font-bold leading-[1.1]"
+              style={{
+                color: "#F3F7FF",
+                fontFamily: "var(--font-newsreader)",
+              }}
+            >
               Jedz mądrze,
             </h1>
-            <h1 className="text-[60px] font-extrabold leading-[1.1] text-brand-primary">
+            <h1
+              className="text-[60px] font-bold leading-[1.1]"
+              style={{
+                background: "linear-gradient(180deg, #22C55E 0%, #16A34A 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                fontFamily: "var(--font-newsreader)",
+              }}
+            >
               osiągaj cele.
             </h1>
           </div>
 
           <p
-            className="text-lg text-text-secondary leading-relaxed max-w-[520px] animate-fade-in-up"
-            style={{ animationDelay: "300ms" }}
+            className="text-lg leading-relaxed max-w-[520px] animate-fade-in-up"
+            style={{ color: "#8FA0B8", animationDelay: "300ms" }}
           >
             Śledź kalorie, białko, węglowodany i tłuszcze.
             <br />
@@ -48,11 +74,22 @@ export default function Home() {
           >
             <Link
               href="/register"
-              className="px-8 py-4 text-base font-bold text-white bg-brand-primary rounded-xl hover:bg-[#ff5252] hover:scale-105 transition-all shadow-lg shadow-[#ff6b6b33]"
+              className="px-8 py-4 text-base font-bold text-white rounded-xl hover:scale-105 transition-all"
+              style={{
+                background: "linear-gradient(180deg, #16A34A 0%, #15803D 100%)",
+                boxShadow: "0 2px 10px rgba(34,197,94,0.35)",
+              }}
             >
               Zacznij za darmo →
             </Link>
-            <button className="px-8 py-4 text-base font-semibold text-text-primary bg-white border-2 border-gray-200 rounded-xl hover:border-gray-300 hover:scale-105 transition-all">
+            <button
+              className="px-8 py-4 text-base font-semibold rounded-xl hover:scale-105 transition-all"
+              style={{
+                color: "#94A3B8",
+                background: "#111C14",
+                border: "1px solid #1E3322",
+              }}
+            >
               Zobacz demo
             </button>
           </div>
@@ -62,124 +99,227 @@ export default function Home() {
             style={{ animationDelay: "500ms" }}
           >
             <span className="text-base">⭐⭐⭐⭐⭐</span>
-            <span className="text-sm text-text-muted">
+            <span className="text-sm" style={{ color: "#8FA0B8" }}>
               Dołącz do 12 000+ użytkowników
             </span>
           </div>
         </div>
 
-        {/* App mockup — wjazd z prawej, potem float */}
+        {/* App mockup */}
         <div
-          className="hidden lg:block w-[560px] animate-fade-in-right"
+          className="hidden lg:block w-[520px] animate-fade-in-right"
           style={{ animationDelay: "300ms" }}
         >
           <div className="animate-float">
-            <div className="bg-white rounded-2xl shadow-[0_24px_60px_rgba(0,0,0,0.09)] overflow-hidden">
-              <div className="flex items-center justify-between px-6 h-14 border-b border-gray-100">
-                <span className="text-[15px] font-bold text-text-primary">
+            <div
+              className="rounded-2xl overflow-hidden"
+              style={{
+                background: "#111C14",
+                border: "1px solid #1E3322",
+                boxShadow:
+                  "0 24px 60px rgba(0,0,0,0.4), 0 0 60px rgba(34,197,94,0.06)",
+              }}
+            >
+              {/* Header */}
+              <div
+                className="flex items-center justify-between px-5 h-14"
+                style={{ borderBottom: "1px solid #1E3322" }}
+              >
+                <span
+                  className="text-[15px] font-bold"
+                  style={{ color: "#F3F7FF" }}
+                >
                   Dziennik — Wtorek, 25 marca
                 </span>
-                <span className="text-[13px] text-text-secondary">
+                <span
+                  className="text-[13px]"
+                  style={{
+                    color: "#8FA0B8",
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                  }}
+                >
                   2025 / 2200 kcal
                 </span>
               </div>
 
-              {/* Macro bars */}
-              <div className="flex gap-3 px-6 py-5">
-                <div className="flex flex-col gap-1.5 flex-1">
-                  <div className="flex justify-between">
-                    <span className="text-[12px] font-semibold text-macro-carbs">
-                      Węglowodany
-                    </span>
-                    <span className="text-[12px] text-text-muted">
-                      180 / 230g
-                    </span>
-                  </div>
-                  <div className="h-2 rounded-full bg-gray-200">
-                    <div
-                      className="h-2 rounded-full bg-macro-carbs transition-all"
-                      style={{ width: "78%" }}
-                    />
-                  </div>
+              {/* Calorie summary */}
+              <div
+                className="flex flex-col gap-2.5 px-5 py-4"
+                style={{ borderBottom: "1px solid #1E3322" }}
+              >
+                <span
+                  className="text-[11px] font-bold tracking-[0.15em]"
+                  style={{
+                    color: "#4ADE80",
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                  }}
+                >
+                  KALORIE
+                </span>
+                <div className="flex justify-between items-end">
+                  <span
+                    className="text-[30px] font-bold leading-none"
+                    style={{
+                      color: "#F3F7FF",
+                      fontFamily: "var(--font-ibm-plex-mono)",
+                    }}
+                  >
+                    2025 / 2200
+                  </span>
+                  <span
+                    className="text-[12px] font-semibold text-right"
+                    style={{ color: "#94A3B8" }}
+                  >
+                    pozostało
+                    <br />
+                    175 kcal
+                  </span>
                 </div>
-                <div className="flex flex-col gap-1.5 flex-1">
-                  <div className="flex justify-between">
-                    <span className="text-[12px] font-semibold text-macro-protein">
-                      Białko
-                    </span>
-                    <span className="text-[12px] text-text-muted">
-                      95 / 120g
-                    </span>
-                  </div>
-                  <div className="h-2 rounded-full bg-gray-200">
-                    <div
-                      className="h-2 rounded-full bg-macro-protein"
-                      style={{ width: "79%" }}
-                    />
-                  </div>
+                <div
+                  className="h-2 rounded-full"
+                  style={{ background: "#162E1C" }}
+                >
+                  <div
+                    className="h-2 rounded-full"
+                    style={{
+                      width: "92%",
+                      background:
+                        "linear-gradient(90deg, #15803D 0%, #4ADE80 100%)",
+                    }}
+                  />
                 </div>
-                <div className="flex flex-col gap-1.5 flex-1">
-                  <div className="flex justify-between">
-                    <span className="text-[12px] font-semibold text-macro-fat">
-                      Tłuszcze
-                    </span>
-                    <span className="text-[12px] text-text-muted">
-                      55 / 70g
-                    </span>
-                  </div>
-                  <div className="h-2 rounded-full bg-gray-200">
-                    <div
-                      className="h-2 rounded-full bg-macro-fat"
-                      style={{ width: "78%" }}
-                    />
-                  </div>
+
+                {/* Macros */}
+                <div className="flex gap-3 mt-0.5">
+                  {[
+                    {
+                      label: "Białko",
+                      value: "95g",
+                      pct: "79%",
+                      color: "#7DB5FF",
+                    },
+                    {
+                      label: "Węgle",
+                      value: "180g",
+                      pct: "78%",
+                      color: "#F4C65D",
+                    },
+                    {
+                      label: "Tłuszcze",
+                      value: "55g",
+                      pct: "78%",
+                      color: "#F18FA3",
+                    },
+                  ].map((m) => (
+                    <div key={m.label} className="flex-1 flex flex-col gap-1">
+                      <div className="flex justify-between">
+                        <span
+                          className="text-[11px] font-semibold"
+                          style={{ color: m.color }}
+                        >
+                          {m.label}
+                        </span>
+                        <span
+                          className="text-[11px]"
+                          style={{ color: "#8FA0B8" }}
+                        >
+                          {m.value}
+                        </span>
+                      </div>
+                      <div
+                        className="h-1.5 rounded-full"
+                        style={{ background: "#162E1C" }}
+                      >
+                        <div
+                          className="h-1.5 rounded-full"
+                          style={{ width: m.pct, background: m.color }}
+                        />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
               {/* Meal entries */}
-              <div className="flex flex-col px-6 pb-5 gap-1">
-                <div className="flex items-center justify-between h-10">
-                  <span className="text-[13px] font-bold text-text-primary">
+              <div className="flex flex-col px-5 py-4 gap-1">
+                <div className="flex items-center justify-between h-9">
+                  <span
+                    className="text-[13px] font-bold"
+                    style={{ color: "#F3F7FF" }}
+                  >
                     Śniadanie
                   </span>
-                  <span className="text-[13px] text-text-muted">487 kcal</span>
-                </div>
-                <div className="flex items-center justify-between h-[52px] px-3 bg-[#fafafa] rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-[#fff5f5] flex items-center justify-center text-base">
-                      🥣
-                    </div>
-                    <div className="flex flex-col gap-0.5">
-                      <span className="text-[13px] font-semibold text-text-primary">
-                        Owsianka z owocami
-                      </span>
-                      <span className="text-[11px] text-text-muted">
-                        250g · 12g B · 58g W · 8g T
-                      </span>
-                    </div>
-                  </div>
-                  <span className="text-[13px] font-semibold text-brand-primary">
-                    350 kcal
+                  <span
+                    className="text-[13px]"
+                    style={{
+                      color: "#8FA0B8",
+                      fontFamily: "var(--font-ibm-plex-mono)",
+                    }}
+                  >
+                    487 kcal
                   </span>
                 </div>
-                <div className="flex items-center justify-between h-[52px] px-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-[#f0fdf4] flex items-center justify-center text-base">
-                      ☕
+                {[
+                  {
+                    icon: "🥣",
+                    name: "Owsianka z owocami",
+                    detail: "250g · 12g B · 58g W · 8g T",
+                    kcal: "350 kcal",
+                    highlighted: true,
+                  },
+                  {
+                    icon: "☕",
+                    name: "Kawa z mlekiem",
+                    detail: "200ml · 3g B · 5g W · 3g T",
+                    kcal: "137 kcal",
+                    highlighted: false,
+                  },
+                ].map((entry) => (
+                  <div
+                    key={entry.name}
+                    className="flex items-center justify-between h-[52px] px-3 rounded-xl"
+                    style={
+                      entry.highlighted
+                        ? { background: "#162218", border: "1px solid #1E3322" }
+                        : { background: "transparent" }
+                    }
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-base"
+                        style={{
+                          background: "#1A2B1F",
+                          border: "1px solid #1E3322",
+                        }}
+                      >
+                        {entry.icon}
+                      </div>
+                      <div className="flex flex-col gap-0.5">
+                        <span
+                          className="text-[13px] font-semibold"
+                          style={{ color: "#F3F7FF" }}
+                        >
+                          {entry.name}
+                        </span>
+                        <span
+                          className="text-[11px]"
+                          style={{ color: "#8FA0B8" }}
+                        >
+                          {entry.detail}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex flex-col gap-0.5">
-                      <span className="text-[13px] font-semibold text-text-primary">
-                        Kawa z mlekiem
-                      </span>
-                      <span className="text-[11px] text-text-muted">
-                        200ml · 3g B · 5g W · 3g T
-                      </span>
-                    </div>
+                    <span
+                      className="text-[13px] font-semibold"
+                      style={{
+                        color: "#4ADE80",
+                        fontFamily: "var(--font-ibm-plex-mono)",
+                      }}
+                    >
+                      {entry.kcal}
+                    </span>
                   </div>
-                  <span className="text-[13px] font-semibold text-brand-primary">
-                    137 kcal
-                  </span>
-                </div>
+                ))}
               </div>
             </div>
           </div>
@@ -189,18 +329,31 @@ export default function Home() {
       {/* Features */}
       <section
         id="funkcje"
-        className="flex flex-col items-center gap-16 px-4 md:px-20 py-20 bg-white"
+        className="flex flex-col items-center gap-16 px-4 md:px-20 py-20"
+        style={{ background: "#0D1A0E" }}
       >
         <AnimateOnScroll className="flex flex-col items-center gap-4 text-center">
-          <div className="px-4 py-1.5 rounded-full bg-[#f0f0ff]">
-            <span className="text-[13px] font-semibold text-brand-secondary">
+          <div
+            className="px-4 py-1.5 rounded-full"
+            style={{ background: "#162218", border: "1px solid #1E3322" }}
+          >
+            <span
+              className="text-[13px] font-semibold"
+              style={{ color: "#4ADE80" }}
+            >
               Funkcje
             </span>
           </div>
-          <h2 className="text-[40px] font-extrabold text-text-primary">
+          <h2
+            className="text-[40px] font-extrabold"
+            style={{ color: "#F3F7FF" }}
+          >
             Wszystko czego potrzebujesz
           </h2>
-          <p className="text-lg text-text-secondary text-center leading-relaxed max-w-[520px]">
+          <p
+            className="text-lg leading-relaxed max-w-[520px] text-center"
+            style={{ color: "#8FA0B8" }}
+          >
             Jeden tracker do zarządzania dietą, przepisami i postępami.
           </p>
         </AnimateOnScroll>
@@ -209,35 +362,42 @@ export default function Home() {
           {[
             {
               emoji: "📓",
-              iconBg: "#fff0f0",
               title: "Dziennik żywieniowy",
               desc: "Loguj posiłki w sekundy. Baza tysięcy produktów z gotowymi makrami.",
             },
             {
               emoji: "📊",
-              iconBg: "#f0f0ff",
               title: "Śledzenie makroskładników",
               desc: "Wizualne wykresy białka, węglowodanów i tłuszczów w czasie rzeczywistym.",
             },
             {
               emoji: "🍽️",
-              iconBg: "#f0fdf4",
               title: "Kreator przepisów",
               desc: "Twórz własne przepisy i automatycznie obliczaj ich wartości odżywcze.",
             },
           ].map((card, i) => (
             <AnimateOnScroll key={card.title} delay={i * 120}>
-              <div className="flex flex-col gap-5 p-8 bg-[#fafafa] border border-gray-100 rounded-2xl hover:shadow-md hover:-translate-y-1 transition-all duration-300 h-full">
+              <div
+                className="flex flex-col gap-5 p-8 rounded-2xl hover:-translate-y-1 transition-all duration-300 h-full"
+                style={{
+                  background: "#111C14",
+                  border: "1px solid #1E3322",
+                  boxShadow: "0 1px 20px rgba(34,197,94,0.04)",
+                }}
+              >
                 <div
                   className="w-[52px] h-[52px] rounded-[14px] flex items-center justify-center text-[26px]"
-                  style={{ backgroundColor: card.iconBg }}
+                  style={{ background: "#162218", border: "1px solid #1E3322" }}
                 >
                   {card.emoji}
                 </div>
-                <h3 className="text-xl font-bold text-text-primary">
+                <h3 className="text-xl font-bold" style={{ color: "#F3F7FF" }}>
                   {card.title}
                 </h3>
-                <p className="text-[15px] text-text-secondary leading-relaxed">
+                <p
+                  className="text-[15px] leading-relaxed"
+                  style={{ color: "#8FA0B8" }}
+                >
                   {card.desc}
                 </p>
               </div>
@@ -249,15 +409,25 @@ export default function Home() {
       {/* How it works */}
       <section
         id="jak-to-dziala"
-        className="flex flex-col items-center gap-16 px-4 md:px-20 py-20 bg-[#f9fafb]"
+        className="flex flex-col items-center gap-16 px-4 md:px-20 py-20"
+        style={{ background: "#0F1A10" }}
       >
         <AnimateOnScroll className="flex flex-col items-center gap-4 text-center">
-          <div className="px-4 py-1.5 rounded-full bg-[#fff0f0]">
-            <span className="text-[13px] font-semibold text-brand-primary">
+          <div
+            className="px-4 py-1.5 rounded-full"
+            style={{ background: "#162218", border: "1px solid #1E3322" }}
+          >
+            <span
+              className="text-[13px] font-semibold"
+              style={{ color: "#4ADE80" }}
+            >
               Jak to działa
             </span>
           </div>
-          <h2 className="text-[40px] font-extrabold text-text-primary">
+          <h2
+            className="text-[40px] font-extrabold"
+            style={{ color: "#F3F7FF" }}
+          >
             Zacznij w 3 krokach
           </h2>
         </AnimateOnScroll>
@@ -266,19 +436,16 @@ export default function Home() {
           {[
             {
               num: "1",
-              color: "#ff6b6b",
               title: "Załóż konto",
               desc: "Rejestracja zajmuje 30 sekund. Podaj cel — schudnięcie, przybranie lub utrzymanie wagi.",
             },
             {
               num: "2",
-              color: "#6366f1",
               title: "Loguj posiłki",
               desc: "Wyszukaj produkt lub zeskanuj kod kreskowy. Dodaj porcję i gotowe — makra przeliczają się automatycznie.",
             },
             {
               num: "3",
-              color: "#22c55e",
               title: "Obserwuj postępy",
               desc: "Analizuj trendy, sprawdzaj bilans kalorii i dostosowuj dietę na podstawie danych.",
             },
@@ -290,18 +457,23 @@ export default function Home() {
             >
               <div className="flex flex-col items-center gap-5 text-center">
                 <div
-                  className="w-14 h-14 rounded-full flex items-center justify-center text-[22px] font-extrabold text-white shadow-lg"
+                  className="w-14 h-14 rounded-full flex items-center justify-center text-[22px] font-extrabold text-white"
                   style={{
-                    backgroundColor: step.color,
-                    boxShadow: `0 8px 24px ${step.color}44`,
+                    background:
+                      "linear-gradient(180deg, #16A34A 0%, #15803D 100%)",
+                    boxShadow: "0 8px 24px rgba(34,197,94,0.3)",
+                    fontFamily: "var(--font-ibm-plex-mono)",
                   }}
                 >
                   {step.num}
                 </div>
-                <h3 className="text-xl font-bold text-text-primary">
+                <h3 className="text-xl font-bold" style={{ color: "#F3F7FF" }}>
                   {step.title}
                 </h3>
-                <p className="text-[15px] text-text-secondary leading-relaxed">
+                <p
+                  className="text-[15px] leading-relaxed"
+                  style={{ color: "#8FA0B8" }}
+                >
                   {step.desc}
                 </p>
               </div>
@@ -311,55 +483,78 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section className="flex flex-col items-center gap-8 px-4 md:px-20 py-20 bg-linear-to-br from-brand-primary to-brand-secondary">
+      <section
+        className="flex flex-col items-center gap-8 px-4 md:px-20 py-20"
+        style={{
+          background: "linear-gradient(135deg, #162218 0%, #0F1A10 100%)",
+          borderTop: "1px solid #1E3322",
+        }}
+      >
         <AnimateOnScroll className="flex flex-col items-center gap-8 w-full">
-          <h2 className="text-[48px] font-extrabold text-white text-center">
+          <h2
+            className="text-[48px] font-extrabold text-center"
+            style={{
+              color: "#F3F7FF",
+              fontFamily: "var(--font-newsreader)",
+            }}
+          >
             Gotowy na zmianę diety?
           </h2>
-          <p className="text-lg text-white/90 text-center leading-relaxed max-w-[560px]">
+          <p
+            className="text-lg text-center leading-relaxed max-w-[560px]"
+            style={{ color: "#8FA0B8" }}
+          >
             Zacznij śledzić makra już dziś — za darmo, bez karty kredytowej.
           </p>
           <Link
             href="/register"
-            className="px-10 py-[18px] text-lg font-bold text-brand-primary bg-white rounded-2xl hover:bg-gray-50 hover:scale-105 transition-all shadow-xl"
+            className="px-10 py-[18px] text-lg font-bold text-white rounded-2xl hover:scale-105 transition-all"
+            style={{
+              background: "linear-gradient(180deg, #16A34A 0%, #15803D 100%)",
+              boxShadow: "0 4px 20px rgba(34,197,94,0.35)",
+            }}
           >
             Stwórz darmowe konto →
           </Link>
-          <p className="text-sm text-white/75 text-center">
+          <p className="text-sm text-center" style={{ color: "#8FA0B8" }}>
             Dołącz do 12 000+ użytkowników • Brak limitu wpisów
           </p>
         </AnimateOnScroll>
       </section>
 
       {/* Footer */}
-      <footer className="flex items-center justify-between h-16 px-4 md:px-20 bg-surface-dark">
+      <footer
+        className="flex items-center justify-between h-16 px-4 md:px-20"
+        style={{ background: "#111C14", borderTop: "1px solid #1E3322" }}
+      >
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-brand-primary flex items-center justify-center text-sm">
+          <div
+            className="w-7 h-7 rounded-lg flex items-center justify-center text-sm"
+            style={{
+              background: "linear-gradient(180deg, #22C55E 0%, #16A34A 100%)",
+            }}
+          >
             🥗
           </div>
-          <span className="text-base font-bold text-white">NutriTrack</span>
+          <span className="text-base font-bold" style={{ color: "#F3F7FF" }}>
+            DietTracker
+          </span>
         </div>
         <div className="flex items-center gap-6">
-          <a
-            href="#"
-            className="text-[13px] text-text-muted hover:text-white transition-colors"
-          >
-            Prywatność
-          </a>
-          <a
-            href="#"
-            className="text-[13px] text-text-muted hover:text-white transition-colors"
-          >
-            Regulamin
-          </a>
-          <a
-            href="#"
-            className="text-[13px] text-text-muted hover:text-white transition-colors"
-          >
-            Kontakt
-          </a>
+          {["Prywatność", "Regulamin", "Kontakt"].map((link) => (
+            <a
+              key={link}
+              href="#"
+              className="text-[13px] transition-colors"
+              style={{ color: "#8FA0B8" }}
+            >
+              {link}
+            </a>
+          ))}
         </div>
-        <span className="text-[13px] text-text-muted">© 2025 NutriTrack</span>
+        <span className="text-[13px]" style={{ color: "#8FA0B8" }}>
+          © 2025 DietTracker
+        </span>
       </footer>
     </main>
   );

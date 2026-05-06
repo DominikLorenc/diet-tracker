@@ -18,37 +18,45 @@ export default function Navbar({ variant }: NavbarProps) {
   };
 
   return (
-    <nav className="sticky top-0 z-50 flex items-center justify-between h-[64px] px-4 md:px-20 bg-white border-b border-gray-100">
+    <nav
+      className="sticky top-0 z-50 flex items-center justify-between h-[64px] px-4 md:px-20"
+      style={{ background: "#111C14", borderBottom: "1px solid #1E3322" }}
+    >
       <Link
         href={variant === "dashboard" ? "/dashboard" : "/"}
         className="flex items-center gap-2"
       >
-        <div className="w-8 h-8 rounded-xl bg-white/20 bg-gradient-to-br from-[#ff6b6b] to-[#e8503a] flex items-center justify-center shrink-0">
+        <div
+          className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+          style={{
+            background: "linear-gradient(180deg, #22C55E 0%, #16A34A 100%)",
+          }}
+        >
           <Apple className="w-4 h-4 text-white" />
         </div>
-        <span className="text-lg font-bold text-text-primary">DietTracker</span>
+        <span className="text-lg font-bold" style={{ color: "#F3F7FF" }}>
+          DietTracker
+        </span>
       </Link>
 
       {variant === "public" && (
         <div className="hidden md:flex items-center gap-9">
-          <a
-            href="#funkcje"
-            className="text-[15px] text-text-secondary hover:text-text-primary transition-colors"
-          >
-            Funkcje
-          </a>
-          <a
-            href="#jak-to-dziala"
-            className="text-[15px] text-text-secondary hover:text-text-primary transition-colors"
-          >
-            Jak to działa
-          </a>
-          <a
-            href="#cennik"
-            className="text-[15px] text-text-secondary hover:text-text-primary transition-colors"
-          >
-            Cennik
-          </a>
+          {[
+            { href: "#funkcje", label: "Funkcje" },
+            { href: "#jak-to-dziala", label: "Jak to działa" },
+            { href: "#cennik", label: "Cennik" },
+          ].map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className="text-[15px] transition-colors hover:opacity-100"
+              style={{ color: "#8FA0B8" }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "#F3F7FF")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "#8FA0B8")}
+            >
+              {item.label}
+            </a>
+          ))}
         </div>
       )}
 
@@ -57,13 +65,22 @@ export default function Navbar({ variant }: NavbarProps) {
           <>
             <Link
               href="/login"
-              className="px-3 py-2 md:px-5 md:py-2.5 text-sm font-semibold text-text-primary bg-surface-muted rounded-lg hover:bg-gray-200 transition-colors"
+              className="px-3 py-2 md:px-5 md:py-2.5 text-sm font-semibold rounded-lg transition-all hover:opacity-80"
+              style={{
+                color: "#94A3B8",
+                background: "#0F1A10",
+                border: "1px solid #1E3322",
+              }}
             >
               Zaloguj się
             </Link>
             <Link
               href="/register"
-              className="px-3 py-2 md:px-5 md:py-2.5 text-sm font-semibold text-white bg-brand-primary rounded-lg hover:bg-[#ff5252] transition-colors"
+              className="px-3 py-2 md:px-5 md:py-2.5 text-sm font-semibold text-white rounded-lg transition-all hover:opacity-90"
+              style={{
+                background: "linear-gradient(180deg, #16A34A 0%, #15803D 100%)",
+                boxShadow: "0 2px 10px rgba(34,197,94,0.25)",
+              }}
             >
               <span className="hidden sm:inline">Zacznij za darmo</span>
               <span className="sm:hidden">Rejestracja</span>
@@ -72,7 +89,12 @@ export default function Navbar({ variant }: NavbarProps) {
         ) : (
           <button
             onClick={handleLogout}
-            className="px-4 py-2 text-sm font-semibold text-text-primary bg-surface-muted rounded-lg hover:bg-gray-200 transition-colors cursor-pointer"
+            className="px-4 py-2 text-sm font-semibold rounded-lg transition-all hover:opacity-80 cursor-pointer"
+            style={{
+              color: "#94A3B8",
+              background: "#0F1A10",
+              border: "1px solid #1E3322",
+            }}
           >
             Wyloguj się
           </button>
