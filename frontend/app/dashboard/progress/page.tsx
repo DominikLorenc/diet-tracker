@@ -21,9 +21,21 @@ const PRESETS = [
 
 type PresetId = (typeof PRESETS)[number]["id"];
 
-const toDateStr = (d: Date) => d.toISOString().split("T")[0];
+const currentDate = new Date();
 
-const todayStr = toDateStr(new Date());
+const toDateStr = (d: Date) => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+};
+
+const todayStr = toDateStr(currentDate);
+
+const yesterday = new Date(currentDate);
+yesterday.setDate(yesterday.getDate() - 1);
+
+const yesterdayStr = toDateStr(yesterday);
 
 const headerDate = new Date().toLocaleDateString("pl-PL", {
   weekday: "long",
@@ -165,39 +177,45 @@ export default function ProgressPage() {
 
       {/* Filter row */}
       <div className="flex flex-wrap items-center gap-4 rounded-xl border border-[#1E3322] bg-[#162218] px-4 py-2.5">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <span className="font-['IBM_Plex_Mono'] text-[10px] font-bold tracking-[2px] text-[#4ADE80]">
-              OD
-            </span>
-            <input
-              type="date"
-              value={dateFrom}
-              onChange={(e) => {
-                setDateFrom(e.target.value);
-                setActivePreset("all");
-              }}
-              className="rounded-lg border border-[#1E3322] bg-[#111C14] px-2.5 py-1.5 font-['Funnel_Sans'] text-xs text-[#D6DFEC] outline-none [color-scheme:dark]"
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="font-['IBM_Plex_Mono'] text-[10px] font-bold tracking-[2px] text-[#4ADE80]">
-              DO
-            </span>
-            <input
-              type="date"
-              value={dateTo}
-              onChange={(e) => {
-                setDateTo(e.target.value);
-                setActivePreset("all");
-              }}
-              className="rounded-lg border border-[#1E3322] bg-[#111C14] px-2.5 py-1.5 font-['Funnel_Sans'] text-xs text-[#D6DFEC] outline-none [color-scheme:dark]"
-            />
-          </div>
-        </div>
+        {/* improve this logic */}
+        {false && (
+          <>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <span className="font-['IBM_Plex_Mono'] text-[10px] font-bold tracking-[2px] text-[#4ADE80]">
+                  OD
+                </span>
+                <input
+                  type="date"
+                  value={dateFrom}
+                  onChange={(e) => {
+                    setDateFrom(e.target.value);
+                    setActivePreset("all");
+                  }}
+                  max={yesterdayStr}
+                  className="rounded-lg border border-[#1E3322] bg-[#111C14] px-2.5 py-1.5 font-['Funnel_Sans'] text-xs text-[#D6DFEC] outline-none [color-scheme:dark]"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-['IBM_Plex_Mono'] text-[10px] font-bold tracking-[2px] text-[#4ADE80]">
+                  DO
+                </span>
+                <input
+                  type="date"
+                  value={dateTo}
+                  onChange={(e) => {
+                    setDateTo(e.target.value);
+                    setActivePreset("all");
+                  }}
+                  max={todayStr}
+                  className="rounded-lg border border-[#1E3322] bg-[#111C14] px-2.5 py-1.5 font-['Funnel_Sans'] text-xs text-[#D6DFEC] outline-none [color-scheme:dark]"
+                />
+              </div>
+            </div>
 
-        <div className="h-4 w-px bg-[#1E3322]" />
-
+            <div className="h-4 w-px bg-[#1E3322]" />
+          </>
+        )}
         <div className="flex gap-1.5">
           {PRESETS.map((p) => (
             <button
