@@ -423,6 +423,7 @@ export interface paths {
                   recipeId: string | null;
                   /** @enum {string} */
                   mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
+                  isEaten: boolean;
                   quantity: string;
                   createdAt: string;
                   product: {
@@ -531,6 +532,7 @@ export interface paths {
                   recipeId: string | null;
                   /** @enum {string} */
                   mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
+                  isEaten: boolean;
                   quantity: string;
                   createdAt: string;
                   product: {
@@ -663,6 +665,7 @@ export interface paths {
                   recipeId: string | null;
                   /** @enum {string} */
                   mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
+                  isEaten: boolean;
                   quantity: string;
                   createdAt: string;
                   product: {
@@ -798,6 +801,7 @@ export interface paths {
                 recipeId: string | null;
                 /** @enum {string} */
                 mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
+                isEaten: boolean;
                 quantity: string;
                 createdAt: string;
                 product: {
@@ -931,6 +935,7 @@ export interface paths {
                 recipeId: string | null;
                 /** @enum {string} */
                 mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
+                isEaten: boolean;
                 quantity: string;
                 createdAt: string;
                 product: {

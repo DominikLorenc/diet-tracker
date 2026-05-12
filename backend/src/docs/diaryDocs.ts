@@ -21,6 +21,7 @@ const diaryItemSchema = z.object({
     productId: z.string().nullable(),
     recipeId: z.string().nullable(),
     mealType: z.enum(['BREAKFAST', 'LUNCH', 'DINNER', 'SNACK']),
+    isEaten: z.boolean(),
     quantity: z.string(),
     createdAt: z.string(),
     product: productSchema.nullable(),

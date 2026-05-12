@@ -86,8 +86,8 @@ Dodać link do `/dashboard/shopping-list` w `Navbar.tsx` (np. ikona koszyka).
 ## Kolejność implementacji
 
 1. [x] Migracja Prisma (`isEaten`) — **ZROBIONE**
-2. [ ] Backend: endpoint `PATCH /diary/item/:itemId/eaten`
-3. [ ] Frontend: toggle "zjedzone" w `DiaryDayView`
+2. [x] Backend: endpoint `PATCH /diary/item/:itemId/eaten` — **ZROBIONE**
+3. [x] Frontend: toggle "zjedzone" w `DiaryDayView` — **ZROBIONE**
 4. [ ] Frontend: strona `/dashboard/shopping-list` z date pickerem
 5. [ ] Frontend: logika agregacji składników
 6. [ ] Frontend: interaktywna lista (usuwanie pozycji)

@@ -52,6 +52,7 @@ export interface DiaryItem {
   mealType: MealType;
   createdAt: string;
   quantity: string;
+  isEaten: boolean;
   product: Product | null;
   recipe: Recipe | null;
   userRecipe: UserRecipe | null;
@@ -144,8 +145,6 @@ export const DiaryDayView = () => {
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  console.log(entries);
-
   const allItems = entries[0]?.items ?? [];
   const showToast = useToastStore((state) => state.showToast);
 
@@ -199,6 +198,30 @@ export const DiaryDayView = () => {
     }
   };
 
+  const handleEaten = async (id: string, isEaten: boolean) => {
+    const { error: updateError } = await apiClient.PATCH("/diary/{id}/eaten", {
+      params: { path: { id } },
+      body: { isEaten },
+    });
+    if (updateError) {
+      showToast(
+        "error",
+        "Nie udało się zaktualizować statusu",
+        "Spróbuj ponownie lub odśwież stronę",
+      );
+    } else {
+      setEntries(
+        entries.map((entry) => ({
+          ...entry,
+          items: entry.items.map((item) => ({
+            ...item,
+            isEaten: item.id === id ? isEaten : item.isEaten,
+          })),
+        })),
+      );
+    }
+  };
+
   return (
     <div
       className="flex flex-col gap-4 p-5 sm:p-7 min-h-full"
@@ -224,7 +247,10 @@ export const DiaryDayView = () => {
       </div>
 
       {/* ── Podsumowanie kalorii + makro ─────────────────────────── */}
-      <MacroSummary items={allItems} user={user} />
+      <MacroSummary
+        items={allItems.filter((item) => item.isEaten)}
+        user={user}
+      />
 
       {/* ── Nawigacja dat ────────────────────────────────────────── */}
       <DateNavigator date={date} onDateChange={setDate} />
@@ -305,12 +331,46 @@ export const DiaryDayView = () => {
                 return (
                   <div
                     key={item.id}
-                    className="flex items-center gap-3 px-4 h-[50px]"
+                    className="flex items-center gap-3 px-4 h-[50px] transition-opacity duration-300"
                     style={{
                       background: "#1A2B1F",
                       borderTop: idx > 0 ? "1px solid #1E3322" : undefined,
+                      opacity: item.isEaten ? 0.5 : 1,
                     }}
                   >
+                    {/* TODO(human): onClick -> wywołaj PATCH /diary/:id/eaten i zaktualizuj lokalny stan entries */}
+                    <button
+                      onClick={() => handleEaten(item.id, !item.isEaten)}
+                      className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center transition-all duration-200"
+                      style={{
+                        background: item.isEaten ? "#22C55E" : "transparent",
+                        border: item.isEaten ? "none" : "1.5px solid #2E4A35",
+                        boxShadow: item.isEaten ? "0 0 8px #22C55E55" : "none",
+                      }}
+                      title={
+                        item.isEaten
+                          ? "Oznacz jako niezjedzone"
+                          : "Oznacz jako zjedzone"
+                      }
+                    >
+                      {item.isEaten && (
+                        <svg
+                          width="10"
+                          height="8"
+                          viewBox="0 0 10 8"
+                          fill="none"
+                        >
+                          <path
+                            d="M1 4L3.5 6.5L9 1"
+                            stroke="#0F1F13"
+                            strokeWidth="1.8"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      )}
+                    </button>
+
                     {/* Zdjęcie lub placeholder */}
                     {imageUrl ? (
                       <Image
@@ -330,8 +390,13 @@ export const DiaryDayView = () => {
                     {/* Nazwa + makro */}
                     <div className="flex items-center flex-1 gap-2 min-w-0">
                       <span
-                        className="text-sm font-medium truncate flex-1"
-                        style={{ color: "#D6DFEC" }}
+                        className="text-sm font-medium truncate flex-1 transition-all duration-300"
+                        style={{
+                          color: "#D6DFEC",
+                          textDecoration: item.isEaten
+                            ? "line-through #3D5A45"
+                            : "none",
+                        }}
                       >
                         {name}
                       </span>
