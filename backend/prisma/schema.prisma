@@ -187,4 +187,5 @@ model DiaryEntryItem {
   mealType  MealType @default(BREAKFAST)
   createdAt DateTime @default(now())
   quantity  Decimal
+  isEaten Boolean @default(false)
 }

@@ -752,6 +752,148 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/diary/{id}/eaten": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Toggle eaten status of diary item */
+    patch: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: {
+        content: {
+          "application/json": {
+            isEaten: boolean;
+          };
+        };
+      };
+      responses: {
+        /** @description Item updated */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              updated: {
+                id: string;
+                diaryEntryId: string;
+                productId: string | null;
+                recipeId: string | null;
+                /** @enum {string} */
+                mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
+                quantity: string;
+                createdAt: string;
+                product: {
+                  id: string;
+                  name: string;
+                  calories: string;
+                  carbs: string;
+                  protein: string;
+                  fat: string;
+                  imageUrl: string;
+                  createdAt: string;
+                } | null;
+                recipe: {
+                  id: string;
+                  name: string;
+                  products: {
+                    quantity: string;
+                    product: {
+                      id: string;
+                      name: string;
+                      calories: string;
+                      carbs: string;
+                      protein: string;
+                      fat: string;
+                      imageUrl: string;
+                      createdAt: string;
+                    };
+                  }[];
+                } | null;
+                userRecipeId: string | null;
+                userRecipe: {
+                  id: string;
+                  userId: string;
+                  createdAt: string;
+                  sourceRecipeId: string;
+                  name: string;
+                  userRecipeIngredients: {
+                    id: string;
+                    userRecipeId: string;
+                    productId: string;
+                    quantity: string;
+                    createdAt: string;
+                    updatedAt: string;
+                    product: {
+                      id: string;
+                      name: string;
+                      calories: string;
+                      carbs: string;
+                      protein: string;
+                      fat: string;
+                      imageUrl: string;
+                      createdAt: string;
+                    };
+                  }[];
+                } | null;
+              };
+            };
+          };
+        };
+        /** @description Validation error */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Item not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    trace?: never;
+  };
   "/diary/{id}/item": {
     parameters: {
       query?: never;

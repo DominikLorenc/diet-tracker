@@ -18,3 +18,7 @@ export const dateDiarySchema = z.object({
 });
 
 export const diaryIdSchema = z.uuid();
+
+export const toggleEatenSchema = z.object({
+    isEaten: z.boolean(),
+});

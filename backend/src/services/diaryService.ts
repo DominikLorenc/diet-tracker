@@ -140,6 +140,25 @@ export const deleteDiaryService = async (id: string, userId: string): Promise<Di
     }
 };
 
+export const updateDiaryEntry = async (id: string, userId: string, isEaten: boolean): Promise<DiaryEntryItem> => {
+    try {
+        const updated = await prisma.diaryEntryItem.update({
+            where: {
+                id,
+                diaryEntry: {
+                    userId,
+                },
+            },
+            data: {
+                isEaten,
+            },
+        });
+        return updated;
+    } catch (_error) {
+        throw new AppError('Diary entry not found', 404);
+    }
+};
+
 export const deleteDiaryItemProductService = async (id: string, userId: string): Promise<DiaryEntryItem> => {
     const diaryItem = await findDiaryItemById(id);
     if (!diaryItem) {

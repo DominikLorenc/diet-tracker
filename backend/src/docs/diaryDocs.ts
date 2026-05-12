@@ -134,6 +134,27 @@ registry.registerPath({
 });
 
 registry.registerPath({
+    method: 'patch',
+    path: '/diary/{id}/eaten',
+    tags: ['Diary'],
+    summary: 'Toggle eaten status of diary item',
+    security: [{ cookieAuth: [] }],
+    request: {
+        params: z.object({ id: z.uuid() }),
+        body: { content: { 'application/json': { schema: z.object({ isEaten: z.boolean() }) } } },
+    },
+    responses: {
+        200: {
+            description: 'Item updated',
+            content: { 'application/json': { schema: z.object({ message: z.string(), updated: diaryItemSchema }) } },
+        },
+        400: { description: 'Validation error', content: errorContent },
+        401: { description: 'Unauthorized', content: errorContent },
+        404: { description: 'Item not found', content: errorContent },
+    },
+});
+
+registry.registerPath({
     method: 'delete',
     path: '/diary/{id}/item',
     tags: ['Diary'],
