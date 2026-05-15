@@ -87,17 +87,31 @@ export default function Navbar({ variant }: NavbarProps) {
             </Link>
           </>
         ) : (
-          <button
-            onClick={handleLogout}
-            className="px-4 py-2 text-sm font-semibold rounded-lg transition-all hover:opacity-80 cursor-pointer"
-            style={{
-              color: "#94A3B8",
-              background: "#0F1A10",
-              border: "1px solid #1E3322",
-            }}
-          >
-            Wyloguj się
-          </button>
+          <>
+            <Link
+              href="/dashboard/shopping-list"
+              className="w-9 h-9 flex items-center justify-center rounded-lg text-base transition-all hover:opacity-80"
+              style={{
+                color: "#94A3B8",
+                background: "#0F1A10",
+                border: "1px solid #1E3322",
+              }}
+              title="Lista zakupów"
+            >
+              🛒
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 text-sm font-semibold rounded-lg transition-all hover:opacity-80 cursor-pointer"
+              style={{
+                color: "#94A3B8",
+                background: "#0F1A10",
+                border: "1px solid #1E3322",
+              }}
+            >
+              Wyloguj się
+            </button>
+          </>
         )}
       </div>
     </nav>

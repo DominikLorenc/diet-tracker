@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { emoji: "👤", name: "Profil", href: "/dashboard/profile" },
   { emoji: "📦", name: "Wszystkie produkty", href: "/dashboard/all" },
   { emoji: "🍳", name: "Przepisy", href: "/dashboard/recipes" },
+  { emoji: "🛒", name: "Lista zakupów", href: "/dashboard/shopping-list" },
 ];
 
 const MOBILE_NAV = NAV_ITEMS.slice(0, 4);
