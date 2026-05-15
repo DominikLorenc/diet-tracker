@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Card } from "@/app/_components/ui/Card";
 import { Button } from "@/app/_components/ui/Button";
 import { apiClient } from "@/app/lib/apiClient";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 type ShoppingItem = {
   name: string;
@@ -139,6 +141,41 @@ export default function ShoppingListPage() {
     setRemoved(new Set());
   }
 
+  async function handleExportPDF() {
+    const rows = visibleItems
+      .map(
+        (item) => `
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e5e7eb;font-size:14px;">
+          <span>${item.name}</span>
+          <span style="color:#6b7280;margin-left:16px;">${item.grams} g</span>
+        </div>`,
+      )
+      .join("");
+
+    const el = document.createElement("div");
+    el.style.cssText =
+      "font-family:Arial,sans-serif;padding:32px;color:#111;width:700px;position:fixed;top:-9999px;left:-9999px;background:white;";
+    el.innerHTML = `
+      <h2 style="margin:0 0 4px;font-size:22px;">Lista zakupów</h2>
+      <p style="margin:0 0 24px;color:#6b7280;font-size:13px;">${from} — ${to}</p>
+      ${rows}
+    `;
+    document.body.appendChild(el);
+
+    const canvas = await html2canvas(el, {
+      scale: 2,
+      backgroundColor: "#ffffff",
+    });
+    document.body.removeChild(el);
+
+    const imgData = canvas.toDataURL("image/png");
+    const doc = new jsPDF({ unit: "mm", format: "a4" });
+    const pageW = doc.internal.pageSize.getWidth();
+    const imgH = (canvas.height * pageW) / canvas.width;
+    doc.addImage(imgData, "PNG", 0, 0, pageW, imgH);
+    doc.save(`lista-zakupow-${from}-${to}.pdf`);
+  }
+
   return (
     <main className="min-h-screen bg-[#0F1A10] p-6 md:p-10">
       <div className="max-w-2xl mx-auto flex flex-col gap-6">
@@ -199,14 +236,22 @@ export default function ShoppingListPage() {
               <p className="text-dash-fg font-sans font-semibold text-sm">
                 {visibleItems.length} pozycji
               </p>
-              {removed.size > 0 && (
+              <div className="flex items-center gap-3">
+                {removed.size > 0 && (
+                  <button
+                    onClick={handleReset}
+                    className="text-dash-fg-muted text-xs font-sans hover:text-dash-green transition-colors cursor-pointer"
+                  >
+                    ↺ Resetuj ({removed.size})
+                  </button>
+                )}
                 <button
-                  onClick={handleReset}
-                  className="text-dash-fg-muted text-xs font-sans hover:text-dash-green transition-colors cursor-pointer"
+                  onClick={handleExportPDF}
+                  className="text-xs font-sans text-dash-fg-muted border border-dash-border rounded-lg px-3 py-1 hover:border-dash-green hover:text-dash-green transition-colors cursor-pointer"
                 >
-                  ↺ Resetuj ({removed.size})
+                  ↓ PDF
                 </button>
-              )}
+              </div>
             </div>
 
             {/* Pozycje */}
