@@ -6,6 +6,7 @@ import {
     updateProduct,
     deleteProduct,
     searchProducts,
+    getProductByBarcodeController,
 } from '../controllers/productController';
 import { authMiddleware } from '../middleware/authMiddleware';
 
@@ -16,6 +17,7 @@ router.use(authMiddleware);
 router.post('/', createProduct);
 router.get('/', getProducts);
 router.get('/search', searchProducts);
+router.get('/barcode/:code', getProductByBarcodeController);
 router.get('/:id', getProduct);
 router.patch('/:id', updateProduct);
 router.delete('/:id', deleteProduct);

@@ -6,6 +6,7 @@ import {
     searchProductsService,
     updateProductValues,
     deleteProductService,
+    getProductByBarcode,
 } from '../services/productService';
 import request from 'supertest';
 import app from '../app';
@@ -180,12 +181,12 @@ describe(`GET /api/v1/products/search?q=apple`, () => {
             },
         ]);
         const res = await request(app)
-            .get(`/api/v1/products/search?q=apple`)
+            .get(`/api/v1/products/search?search=apple`)
             .set('Cookie', ['token=' + token]);
         expect(res.status).toBe(200);
     });
     it('should return 401 when user is not logged in', async () => {
-        const res = await request(app).get(`/api/v1/products/search?q=apple`);
+        const res = await request(app).get(`/api/v1/products/search?search=apple`);
         expect(res.status).toBe(401);
     });
     it('should return 400 when invalid data is provided', async () => {
@@ -312,6 +313,57 @@ describe('DELETE /api/v1/products/:id', () => {
 
     it('should return 401 when user is not logged in', async () => {
         const res = await request(app).delete(`/api/v1/products/${productId}`);
+        expect(res.status).toBe(401);
+    });
+});
+
+describe('GET /api/v1/products/barcode/:code', () => {
+    beforeEach(() => {
+        vi.resetAllMocks();
+    });
+
+    it('should return 200 when product found by barcode', async () => {
+        vi.mocked(getProductByBarcode).mockResolvedValue({
+            id: productId,
+            name: 'Test product',
+            calories: 100,
+            protein: 100,
+            carbs: 100,
+            fat: 100,
+            barcode: '5901234123457',
+            imageUrl: '',
+            source: 'database',
+        });
+
+        const res = await request(app)
+            .get('/api/v1/products/barcode/5901234123457')
+            .set('Cookie', ['token=' + token]);
+
+        expect(res.status).toBe(200);
+        expect(res.body.product.barcode).toBe('5901234123457');
+        expect(res.body.product.source).toBe('database');
+    });
+
+    it('should return 404 when product not found', async () => {
+        vi.mocked(getProductByBarcode).mockRejectedValue(new AppError('Product not found', 404));
+
+        const res = await request(app)
+            .get('/api/v1/products/barcode/5901234123457')
+            .set('Cookie', ['token=' + token]);
+
+        expect(res.status).toBe(404);
+    });
+
+    it('should return 400 when barcode format is invalid', async () => {
+        const res = await request(app)
+            .get('/api/v1/products/barcode/NOTABARCODE')
+            .set('Cookie', ['token=' + token]);
+
+        expect(res.status).toBe(400);
+    });
+
+    it('should return 401 when not authenticated', async () => {
+        const res = await request(app).get('/api/v1/products/barcode/5901234123457');
         expect(res.status).toBe(401);
     });
 });

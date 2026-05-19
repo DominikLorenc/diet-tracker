@@ -1056,6 +1056,7 @@ export interface paths {
                 protein: number;
                 fat: number;
                 imageUrl: string;
+                barcode: string | null;
                 createdAt: string;
               }[];
             };
@@ -1105,6 +1106,7 @@ export interface paths {
                 protein: number;
                 fat: number;
                 imageUrl: string;
+                barcode: string | null;
                 createdAt: string;
               };
             };
@@ -1174,6 +1176,7 @@ export interface paths {
                 protein: number;
                 fat: number;
                 imageUrl: string;
+                barcode: string | null;
                 createdAt: string;
               }[];
             };
@@ -1192,6 +1195,93 @@ export interface paths {
         };
         /** @description Unauthorized */
         401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/products/barcode/{code}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get product by barcode
+     * @description Looks up a product by EAN-8 or EAN-13 barcode. If not in the database and the caller is an admin, falls back to Open Food Facts.
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          code: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Product found */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              product: {
+                id?: string;
+                name: string;
+                calories: number;
+                carbs: number;
+                protein: number;
+                fat: number;
+                imageUrl: string;
+                barcode: string;
+                /** @enum {string} */
+                source: "database" | "open_food_facts";
+              };
+            };
+          };
+        };
+        /** @description Invalid barcode format (must be 8 or 13 digits) */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Product not found */
+        404: {
           headers: {
             [name: string]: unknown;
           };
@@ -1245,6 +1335,7 @@ export interface paths {
                 protein: number;
                 fat: number;
                 imageUrl: string;
+                barcode: string | null;
                 createdAt: string;
               };
             };
@@ -1304,6 +1395,7 @@ export interface paths {
                 protein: number;
                 fat: number;
                 imageUrl: string;
+                barcode: string | null;
                 createdAt: string;
               };
             };
@@ -1354,6 +1446,7 @@ export interface paths {
             protein?: number;
             fat?: number;
             imageUrl?: string;
+            barcode?: string;
           };
         };
       };
@@ -1373,6 +1466,7 @@ export interface paths {
                 protein: number;
                 fat: number;
                 imageUrl: string;
+                barcode: string | null;
                 createdAt: string;
               };
             };
@@ -3232,6 +3326,7 @@ export interface components {
       protein: number;
       fat: number;
       imageUrl?: string;
+      barcode?: string;
     };
     DiaryEntry: {
       /** Format: date-time */

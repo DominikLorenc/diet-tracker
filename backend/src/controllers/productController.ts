@@ -6,8 +6,16 @@ import {
     updateProductValues,
     deleteProductService,
     searchProductsService,
+    getProductByBarcode,
 } from '../services/productService';
-import { productSchema, productIdSchema, updateProductSchema, searchProductSchema } from '../schemas/productSchema';
+import {
+    productSchema,
+    productIdSchema,
+    updateProductSchema,
+    searchProductSchema,
+    barcodeCodeSchema,
+} from '../schemas/productSchema';
+import { Role } from '../generated/prisma';
 
 export const createProduct = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -105,6 +113,24 @@ export const searchProducts = async (req: Request, res: Response, next: NextFunc
         const query = result.data.search;
         const products = await searchProductsService(query);
         res.status(200).json({ products });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getProductByBarcodeController = async (req: Request, res: Response, next: NextFunction) => {
+    const { code } = req.params;
+
+    const result = barcodeCodeSchema.safeParse(code);
+    if (!result.success) {
+        res.status(400).json({ message: result.error.issues });
+        return;
+    }
+
+    try {
+        const isAdmin = req.role === Role.ADMIN;
+        const product = await getProductByBarcode(result.data, isAdmin);
+        res.status(200).json({ product });
     } catch (error) {
         next(error);
     }

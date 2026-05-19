@@ -10,6 +10,10 @@ export const productSchema = registry.register(
         protein: z.number().nonnegative('Protein must be a positive number'),
         fat: z.number().nonnegative('Fat must be a positive number'),
         imageUrl: z.string().optional(),
+        barcode: z
+            .string()
+            .regex(/^\d{8}$|^\d{13}$/, 'Barcode must be 8 or 13 digits')
+            .optional(),
     }),
 );
 
@@ -22,3 +26,5 @@ export const productIdSchema = z.uuid({ message: 'Product ID must be a valid UUI
 export const searchProductSchema = z.object({
     search: z.string().min(1, 'Search term is required'),
 });
+
+export const barcodeCodeSchema = z.string().regex(/^\d{8}$|^\d{13}$/, 'Barcode must be 8 or 13 digits');

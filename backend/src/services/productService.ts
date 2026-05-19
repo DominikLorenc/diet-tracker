@@ -100,3 +100,80 @@ export const searchProductsService = async (search: string): Promise<Product[]> 
 
     return products;
 };
+
+export type BarcodeProductResult = {
+    id?: string;
+    name: string;
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    barcode: string;
+    imageUrl: string;
+    source: 'database' | 'open_food_facts';
+};
+
+type OpenFoodFactsResponse = {
+    status: number;
+    product?: {
+        product_name?: string;
+        image_front_url?: string;
+        nutriments?: {
+            'energy-kcal_100g'?: number;
+            proteins_100g?: number;
+            carbohydrates_100g?: number;
+            fat_100g?: number;
+        };
+    };
+};
+
+export const getProductByBarcode = async (code: string, isAdmin: boolean): Promise<BarcodeProductResult> => {
+    const product = await prisma.product.findUnique({
+        where: { barcode: code },
+    });
+
+    if (product) {
+        return {
+            id: product.id,
+            name: product.name,
+            calories: Number(product.calories),
+            protein: Number(product.protein),
+            carbs: Number(product.carbs),
+            fat: Number(product.fat),
+            barcode: code,
+            imageUrl: product.imageUrl,
+            source: 'database',
+        };
+    }
+
+    if (!isAdmin) {
+        throw new AppError('Product not found', 404);
+    }
+
+    const response = await fetch(`https://world.openfoodfacts.org/api/v2/product/${code}.json`);
+
+    if (!response.ok) {
+        throw new AppError('Product not found', 404);
+    }
+
+    const json: OpenFoodFactsResponse = await response.json();
+
+    console.log(json);
+
+    if (json.status !== 1 || !json.product) {
+        throw new AppError('Product not found', 404);
+    }
+
+    const off = json.product;
+
+    return {
+        name: off.product_name ?? '',
+        calories: off.nutriments?.['energy-kcal_100g'] ?? 0,
+        protein: off.nutriments?.['proteins_100g'] ?? 0,
+        carbs: off.nutriments?.['carbohydrates_100g'] ?? 0,
+        fat: off.nutriments?.['fat_100g'] ?? 0,
+        barcode: code,
+        imageUrl: off.image_front_url ?? '',
+        source: 'open_food_facts',
+    };
+};

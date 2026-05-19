@@ -8,6 +8,10 @@ import { useSearchParams } from "next/navigation";
 import { apiClient } from "@/app/lib/apiClient";
 import { useToastStore } from "@/store/useToastStore";
 import { AddProductCard } from "./ProductCard";
+import {
+  BarcodeScannerModal,
+  type ScannedProduct,
+} from "@/app/_components/barcode/BarcodeScannerModal";
 
 const searchSchema = z.object({
   search: z.string().min(1, "Wpisz nazwę produktu"),
@@ -59,6 +63,10 @@ export const ProductSearch = ({
   const [expandedProductIdState, setExpandedProductId] = useState<
     string | null
   >(null);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [isCameraSupported] = useState(
+    typeof navigator !== "undefined" && !!navigator.mediaDevices?.getUserMedia,
+  );
 
   const {
     register,
@@ -150,6 +158,24 @@ export const ProductSearch = ({
     }
   };
 
+  const handleBarcodeFound = (scannedProduct: ScannedProduct) => {
+    if (scannedProduct.source === "database" && scannedProduct.id) {
+      const product: Product = {
+        id: scannedProduct.id,
+        name: scannedProduct.name,
+        calories: scannedProduct.calories,
+        carbs: scannedProduct.carbs,
+        protein: scannedProduct.protein,
+        fat: scannedProduct.fat,
+        imageUrl: scannedProduct.imageUrl,
+        createdAt: new Date().toISOString(),
+      };
+      setSearchResults([product]);
+      setHasSearched(true);
+      setExpandedProductId(product.id);
+    }
+  };
+
   const recentProducts = recentSearches
     .filter((r) => r.product !== null)
     .map((r) => r.product as Product)
@@ -197,6 +223,36 @@ export const ProductSearch = ({
             Szukaj
           </button>
         </form>
+
+        {/* Przycisk skanera kodu kreskowego */}
+        {isCameraSupported && (
+          <button
+            type="button"
+            onClick={() => setIsScannerOpen(true)}
+            title="Skanuj kod kreskowy"
+            className="shrink-0 flex items-center gap-1.5 bg-[#1A2E1A] border border-[#22C55E40] hover:border-[#22C55E] transition-colors px-3 py-2.5 rounded-xl text-[#4ADE80]"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width={16}
+              height={16}
+              fill="none"
+              stroke="#4ADE80"
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+              <line x1="14" y1="14" x2="14" y2="21" />
+              <line x1="14" y1="14" x2="21" y2="14" />
+              <line x1="21" y1="17" x2="21" y2="21" />
+              <line x1="17" y1="21" x2="21" y2="21" />
+            </svg>
+          </button>
+        )}
 
         {/* Przycisk nowego produktu — zawsze widoczny */}
         <button
@@ -358,6 +414,13 @@ export const ProductSearch = ({
           )}
         </div>
       )}
+
+      <BarcodeScannerModal
+        key={isScannerOpen ? "open" : "closed"}
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+        onProductFound={handleBarcodeFound}
+      />
     </div>
   );
 };

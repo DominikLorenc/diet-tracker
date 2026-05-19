@@ -50,9 +50,7 @@ async function generateShoppingList(
 
   const entries = await fetchData(dates);
 
-  const map = new Map<string, number>(); // nazwa → łączna ilość gramów
-
-  console.log(entries);
+  const map = new Map<string, number>();
 
   for (const item of entries) {
     item?.forEach((entry) => {
@@ -126,7 +124,11 @@ export default function ShoppingListPage() {
 
   const visibleItems = items?.filter((i) => !removed.has(i.name)) ?? [];
 
+  const isDateRangeInvalid = from > to;
+
   async function handleGenerate() {
+    if (!from || !to) return;
+
     setIsLoading(true);
     const items = await generateShoppingList(from, to);
     setItems(items);
@@ -223,9 +225,15 @@ export default function ShoppingListPage() {
             onClick={handleGenerate}
             isLoading={isLoading}
             className="w-full mt-1"
+            disabled={isDateRangeInvalid}
           >
             Generuj listę
           </Button>
+          {isDateRangeInvalid && (
+            <p className="text-red-400 text-sm">
+              Data &apos;Od&apos; musi być wcześniejsza niż data &apos;Do&apos;
+            </p>
+          )}
         </Card>
 
         {/* Krok 2 — lista zakupów */}
@@ -245,12 +253,14 @@ export default function ShoppingListPage() {
                     ↺ Resetuj ({removed.size})
                   </button>
                 )}
-                <button
-                  onClick={handleExportPDF}
-                  className="text-xs font-sans text-dash-fg-muted border border-dash-border rounded-lg px-3 py-1 hover:border-dash-green hover:text-dash-green transition-colors cursor-pointer"
-                >
-                  ↓ PDF
-                </button>
+                {visibleItems.length > 0 && (
+                  <button
+                    onClick={handleExportPDF}
+                    className="text-xs font-sans text-dash-fg-muted border border-dash-border rounded-lg px-3 py-1 hover:border-dash-green hover:text-dash-green transition-colors cursor-pointer"
+                  >
+                    ↓ PDF
+                  </button>
+                )}
               </div>
             </div>
 

@@ -12,7 +12,20 @@ const productResponseSchema = z.object({
     protein: z.number(),
     fat: z.number(),
     imageUrl: z.string(),
+    barcode: z.string().nullable(),
     createdAt: z.string(),
+});
+
+const barcodeProductResponseSchema = z.object({
+    id: z.string().optional(),
+    name: z.string(),
+    calories: z.number(),
+    carbs: z.number(),
+    protein: z.number(),
+    fat: z.number(),
+    imageUrl: z.string(),
+    barcode: z.string(),
+    source: z.enum(['database', 'open_food_facts']),
 });
 
 registry.registerPath({
@@ -66,6 +79,28 @@ registry.registerPath({
             content: { 'application/json': { schema: z.object({ products: z.array(productResponseSchema) }) } },
         },
         400: { description: 'Missing search term', content: errorContent },
+        401: { description: 'Unauthorized', content: errorContent },
+    },
+});
+
+registry.registerPath({
+    method: 'get',
+    path: '/products/barcode/{code}',
+    tags: ['Products'],
+    summary: 'Get product by barcode',
+    description:
+        'Looks up a product by EAN-8 or EAN-13 barcode. If not in the database and the caller is an admin, falls back to Open Food Facts.',
+    security: [{ cookieAuth: [] }],
+    request: {
+        params: z.object({ code: z.string().regex(/^\d{8}$|^\d{13}$/) }),
+    },
+    responses: {
+        200: {
+            description: 'Product found',
+            content: { 'application/json': { schema: z.object({ product: barcodeProductResponseSchema }) } },
+        },
+        400: { description: 'Invalid barcode format (must be 8 or 13 digits)', content: errorContent },
+        404: { description: 'Product not found', content: errorContent },
         401: { description: 'Unauthorized', content: errorContent },
     },
 });
