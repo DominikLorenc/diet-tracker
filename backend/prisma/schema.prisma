@@ -117,6 +117,7 @@ model Product {
   protein      Decimal
   fat          Decimal
   imageUrl     String        @default("")
+  barcode      String?       @unique
   createdAt    DateTime      @default(now())
   diaryEntriesItems DiaryEntryItem[]
   recipeIngredient RecipeIngredient[]

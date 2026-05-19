@@ -34,6 +34,7 @@ describe('POST /api/v1/products/', () => {
             id: productId,
             createdAt: new Date(),
             imageUrl: '',
+            barcode: null,
         });
 
         const res = await request(app)
@@ -109,6 +110,7 @@ describe('GET /api/v1/products', () => {
                 id: productId,
                 createdAt: new Date(),
                 imageUrl: '',
+                barcode: null,
             },
         ]);
         const res = await request(app)
@@ -137,6 +139,7 @@ describe(`GET /api/v1/products/${productId}`, () => {
             id: productId,
             createdAt: new Date(),
             imageUrl: '',
+            barcode: null,
         });
         const res = await request(app)
             .get(`/api/v1/products/${productId}`)
@@ -173,6 +176,7 @@ describe(`GET /api/v1/products/search?q=apple`, () => {
                 id: productId,
                 createdAt: new Date(),
                 imageUrl: '',
+                barcode: null,
             },
         ]);
         const res = await request(app)
@@ -206,6 +210,7 @@ describe('PATCH /api/v1/products/:id', () => {
             id: productId,
             createdAt: new Date(),
             imageUrl: '',
+            barcode: null,
         });
         const res = await request(app)
             .patch(`/api/v1/products/${productId}`)
@@ -288,6 +293,7 @@ describe('DELETE /api/v1/products/:id', () => {
             id: productId,
             createdAt: new Date(),
             imageUrl: '',
+            barcode: null,
         });
         const res = await request(app)
             .delete(`/api/v1/products/${productId}`)
