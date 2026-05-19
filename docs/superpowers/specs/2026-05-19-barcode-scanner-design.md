@@ -8,7 +8,7 @@ Umożliwienie skanowania kodów kreskowych EAN-13 z opakowań produktów spożyw
 
 ## Uprawnienia
 
-- **Zwykły user** — może skanować kody w dzienniku. Wynik pochodzi z własnej bazy lub Open Food Facts (tymczasowo, bez zapisu do DB). Jeśli produkt nie znaleziony nigdzie — komunikat błędu.
+- **Zwykły user** — może skanować kody w dzienniku. Wynik pochodzi wyłącznie z własnej bazy. Jeśli produkt nie znaleziony — komunikat "Nie znaleziono produktu".
 - **Admin** — może skanować kod w formularzu dodawania produktu. Open Food Facts wypełnia formularz automatycznie. Admin weryfikuje i zapisuje do bazy.
 
 Żaden produkt nie trafia do bazy bez świadomej akcji admina.
@@ -39,8 +39,16 @@ GET /api/products/barcode/:code
 
 **Logika (productService.ts):**
 
+Endpoint ma dwa tryby zależnie od roli wywołującego:
+
+**Tryb user (domyślny):**
 1. Szukaj w DB: `Product.findFirst({ where: { barcode: code } })`
-2. Znaleziono → zwróć `{ ...product, source: "database" }` (200)
+2. Znaleziono → zwróć produkt (200)
+3. Nie znaleziono → zwróć 404
+
+**Tryb admin (`?source=full`):**
+1. Szukaj w DB
+2. Znaleziono → zwróć produkt (200)
 3. Nie znaleziono → odpytaj Open Food Facts API
 4. Znaleziono w OFF → zmapuj dane → zwróć `{ name, calories, protein, carbs, fat, barcode: code, source: "open_food_facts" }` (200)
 5. Nie znaleziono nigdzie → zwróć 404
@@ -117,13 +125,8 @@ Przy polu wyszukiwania produktów pojawia się ikonka aparatu (przycisk). Klikni
 - Modal zmienia widok na formularz "dodaj do dziennika" z wypełnionymi danymi
 - User wybiera porcję i potwierdza
 
-**Po znalezieniu produktu (`source: "open_food_facts"`):**
-- Komunikat: "Produkt znaleziony w Open Food Facts, ale nie ma go jeszcze w naszej bazie. Poproś administratora o jego dodanie."
-- User nie może dodać go do dziennika — `DiaryEntryItem` wymaga istniejącego `productId` w DB
-- Pokazujemy podgląd danych (nazwa, kalorie, makro) żeby user wiedział o co chodzi
-
 **Produkt nie znaleziony:**
-- Komunikat: "Nie znaleziono produktu. Skontaktuj się z administratorem."
+- Komunikat: "Nie znaleziono produktu."
 
 ## Integracja — Miejsce 2: Formularz admina
 
