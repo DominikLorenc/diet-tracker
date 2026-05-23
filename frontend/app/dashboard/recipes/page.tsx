@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { apiClient } from "@/app/lib/apiClient";
 
 export interface Product {
@@ -34,17 +35,22 @@ export interface RecipesResponse {
 
 export default function Recipes() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const fetchRecipes = async () => {
-      const { data, error } = await apiClient.GET("/recipes");
-      if (error) {
-        console.log(error);
-      } else if (data) {
-        setRecipes(data.recipes as Recipe[]);
+    const fetchData = async () => {
+      const [recipesRes, meRes] = await Promise.all([
+        apiClient.GET("/recipes"),
+        apiClient.GET("/users/me"),
+      ]);
+      if (recipesRes.data) {
+        setRecipes(recipesRes.data.recipes as Recipe[]);
+      }
+      if (meRes.data?.user) {
+        setIsAdmin(meRes.data.user.role === "ADMIN");
       }
     };
-    fetchRecipes();
+    fetchData();
   }, []);
 
   const handleAddProductToDiary = async (id: string, quantity: number) => {
@@ -76,12 +82,22 @@ export default function Recipes() {
             <h3 className="text-sm font-semibold uppercase tracking-widest text-white/50">
               {recipe.name}
             </h3>
-            <button
-              onClick={() => handleAddProductToDiary(recipe.id, 100)}
-              className="flex items-center justify-center w-7 h-7 rounded-full bg-yellow-400 text-black font-bold text-lg hover:bg-yellow-300 transition-colors"
-            >
-              +
-            </button>
+            <div className="flex items-center gap-3">
+              {isAdmin && (
+                <Link
+                  href={`/dashboard/recipe-builder?id=${recipe.id}`}
+                  className="text-xs text-white/40 hover:text-white transition-colors"
+                >
+                  Edytuj
+                </Link>
+              )}
+              <button
+                onClick={() => handleAddProductToDiary(recipe.id, 100)}
+                className="flex items-center justify-center w-7 h-7 rounded-full bg-yellow-400 text-black font-bold text-lg hover:bg-yellow-300 transition-colors"
+              >
+                +
+              </button>
+            </div>
           </div>
           <div className="px-4 py-3">
             <div className="flex flex-col divide-y divide-white/5">

@@ -269,7 +269,7 @@ export const RecipeSearch = ({ mealType, date }: Props) => {
               recipe={recipe}
               onAddToDiary={addUserRecipeToDiary}
               onDelete={handleDelete}
-              editHref={`/dashboard/recipe-builder?id=${recipe.id}&mealType=${mealType}&date=${date}`}
+              editHref={`/dashboard/recipe-builder?id=${recipe.id}&userRecipe=true&mealType=${mealType}&date=${date}`}
             />
           ))
         )}

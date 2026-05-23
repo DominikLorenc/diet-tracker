@@ -111,7 +111,10 @@ export const UserRecipeCard = ({
 
         {/* Link Edytuj */}
         <Link
-          href={editHref ?? `/dashboard/recipe-builder?id=${recipe.id}`}
+          href={
+            editHref ??
+            `/dashboard/recipe-builder?id=${recipe.id}&userRecipe=true`
+          }
           onClick={(e) => e.stopPropagation()}
           className="shrink-0 text-[#8FA0B8] hover:text-[#F3F7FF] text-xs transition-colors"
         >

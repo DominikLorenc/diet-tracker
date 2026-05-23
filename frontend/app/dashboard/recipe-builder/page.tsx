@@ -27,6 +27,7 @@ function RecipeBuilderContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const editId = searchParams.get("id");
+  const isUserRecipe = searchParams.get("userRecipe") === "true";
   const returnMealType = searchParams.get("mealType");
   const returnDate = searchParams.get("date");
 
@@ -45,7 +46,7 @@ function RecipeBuilderContent() {
 
       if (!editId) return;
 
-      if (userRole === "ADMIN") {
+      if (!isUserRecipe && userRole === "ADMIN") {
         const res = await apiClient.GET("/recipes/{id}", {
           params: { path: { id: editId } },
         });
@@ -126,7 +127,7 @@ function RecipeBuilderContent() {
 
     let saveError: unknown = null;
 
-    if (role === "ADMIN") {
+    if (!isUserRecipe && role === "ADMIN") {
       if (editId) {
         const { error } = await apiClient.PATCH("/recipes/{id}", {
           params: { path: { id: editId } },
