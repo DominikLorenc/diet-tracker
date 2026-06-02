@@ -9,10 +9,14 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "**",
+        hostname: "hnhiomyxdfnxogqckncq.supabase.co",
+      },
+      {
+        protocol: "https",
+        hostname: "images.openfoodfacts.org",
       },
     ],
-  }
+  },
 };
 
 export default nextConfig;

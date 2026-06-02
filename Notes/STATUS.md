@@ -70,8 +70,9 @@
 
 ## 🛠️ Dług techniczny / ulepszenia (scalone z `improvements.md`)
 
-Zweryfikowane 2026-06-02. Już zrobione (skreślone): **F1** useMeasurements działa,
-**F2** brak `.env` w gitcie, **B7** martwy `diaryExists` usunięty.
+Zweryfikowane 2026-06-02. Już zrobione (skreślone): ~~**F1**~~ useMeasurements działa,
+~~**F2**~~ brak `.env` w gitcie, ~~**B7**~~ martwy `diaryExists` usunięty,
+~~**F7**~~ `remotePatterns` zawężone do `*.supabase.co` + `images.openfoodfacts.org` (2026-06-02).
 
 ### Backend
 
@@ -90,7 +91,7 @@ Zweryfikowane 2026-06-02. Już zrobione (skreślone): **F1** useMeasurements dzi
 - **F4 — Usuń zduplikowane typy** (`User`, `UserGoals`) → `_types/`
 - **F5 — Over-fetching `/users/me`** — `useUserStore` (Zustand) zamiast wielu `useEffect` (pokrywa się z `useAuthStore` wyżej)
 - **F6 — Dokończ ProductSearch** *potwierdzone* — celowe `TODO(human)` w liniach 83 i 311 (ostatnie wyszukiwania + lokalny stan ulubionych)
-- **F7 — Zawęź remote image pattern** — `next.config.ts`: `hostname:"**"` → domena Supabase
+- **F11 — Błąd typów blokujący `next build`** 🟠 `MeasurementChart.tsx:85` — `formatter` recharts dostaje `ValueType | undefined`, kod deklaruje `(value: number)`. Build kompiluje się OK, ale wywala na etapie TypeScript. Naprawić typ w `formatter`.
 - **F8 — Modal a11y** — focus trap + `aria-modal`/`role="dialog"` w `Modal.tsx`
 - **F9 — Lepsze błędy formularzy** — przekazywać wiadomość z API zamiast „Coś poszło nie tak"
 - **F10 — Error boundary** — `error.tsx` w `/app/dashboard/`
