@@ -1,6 +1,6 @@
 # Diet Tracker — Status projektu
 
-> Jedyne źródło prawdy o stanie projektu. Zweryfikowane z kodem 2026-06-02.
+> Jedyne źródło prawdy o stanie projektu. Zweryfikowane z kodem 2026-06-03.
 > Zasada: nie odhaczamy w wielu plikach — aktualizujemy TYLKO ten.
 
 ---
@@ -31,7 +31,7 @@
 | `**/dashboard/profile`**       | ✅ **DZIAŁA** | GET `/users/me` + zapis celów przez `MacroCalculator` (PATCH `/users/goals`, Auto + Manual) |
 | `**/dashboard/progress`**      | ✅            | pełny ekran: wykresy (recharts), pomiary ciała, modal, tabela historii, ~10 wywołań API     |
 | `**/dashboard/shopping-list**` | ✅            | lista zakupów z planera, ~4 wywołania API                                                   |
-| **Barcode scanner**            | ✅ kod gotowy | ⚠️ na gałęzi `feat/barcode-scanner`, **niezmergowany do main**                              |
+| **Barcode scanner**            | ✅            | zmergowany do `main` (commit `d94c4cd`)                                                     |
 | Toast notifications            | ✅            | `useToastStore` (Zustand) + `<Toast>`                                                       |
 | Empty states                   | ✅ częściowo  | obecne w 8 miejscach (search, shopping-list, recipe-builder, barcode…)                      |
 | Shared UI                      | ✅ częściowo  | istnieją `Button`, `Card`, `SectionHeader`, `Spinner`                                       |
@@ -43,14 +43,10 @@
 
 ## ⏳ Do zrobienia (potwierdzony brak w kodzie)
 
-### Domknięcie bieżącej pracy
-
-- **Zmergować `feat/barcode-scanner` do `main`** — gotowa praca leży niezmergowana (3 commity)
-
 ### Frontend — drobne braki
 
-- **Quick Stats w profilu** — wartości zahardkodowane (1400 kcal, 7 streak, 142 meals, 3.2 kg). Podpiąć pod realne dane.
-- `**/dashboard/all`** — to 10-liniowy stub (0 wywołań API). Dokończyć albo usunąć.
+- **Quick Stats w profilu** — 🔮 **feature na przyszłość, nie teraz**. Wartości zahardkodowane (1400 kcal, 7 streak, 142 meals, 3.2 kg). Podpiąć pod realne dane gdy będzie priorytet.
+- ~~`**/dashboard/all`**~~ ✅ ZROBIONE (2026-06-03) — NIE był stubem, to działająca lista wszystkich produktów (`AllProducts`): GET `/products`, edycja przez modal z odświeżeniem listy, usuwanie, stan ładowania (`Spinner`), empty state, obsługa błędu `GET`.
 - **Shared `Input`** — Button/Card są, brakuje wspólnego `Input`
 - **Loading skeletony** — dziś tylko teksty „Ładowanie…". Brak komponentów skeleton.
 
@@ -70,14 +66,15 @@
 
 ## 🛠️ Dług techniczny / ulepszenia (scalone z `improvements.md`)
 
-Zweryfikowane 2026-06-02. Już zrobione (skreślone): ~~**F1**~~ useMeasurements działa,
+Zweryfikowane 2026-06-03. Już zrobione (skreślone): ~~**F1**~~ useMeasurements działa,
 ~~**F2**~~ brak `.env` w gitcie, ~~**B7**~~ martwy `diaryExists` usunięty,
-~~**F7**~~ `remotePatterns` zawężone do `*.supabase.co` + `images.openfoodfacts.org` (2026-06-02).
+~~**F7**~~ `remotePatterns` zawężone do `*.supabase.co` + `images.openfoodfacts.org` (2026-06-02),
+~~**B1**~~ + ~~**B2**~~ access control — patrz niżej (2026-06-03).
 
 ### Backend
 
-- **B1 — Row-level authorization (diary)** 🔴 przed deployem. `diaryService`: dodać `userId` do `where` w `findFirst/update/delete`; `diaryController`: brać `req.userId`, nie z body
-- **B2 — Row-level authorization (recipe)** 🔴 sprawdzać właściciela przed edycją/usunięciem
+- ~~**B1 — Row-level authorization (diary)**~~ ✅ ZROBIONE. `diaryService` filtruje `userId` w `where` (`delete`/`update`/`deleteItem`), kontrolery biorą `req.userId`.
+- ~~**B2 — Row-level authorization (recipe)**~~ ✅ ZROBIONE — z rozróżnieniem na dwa modele: `Recipe` (globalny katalog, **bez właściciela**) chroniony przez `requireAdmin` na trasach `POST/PATCH/DELETE` (= role-based, bo nie ma czego „posiadać"); `UserRecipe` (przepis usera) filtruje `where: { id, userId }` w `update`/`delete`. Wniosek: A01 to nie zawsze `userId` w `where` — dla zasobu współdzielonego właściwa jest kontrola ról.
 - **B3 — Usuń `console.log`** z produkcji (`productController` ~99, `diaryService` ~134/153) → logger (`pino`)
 - **B4 — CORS z env** 🟠 *potwierdzone aktualne* — `app.ts` ma hardcoded `['http://localhost:3000','http://localhost:3001']` → `process.env.CORS_ORIGINS`
 - **B5 — Transakcja przy update recipe** — owinąć `deleteMany`+`create` w `prisma.$transaction`
@@ -100,12 +97,14 @@ Zweryfikowane 2026-06-02. Już zrobione (skreślone): ~~**F1**~~ useMeasurements
 
 ## Sugerowana kolejność
 
-1. **Merge barcode** — najpierw domknij gotową pracę
-2. **B1 + B2 — row-level authorization** 🔴 security, koniecznie przed deployem
-3. **Quick Stats + `/dashboard/all`** — usuń resztki placeholderów/stubów
-4. `**useAuthStore` / `useUserStore**` (= F5) — porządkuje stan auth, kończy over-fetching
-5. **Pierwsze testy frontend** (Vitest + RTL) — zacznij od jednego komponentu
-6. **B3, B4, B5 + F2-check** — standard produkcyjny przed deployem
-7. **Deploy** (Railway + Vercel + README) — żeby projekt żył publicznie
-8. Reszta długu technicznego + skeletony + shared `Input` — w wolnym czasie
+1. ~~**Merge barcode**~~ ✅ zmergowany do `main`
+2. ~~**B1 + B2 — row-level authorization**~~ ✅ zrobione (patrz dług techniczny → Backend)
+3. ~~**`/dashboard/all`**~~ ✅ zrobione (patrz „Frontend — drobne braki")
+4. **Przeglądanie listy produktów** (search + paginacja, server-side) ← **w toku** — spec: `docs/superpowers/specs/2026-06-03-products-list-browsing-design.md`
+5. `**useAuthStore` / `useUserStore**` (= F5) — porządkuje stan auth, kończy over-fetching
+6. **Pierwsze testy frontend** (Vitest + RTL) — zacznij od jednego komponentu
+7. **B3, B4, B5 + F2-check** — standard produkcyjny przed deployem
+8. **Deploy** (Railway + Vercel + README) — żeby projekt żył publicznie
+9. Reszta długu technicznego + skeletony + shared `Input` — w wolnym czasie
+10. **Quick Stats w profilu** (feature na przyszłość) — podpiąć zahardkodowane wartości pod realne dane
 

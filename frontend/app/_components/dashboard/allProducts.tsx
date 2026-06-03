@@ -7,6 +7,7 @@ import { Modal } from "../shared/Modal";
 import { ProductForm } from "../shared/ProductForm";
 import { useToastStore } from "@/store/useToastStore";
 import { apiClient } from "@/app/lib/apiClient";
+import { Spinner } from "../ui/Spinner";
 
 type Product = {
   name: string;
@@ -23,6 +24,7 @@ export const AllProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [openModal, setOpenModal] = useState(false);
   const [productToEdit, setProductToEdit] = useState<Product | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const showToast = useToastStore((state) => state.showToast);
 
   const handleEdit = (id: string) => {
@@ -36,10 +38,18 @@ export const AllProducts = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const { data } = await apiClient.GET("/products");
-      if (data) {
+      setIsLoading(true);
+      const { data, error } = await apiClient.GET("/products");
+      if (error) {
+        showToast(
+          "error",
+          "Nie udało się pobrać produktów",
+          "Spróbuj ponownie",
+        );
+      } else if (data) {
         setProducts(data.products as Product[]);
       }
+      setIsLoading(false);
     };
     fetchProducts();
   }, []);
@@ -51,10 +61,28 @@ export const AllProducts = () => {
     if (error) {
       showToast("error", "Nie udało się usunąć produktu", "Spróbuj ponownie");
     } else {
-      setProducts(products.filter((product) => product.id !== id));
-      showToast("error", "Produkt usunięty");
+      setProducts((prevProducts) =>
+        prevProducts.filter((prevProduct) => prevProduct.id !== id),
+      );
+      showToast("success", "Produkt usunięty");
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (products.length === 0) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <p className="text-gray-500">Brak produktów</p>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-8 flex flex-col gap-2">
@@ -73,6 +101,15 @@ export const AllProducts = () => {
         <ProductForm
           closeModal={() => setOpenModal(false)}
           productToEdit={productToEdit}
+          onSuccess={(product) => {
+            setOpenModal(false);
+            setProductToEdit(null);
+            setProducts((prevProducts) =>
+              prevProducts.map((prevProduct) =>
+                prevProduct.id === product.id ? product : prevProduct,
+              ),
+            );
+          }}
         />
       </Modal>
     </div>

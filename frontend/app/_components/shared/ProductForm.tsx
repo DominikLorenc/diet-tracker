@@ -147,6 +147,10 @@ export const ProductForm = ({
           "Produkt zaktualizowany!",
           `${product.calories} kcal | B: ${product.protein}g W: ${product.carbs}g T: ${product.fat}g`,
         );
+        if (onSuccess) {
+          onSuccess(product as Product);
+        }
+
         closeModal();
       }
     } catch {
