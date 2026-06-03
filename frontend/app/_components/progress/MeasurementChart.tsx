@@ -33,7 +33,7 @@ export const MeasurementChart = ({ label, unit, color, data }: Props) => {
 
   return (
     <div
-      className="flex flex-col gap-3 rounded-2xl border border-[#1E3322] bg-[#1A2420] p-4"
+      className="flex flex-col gap-3 rounded-2xl border border-dash-border bg-dash-surface-card p-4"
       style={{ boxShadow: "0 1px 20px rgba(34,197,94,0.09)" }}
     >
       <span
@@ -44,12 +44,12 @@ export const MeasurementChart = ({ label, unit, color, data }: Props) => {
       </span>
 
       <div className="flex items-end justify-between">
-        <span className="font-['IBM_Plex_Mono'] text-2xl font-bold text-[#F3F7FF]">
+        <span className="font-['IBM_Plex_Mono'] text-2xl font-bold text-dash-fg">
           {latest !== undefined ? `${latest} ${unit}` : "—"}
         </span>
 
         {delta !== null && (
-          <span className="font-['IBM_Plex_Mono'] text-xs text-[#94A3B8]">
+          <span className="font-['IBM_Plex_Mono'] text-xs text-dash-fg-secondary">
             {delta > 0 ? "↑" : delta < 0 ? "↓" : "→"}{" "}
             {Math.abs(delta).toFixed(1)} {unit}
           </span>
@@ -62,23 +62,23 @@ export const MeasurementChart = ({ label, unit, color, data }: Props) => {
             <LineChart data={chartData}>
               <XAxis
                 dataKey="date"
-                tick={{ fill: "#4B5563", fontSize: 10 }}
+                tick={{ fill: "var(--color-chart-tick)", fontSize: 10 }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
                 domain={["auto", "auto"]}
-                tick={{ fill: "#4B5563", fontSize: 10 }}
+                tick={{ fill: "var(--color-chart-tick)", fontSize: 10 }}
                 axisLine={false}
                 tickLine={false}
                 width={32}
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#111C14",
-                  border: "1px solid #1E3322",
+                  backgroundColor: "var(--color-dash-surface-darker)",
+                  border: "1px solid var(--color-dash-border)",
                   borderRadius: 8,
-                  color: "#F3F7FF",
+                  color: "var(--color-dash-fg)",
                   fontSize: 12,
                 }}
                 itemStyle={{ color }}
@@ -95,7 +95,7 @@ export const MeasurementChart = ({ label, unit, color, data }: Props) => {
             </LineChart>
           </ResponsiveContainer>
         ) : (
-          <div className="flex h-full items-center justify-center text-xs text-[#4B5563]">
+          <div className="flex h-full items-center justify-center text-xs text-chart-tick">
             Za mało danych
           </div>
         )}

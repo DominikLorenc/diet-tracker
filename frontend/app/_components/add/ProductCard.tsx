@@ -85,8 +85,8 @@ export const AddProductCard = ({
     <div
       className={`rounded-xl border overflow-hidden cursor-pointer mb-2 transition-colors ${
         favorite
-          ? "bg-[#1A2420] border-[#22C55E20]"
-          : "bg-[#131E15] border-[#1E3322]"
+          ? "bg-dash-surface-card border-[var(--color-green-mid-alpha-sm)]"
+          : "bg-dash-card-unselected border-dash-border"
       }`}
       onClick={() => setExpanded((v) => !v)}
     >
@@ -102,15 +102,15 @@ export const AddProductCard = ({
             className="rounded-lg shrink-0 object-cover"
           />
         ) : (
-          <div className="w-9 h-9 rounded-lg bg-[#1A2820] shrink-0" />
+          <div className="w-9 h-9 rounded-lg bg-dash-icon-bg shrink-0" />
         )}
 
         {/* Nazwa + makra */}
         <div className="flex-1 min-w-0 flex flex-col gap-0.5">
-          <p className="text-[#F3F7FF] font-semibold text-sm truncate">
+          <p className="text-dash-fg font-semibold text-sm truncate">
             {product.name}
           </p>
-          <p className="text-[#8FA0B8] text-xs">
+          <p className="text-dash-fg-muted text-xs">
             {product.calories} kcal · B: {product.protein}g · T: {product.fat}g
             · W: {product.carbs}g
           </p>
@@ -127,8 +127,12 @@ export const AddProductCard = ({
             viewBox="0 0 24 24"
             width={15}
             height={15}
-            fill={favorite ? "#22C55E" : "none"}
-            stroke={favorite ? "#22C55E" : "#4A5A4A"}
+            fill={favorite ? "var(--color-dash-green-mid)" : "none"}
+            stroke={
+              favorite
+                ? "var(--color-dash-green-mid)"
+                : "var(--color-dash-svg-inactive)"
+            }
             strokeWidth={2}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -144,7 +148,7 @@ export const AddProductCard = ({
           width={15}
           height={15}
           fill="none"
-          stroke="#4A5A4A"
+          stroke="var(--color-dash-svg-inactive)"
           strokeWidth={2}
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -157,28 +161,28 @@ export const AddProductCard = ({
       {/* Panel po rozwinięciu — pole ilości + przycisk */}
       {expanded && (
         <div
-          className="border-t border-[#1E3322] bg-[#1A2B1F] px-3 py-3 flex items-center gap-3"
+          className="border-t border-dash-border bg-dash-surface-alt px-3 py-3 flex items-center gap-3"
           onClick={(e) => e.stopPropagation()}
         >
-          <label className="text-[#8FA0B8] text-xs shrink-0">Ilość:</label>
+          <label className="text-dash-fg-muted text-xs shrink-0">Ilość:</label>
           <input
             type="number"
             value={quantity}
             min={1}
             onChange={(e) => setQuantity(Number(e.target.value))}
-            className="w-20 bg-[#0F1A10] border border-[#1E3322] rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:border-[#22C55E] transition-colors"
+            className="w-20 bg-[var(--background)] border border-dash-border rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:border-dash-green-mid transition-colors"
           />
-          <span className="text-[#8FA0B8] text-xs">g</span>
+          <span className="text-dash-fg-muted text-xs">g</span>
 
           {/* Podgląd kalorii dla wybranej ilości */}
-          <span className="text-[#F4C65D] text-xs font-mono font-bold">
+          <span className="text-macro-carbs text-xs font-mono font-bold">
             = {((quantity / 100) * product.calories).toFixed(0)} kcal
           </span>
 
           <button
             onClick={handleAdd}
             disabled={adding}
-            className="ml-auto bg-[#16A34A] hover:bg-[#15803D] disabled:opacity-60 text-white text-sm font-semibold px-4 py-1.5 rounded-lg transition-colors"
+            className="ml-auto bg-green-600 hover:bg-green-700 disabled:opacity-60 text-white text-sm font-semibold px-4 py-1.5 rounded-lg transition-colors"
           >
             {adding ? "Dodaję..." : "Dodaj"}
           </button>

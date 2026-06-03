@@ -56,7 +56,7 @@ const MacroBar = ({
       </span>
       <div
         className="h-1.5 rounded-full overflow-hidden"
-        style={{ background: "#162E1C" }}
+        style={{ background: "var(--color-macro-track)" }}
       >
         <div
           className="h-full rounded-full transition-all duration-500"
@@ -123,16 +123,16 @@ export const MacroSummary = ({ items, user: userProp }: Props) => {
     <div
       className="rounded-2xl flex flex-col gap-2.5 p-4"
       style={{
-        background: "#1A2420",
-        border: "1px solid #1E3322",
-        boxShadow: "0 1px 20px rgba(34,197,94,0.09)",
+        background: "var(--color-dash-surface-card)",
+        border: "1px solid var(--color-dash-border)",
+        boxShadow: "var(--shadow-dash-card)",
       }}
     >
       {/* Kalorie — etykieta */}
       <span
         className="text-xs font-bold tracking-widest"
         style={{
-          color: "#4ADE80",
+          color: "var(--color-dash-green)",
           fontFamily: "var(--font-ibm-plex-mono)",
           letterSpacing: "0.15em",
         }}
@@ -144,20 +144,26 @@ export const MacroSummary = ({ items, user: userProp }: Props) => {
       <div className="flex items-end justify-between">
         <span
           className="text-4xl sm:text-[46px] font-bold leading-none"
-          style={{ color: "#F3F7FF", fontFamily: "var(--font-ibm-plex-mono)" }}
+          style={{
+            color: "var(--color-dash-fg)",
+            fontFamily: "var(--font-ibm-plex-mono)",
+          }}
         >
           {eaten.calories.toFixed(0)}{" "}
-          <span className="text-xl sm:text-2xl" style={{ color: "#94A3B8" }}>
+          <span
+            className="text-xl sm:text-2xl"
+            style={{ color: "var(--color-dash-fg-secondary)" }}
+          >
             / {goal.calories} kcal
           </span>
         </span>
         <div
           className="text-right text-sm font-semibold leading-snug"
-          style={{ color: "#94A3B8" }}
+          style={{ color: "var(--color-dash-fg-secondary)" }}
         >
           pozostało
           <br />
-          <span style={{ color: "#F3F7FF" }}>
+          <span style={{ color: "var(--color-dash-fg)" }}>
             {caloriesLeft.toFixed(0)} kcal
           </span>
         </div>
@@ -166,13 +172,13 @@ export const MacroSummary = ({ items, user: userProp }: Props) => {
       {/* Pasek postępu kalorii */}
       <div
         className="h-2.5 rounded-full overflow-hidden"
-        style={{ background: "#162E1C" }}
+        style={{ background: "var(--color-macro-track)" }}
       >
         <div
           className="h-full rounded-full transition-all duration-700"
           style={{
             width: `${caloriesPercent}%`,
-            background: "linear-gradient(90deg, #15803D 0%, #4ADE80 100%)",
+            background: "var(--gradient-calories)",
           }}
         />
       </div>
@@ -184,24 +190,24 @@ export const MacroSummary = ({ items, user: userProp }: Props) => {
           eaten={eaten.protein}
           goal={goal.protein}
           unit="g"
-          color="#7DB5FF"
-          barColor="#7DB5FF"
+          color="var(--color-macro-protein)"
+          barColor="var(--color-macro-protein)"
         />
         <MacroBar
           label="WĘGLE"
           eaten={eaten.carbs}
           goal={goal.carbs}
           unit="g"
-          color="#F4C65D"
-          barColor="#F4C65D"
+          color="var(--color-macro-carbs)"
+          barColor="var(--color-macro-carbs)"
         />
         <MacroBar
           label="TŁUSZCZE"
           eaten={eaten.fat}
           goal={goal.fat}
           unit="g"
-          color="#F18FA3"
-          barColor="#F18FA3"
+          color="var(--color-macro-fat)"
+          barColor="var(--color-macro-fat)"
         />
       </div>
     </div>

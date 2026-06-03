@@ -33,30 +33,36 @@ export default function DashboardLayout({
   return (
     <div
       className="flex h-screen overflow-hidden"
-      style={{ background: "#0F1A10", fontFamily: "var(--font-jakarta)" }}
+      style={{
+        background: "var(--background)",
+        fontFamily: "var(--font-jakarta)",
+      }}
     >
       {/* ── Desktop sidebar ─────────────────────────────────────── */}
       <aside
         className="hidden sm:flex w-[230px] h-full flex-col shrink-0"
-        style={{ background: "#111C14", borderRight: "1px solid #1E3322" }}
+        style={{
+          background: "var(--color-dash-surface-darker)",
+          borderRight: "1px solid var(--color-dash-border)",
+        }}
       >
         {/* Logo */}
         <div
           className="flex items-center gap-2 mx-3 mt-4 mb-2 px-2 py-2.5 rounded-xl"
           style={{
-            background: "#111827",
-            border: "1px solid #1E3322",
+            background: "var(--color-dash-logo-bg)",
+            border: "1px solid var(--color-dash-border)",
           }}
         >
           <div
             className="w-[22px] h-[22px] shrink-0 rounded-lg"
             style={{
-              background: "linear-gradient(180deg, #22C55E 0%, #16A34A 100%)",
+              background: "var(--gradient-green-logo)",
             }}
           />
           <span
             className="text-[20px] font-bold leading-none"
-            style={{ color: "#F3F7FF" }}
+            style={{ color: "var(--color-dash-fg)" }}
           >
             DietTracker
           </span>
@@ -74,15 +80,14 @@ export default function DashboardLayout({
                 style={
                   isActive
                     ? {
-                        background:
-                          "linear-gradient(180deg, #16A34A 0%, #15803D 100%)",
-                        color: "#FFFFFF",
-                        boxShadow: "0 2px 10px rgba(34,197,94,0.25)",
+                        background: "var(--gradient-green-button)",
+                        color: "var(--color-white)",
+                        boxShadow: "var(--shadow-green-nav)",
                       }
                     : {
-                        background: "#0F1A10",
-                        border: "1px solid #1E3322",
-                        color: "#AFC0D8",
+                        background: "var(--background)",
+                        border: "1px solid var(--color-dash-border)",
+                        color: "var(--color-dash-nav-inactive)",
                       }
                 }
               >
@@ -98,9 +103,9 @@ export default function DashboardLayout({
           <div
             className="w-[30px] h-[30px] rounded-full flex items-center justify-center text-xs font-bold"
             style={{
-              background: "linear-gradient(180deg, #16A34A 0%, #15803D 100%)",
-              color: "#fff",
-              border: "1px solid rgba(34,197,94,0.25)",
+              background: "var(--gradient-green-button)",
+              color: "var(--color-white)",
+              border: "1px solid var(--color-green-mid-border)",
             }}
           >
             D
@@ -109,9 +114,9 @@ export default function DashboardLayout({
             onClick={handleLogout}
             className="text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors hover:opacity-80"
             style={{
-              color: "#9FB0C7",
-              background: "#162218",
-              border: "1px solid #1E3322",
+              color: "var(--color-dash-fg-dim)",
+              background: "var(--color-dash-surface)",
+              border: "1px solid var(--color-dash-border)",
             }}
           >
             Wyloguj
@@ -122,7 +127,7 @@ export default function DashboardLayout({
       {/* ── Main content ────────────────────────────────────────── */}
       <main
         className="flex-1 overflow-auto pb-[74px] sm:pb-0"
-        style={{ background: "#0F1A10" }}
+        style={{ background: "var(--background)" }}
       >
         {children}
       </main>
@@ -131,9 +136,9 @@ export default function DashboardLayout({
       <nav
         className="sm:hidden fixed bottom-0 left-0 right-0 flex items-center"
         style={{
-          background: "#162218",
+          background: "var(--color-dash-surface)",
           height: "58px",
-          borderTop: "1px solid #1E3322",
+          borderTop: "1px solid var(--color-dash-border)",
           zIndex: 50,
         }}
       >
@@ -147,13 +152,21 @@ export default function DashboardLayout({
             >
               <span
                 className="text-sm leading-none"
-                style={{ color: isActive ? "#FFFFFF" : "#9FB0C7" }}
+                style={{
+                  color: isActive
+                    ? "var(--color-white)"
+                    : "var(--color-dash-fg-dim)",
+                }}
               >
                 {item.emoji}
               </span>
               <span
                 className="text-[10px] font-bold leading-none"
-                style={{ color: isActive ? "#FFFFFF" : "#9FB0C7" }}
+                style={{
+                  color: isActive
+                    ? "var(--color-white)"
+                    : "var(--color-dash-fg-dim)",
+                }}
               >
                 {item.name}
               </span>

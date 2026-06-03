@@ -9,10 +9,10 @@ type Props = {
 const fmt = (date: string) => new Date(date).toLocaleDateString("pl-PL");
 
 const headerCell =
-  "font-['IBM_Plex_Mono'] text-[11px] font-bold tracking-[2px] text-[#4ADE80] shrink-0";
+  "font-['IBM_Plex_Mono'] text-[11px] font-bold tracking-[2px] text-dash-green shrink-0";
 const monoCell =
-  "font-['IBM_Plex_Mono'] text-sm font-semibold text-[#F3F7FF] shrink-0";
-const dateCell = "font-['Funnel_Sans'] text-sm text-[#D6DFEC] shrink-0";
+  "font-['IBM_Plex_Mono'] text-sm font-semibold text-dash-fg shrink-0";
+const dateCell = "font-['Funnel_Sans'] text-sm text-dash-fg-bright shrink-0";
 
 export const MeasurementHistoryTable = ({
   measurements,
@@ -21,7 +21,7 @@ export const MeasurementHistoryTable = ({
 }: Props) => {
   if (measurements.length === 0) {
     return (
-      <p className="px-4 py-8 text-center font-['Funnel_Sans'] text-sm text-[#9FB0C7]">
+      <p className="px-4 py-8 text-center font-['Funnel_Sans'] text-sm text-dash-fg-dim">
         Brak pomiarów
       </p>
     );
@@ -31,8 +31,8 @@ export const MeasurementHistoryTable = ({
     <div className="w-full overflow-x-auto">
       {/* Header */}
       <div
-        className="flex items-center bg-[#1A2B1F] px-3.5 py-2.5"
-        style={{ borderTop: "1px solid #1E3322" }}
+        className="flex items-center bg-dash-surface-alt px-3.5 py-2.5"
+        style={{ borderTop: "1px solid var(--color-dash-border)" }}
       >
         <span className={headerCell} style={{ width: 160 }}>
           DATA
@@ -67,8 +67,8 @@ export const MeasurementHistoryTable = ({
       {measurements.map((m, i) => (
         <div
           key={m.id}
-          className={`flex items-center px-3.5 py-3.5 ${i % 2 === 0 ? "bg-[#162218]" : "bg-[#1A2B1F]"}`}
-          style={{ borderTop: "1px solid #1E3322" }}
+          className={`flex items-center px-3.5 py-3.5 ${i % 2 === 0 ? "bg-dash-surface" : "bg-dash-surface-alt"}`}
+          style={{ borderTop: "1px solid var(--color-dash-border)" }}
         >
           <span className={dateCell} style={{ width: 160 }}>
             {fmt(m.date)}
@@ -97,14 +97,14 @@ export const MeasurementHistoryTable = ({
           <div className="flex shrink-0 gap-2" style={{ width: 90 }}>
             <button
               onClick={() => onEdit(m)}
-              className="text-[#8D9DB4] transition-colors hover:text-[#F3F7FF]"
+              className="text-dash-fg-subtle transition-colors hover:text-dash-fg"
               aria-label="Edytuj"
             >
               ✏️
             </button>
             <button
               onClick={() => onDelete(m.id)}
-              className="text-[#8D9DB4] transition-colors hover:text-red-400"
+              className="text-dash-fg-subtle transition-colors hover:text-red-400"
               aria-label="Usuń"
             >
               🗑

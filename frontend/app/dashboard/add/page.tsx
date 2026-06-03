@@ -139,7 +139,7 @@ function AddPageContent() {
         {/* Powrót do dziennika */}
         <Link
           href="/dashboard"
-          className="flex items-center gap-1.5 bg-[#1A2420] border border-[#1E3322] hover:border-[#4A5A4A] transition-colors px-3 py-2 rounded-lg text-[#8FA0B8] text-sm"
+          className="flex items-center gap-1.5 bg-dash-surface-card border border-dash-border hover:border-dash-svg-inactive transition-colors px-3 py-2 rounded-lg text-dash-fg-muted text-sm"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -159,34 +159,34 @@ function AddPageContent() {
         </Link>
 
         {/* Tytuł strony */}
-        <h1 className="text-[#F3F7FF] text-2xl font-bold flex-1">
+        <h1 className="text-dash-fg text-2xl font-bold flex-1">
           Dodaj do dziennika
         </h1>
 
         {/* Odznaka posiłku + data */}
         {mealType && (
-          <div className="flex items-center gap-1.5 bg-[#1A2E1A] border border-[#22C55E30] px-3.5 py-2 rounded-full text-sm">
+          <div className="flex items-center gap-1.5 bg-dash-badge-bg border border-[var(--color-green-mid-alpha)] px-3.5 py-2 rounded-full text-sm">
             <span>{MEAL_ICONS[mealType] ?? "🍽️"}</span>
-            <span className="text-[#4ADE80] font-semibold">
+            <span className="text-dash-green font-semibold">
               {MEAL_LABELS[mealType] ?? mealType}
             </span>
             {formattedDate && (
-              <span className="text-[#8FA0B8]">· {formattedDate}</span>
+              <span className="text-dash-fg-muted">· {formattedDate}</span>
             )}
           </div>
         )}
       </div>
 
       {/* ── Tab bar ── */}
-      <div className="flex gap-1 mb-6 bg-[#111C14] p-1 rounded-xl border border-[#1E3322]">
+      <div className="flex gap-1 mb-6 bg-dash-surface-darker p-1 rounded-xl border border-dash-border">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setTab(tab.id)}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-sm font-semibold transition-colors ${
               currentTab === tab.id
-                ? "bg-gradient-to-b from-[#16A34A] to-[#15803D] text-[#DCFCE7] shadow-[0_2px_8px_#22C55E30]"
-                : "text-[#8FA0B8] hover:text-[#F3F7FF]"
+                ? "bg-gradient-to-b from-green-600 to-green-700 text-green-100 shadow-[0_2px_8px_var(--color-green-mid-alpha)]"
+                : "text-dash-fg-muted hover:text-dash-fg"
             }`}
           >
             {tab.icon}
@@ -209,10 +209,8 @@ function AddPageContent() {
       )}
 
       {currentTab === "new" && (
-        <div className="bg-[#111C14] rounded-2xl border border-[#1E3322] p-6">
-          <h2 className="text-[#F3F7FF] font-bold text-lg mb-6">
-            Nowy produkt
-          </h2>
+        <div className="bg-dash-surface-darker rounded-2xl border border-dash-border p-6">
+          <h2 className="text-dash-fg font-bold text-lg mb-6">Nowy produkt</h2>
           {/* ProductForm — po zapisaniu wraca do zakładki Produkty i otwiera kartę nowego */}
           <ProductForm onSuccess={handleNewProductSuccess} />
         </div>

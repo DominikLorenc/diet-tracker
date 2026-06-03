@@ -173,7 +173,7 @@ export const RecipeSearch = ({ mealType, date }: Props) => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="w-6 h-6 border-2 border-[#22C55E] border-t-transparent rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-dash-green-mid border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -205,7 +205,7 @@ export const RecipeSearch = ({ mealType, date }: Props) => {
           width={15}
           height={15}
           fill="none"
-          stroke="#4A5A4A"
+          stroke="var(--color-dash-svg-inactive)"
           strokeWidth={2}
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -219,18 +219,18 @@ export const RecipeSearch = ({ mealType, date }: Props) => {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Szukaj przepisów..."
-          className="w-full bg-[#111C14] border border-[#1E3322] rounded-xl pl-9 pr-4 py-2.5 text-sm text-[#F3F7FF] placeholder-[#4A5A4A] focus:outline-none focus:border-[#22C55E] transition-colors"
+          className="w-full bg-dash-surface-darker border border-dash-border rounded-xl pl-9 pr-4 py-2.5 text-sm text-dash-fg placeholder:text-dash-svg-inactive focus:outline-none focus:border-dash-green-mid transition-colors"
         />
       </div>
       {/* ── MOJE PRZEPISY ── */}
-      <section className="bg-[#111C14] rounded-xl border border-[#1E3322] p-4">
+      <section className="bg-dash-surface-darker rounded-xl border border-dash-border p-4">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-[#4ADE80] font-mono text-xs font-bold tracking-widest uppercase">
+          <h2 className="text-dash-green font-mono text-xs font-bold tracking-widest uppercase">
             Moje przepisy
           </h2>
           <Link
             href={`/dashboard/recipe-builder?mealType=${mealType}&date=${date}`}
-            className="flex items-center gap-1 text-xs text-[#4ADE80] hover:text-white transition-colors font-semibold"
+            className="flex items-center gap-1 text-xs text-dash-green hover:text-white transition-colors font-semibold"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -251,15 +251,15 @@ export const RecipeSearch = ({ mealType, date }: Props) => {
         </div>
 
         {userRecipes.length === 0 ? (
-          <p className="text-[#8FA0B8] text-sm text-center py-4">
+          <p className="text-dash-fg-muted text-sm text-center py-4">
             Nie masz jeszcze swoich przepisów.
             <br />
-            <span className="text-[#4A5A4A]">
+            <span className="text-dash-svg-inactive">
               Stwórz nowy lub skopiuj globalny.
             </span>
           </p>
         ) : filteredUserRecipes.length === 0 ? (
-          <p className="text-[#4A5A4A] text-sm text-center py-4">
+          <p className="text-dash-svg-inactive text-sm text-center py-4">
             Brak wyników.
           </p>
         ) : (
@@ -278,17 +278,17 @@ export const RecipeSearch = ({ mealType, date }: Props) => {
       {/* ── PRZEPISY GLOBALNE ── */}
       {(query.trim().length > 0 || onlyFavorites) &&
         globalRecipes.length > 0 && (
-          <section className="bg-[#111C14] rounded-xl border border-[#1E3322] p-4">
+          <section className="bg-dash-surface-darker rounded-xl border border-dash-border p-4">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-[#4ADE80] font-mono text-xs font-bold tracking-widest uppercase">
+              <h2 className="text-dash-green font-mono text-xs font-bold tracking-widest uppercase">
                 Przepisy globalne
               </h2>
               <button
                 onClick={() => setOnlyFavorites((v) => !v)}
                 className={`flex items-center gap-1.5 text-xs font-semibold transition-colors ${
                   onlyFavorites
-                    ? "text-[#22C55E]"
-                    : "text-[#4A5A4A] hover:text-[#8FA0B8]"
+                    ? "text-dash-green-mid"
+                    : "text-dash-svg-inactive hover:text-dash-fg-muted"
                 }`}
               >
                 <svg
@@ -296,8 +296,12 @@ export const RecipeSearch = ({ mealType, date }: Props) => {
                   viewBox="0 0 24 24"
                   width={13}
                   height={13}
-                  fill={onlyFavorites ? "#22C55E" : "none"}
-                  stroke={onlyFavorites ? "#22C55E" : "#4A5A4A"}
+                  fill={onlyFavorites ? "var(--color-dash-green-mid)" : "none"}
+                  stroke={
+                    onlyFavorites
+                      ? "var(--color-dash-green-mid)"
+                      : "var(--color-dash-svg-inactive)"
+                  }
                   strokeWidth={2}
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -308,7 +312,7 @@ export const RecipeSearch = ({ mealType, date }: Props) => {
               </button>
             </div>
             {filteredGlobalRecipes.length === 0 ? (
-              <p className="text-[#4A5A4A] text-sm text-center py-4">
+              <p className="text-dash-svg-inactive text-sm text-center py-4">
                 {onlyFavorites ? "Brak ulubionych przepisów." : "Brak wyników."}
               </p>
             ) : (

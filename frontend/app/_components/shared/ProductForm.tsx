@@ -180,9 +180,9 @@ export const ProductForm = ({
   const submitButtonText = productToEdit ? "Zaktualizuj" : "Dodaj produkt";
 
   const inputClass =
-    "block w-full rounded-xl bg-[#0F1A10] border border-[#1E3322] px-3 py-2.5 text-sm text-white placeholder:text-[#4A5A4A] focus:outline-none focus:border-[#22C55E] transition-colors";
+    "block w-full rounded-xl bg-[var(--background)] border border-dash-border px-3 py-2.5 text-sm text-white placeholder:text-dash-svg-inactive focus:outline-none focus:border-dash-green-mid transition-colors";
   const labelClass =
-    "block text-xs font-bold text-[#8FA0B8] uppercase tracking-wider font-mono";
+    "block text-xs font-bold text-dash-fg-muted uppercase tracking-wider font-mono";
 
   return (
     <>
@@ -190,7 +190,7 @@ export const ProductForm = ({
         <button
           type="button"
           onClick={() => setIsScannerOpen(true)}
-          className="flex items-center justify-center gap-2 w-full rounded-xl bg-[#1A2E1A] border border-[#22C55E40] hover:border-[#22C55E] transition-colors px-3 py-2.5 text-[#4ADE80] text-sm font-semibold mb-2"
+          className="flex items-center justify-center gap-2 w-full rounded-xl bg-dash-badge-bg border border-[var(--color-green-mid-alpha-md)] hover:border-dash-green-mid transition-colors px-3 py-2.5 text-dash-green text-sm font-semibold mb-2"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -198,7 +198,7 @@ export const ProductForm = ({
             width={16}
             height={16}
             fill="none"
-            stroke="#4ADE80"
+            stroke="var(--color-dash-green)"
             strokeWidth={2}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -315,7 +315,7 @@ export const ProductForm = ({
                 alt="Podgląd z Open Food Facts"
                 width={80}
                 height={80}
-                className="object-contain rounded-lg border border-[#1E3322]"
+                className="object-contain rounded-lg border border-dash-border"
               />
             )}
             <input
@@ -349,7 +349,7 @@ export const ProductForm = ({
         <button
           type="submit"
           disabled={isLoading}
-          className="flex items-center justify-center gap-2 w-full rounded-xl bg-[#16A34A] hover:bg-[#15803D] px-3 py-3 text-sm font-semibold text-white shadow-sm disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+          className="flex items-center justify-center gap-2 w-full rounded-xl bg-green-600 hover:bg-green-700 px-3 py-3 text-sm font-semibold text-white shadow-sm disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
         >
           {isLoading && (
             <svg

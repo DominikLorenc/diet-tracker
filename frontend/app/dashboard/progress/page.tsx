@@ -155,20 +155,20 @@ export default function ProgressPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col gap-6 bg-[#0F1A10] p-8">
+    <div className="flex min-h-screen flex-col gap-6 bg-[var(--background)] p-8">
       {/* Header */}
       <div className="flex items-end justify-between">
         <div className="flex flex-col gap-1">
-          <span className="font-['Funnel_Sans'] text-base font-medium text-[#8FA0B8]">
+          <span className="font-['Funnel_Sans'] text-base font-medium text-dash-fg-muted">
             {headerDate}
           </span>
-          <h1 className="font-['Newsreader'] text-5xl font-bold text-[#F3F7FF]">
+          <h1 className="font-['Newsreader'] text-5xl font-bold text-dash-fg">
             Postępy
           </h1>
         </div>
         <button
           onClick={openAdd}
-          className="hidden rounded-xl bg-gradient-to-b from-[#16A34A] to-[#15803D] px-5 py-2.5 font-['Funnel_Sans'] text-sm font-semibold text-white md:block"
+          className="hidden rounded-xl bg-gradient-to-b from-green-600 to-green-700 px-5 py-2.5 font-['Funnel_Sans'] text-sm font-semibold text-white md:block"
           style={{ boxShadow: "0 2px 10px rgba(34,197,94,0.25)" }}
         >
           + Dodaj pomiar
@@ -176,13 +176,13 @@ export default function ProgressPage() {
       </div>
 
       {/* Filter row */}
-      <div className="flex flex-wrap items-center gap-4 rounded-xl border border-[#1E3322] bg-[#162218] px-4 py-2.5">
+      <div className="flex flex-wrap items-center gap-4 rounded-xl border border-dash-border bg-dash-surface px-4 py-2.5">
         {/* improve this logic */}
         {false && (
           <>
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
-                <span className="font-['IBM_Plex_Mono'] text-[10px] font-bold tracking-[2px] text-[#4ADE80]">
+                <span className="font-['IBM_Plex_Mono'] text-[10px] font-bold tracking-[2px] text-dash-green">
                   OD
                 </span>
                 <input
@@ -193,11 +193,11 @@ export default function ProgressPage() {
                     setActivePreset("all");
                   }}
                   max={yesterdayStr}
-                  className="rounded-lg border border-[#1E3322] bg-[#111C14] px-2.5 py-1.5 font-['Funnel_Sans'] text-xs text-[#D6DFEC] outline-none [color-scheme:dark]"
+                  className="rounded-lg border border-dash-border bg-dash-surface-darker px-2.5 py-1.5 font-['Funnel_Sans'] text-xs text-dash-fg-bright outline-none [color-scheme:dark]"
                 />
               </div>
               <div className="flex items-center gap-2">
-                <span className="font-['IBM_Plex_Mono'] text-[10px] font-bold tracking-[2px] text-[#4ADE80]">
+                <span className="font-['IBM_Plex_Mono'] text-[10px] font-bold tracking-[2px] text-dash-green">
                   DO
                 </span>
                 <input
@@ -208,12 +208,12 @@ export default function ProgressPage() {
                     setActivePreset("all");
                   }}
                   max={todayStr}
-                  className="rounded-lg border border-[#1E3322] bg-[#111C14] px-2.5 py-1.5 font-['Funnel_Sans'] text-xs text-[#D6DFEC] outline-none [color-scheme:dark]"
+                  className="rounded-lg border border-dash-border bg-dash-surface-darker px-2.5 py-1.5 font-['Funnel_Sans'] text-xs text-dash-fg-bright outline-none [color-scheme:dark]"
                 />
               </div>
             </div>
 
-            <div className="h-4 w-px bg-[#1E3322]" />
+            <div className="h-4 w-px bg-dash-border" />
           </>
         )}
         <div className="flex gap-1.5">
@@ -223,8 +223,8 @@ export default function ProgressPage() {
               onClick={() => handlePreset(p)}
               className={`rounded-lg px-3 py-1.5 font-['Funnel_Sans'] text-xs font-medium transition-all ${
                 activePreset === p.id
-                  ? "bg-gradient-to-b from-[#16A34A] to-[#15803D] text-white"
-                  : "border border-[#1E3322] bg-[#111C14] text-[#94A3B8] hover:text-[#F3F7FF]"
+                  ? "bg-gradient-to-b from-green-600 to-green-700 text-white"
+                  : "border border-dash-border bg-dash-surface-darker text-dash-fg-secondary hover:text-dash-fg"
               }`}
             >
               {p.label}
@@ -235,7 +235,7 @@ export default function ProgressPage() {
 
       {/* Loading / error states */}
       {loading && (
-        <p className="text-center font-['Funnel_Sans'] text-sm text-[#94A3B8]">
+        <p className="text-center font-['Funnel_Sans'] text-sm text-dash-fg-secondary">
           Ładowanie...
         </p>
       )}
@@ -252,33 +252,33 @@ export default function ProgressPage() {
             <MeasurementChart
               label="WAGA"
               unit="kg"
-              color="#4ADE80"
+              color="var(--color-dash-green)"
               data={chartData("weight")}
             />
             <MeasurementChart
               label="TALIA"
               unit="cm"
-              color="#F4C65D"
+              color="var(--color-macro-carbs)"
               data={chartData("waist")}
             />
             <MeasurementChart
               label="BIODRA"
               unit="cm"
-              color="#F18FA3"
+              color="var(--color-macro-fat)"
               data={chartData("hips")}
             />
             <MeasurementChart
               label="RAMIĘ"
               unit="cm"
-              color="#7DB5FF"
+              color="var(--color-macro-protein)"
               data={chartData("arm")}
             />
           </div>
 
           {/* History table */}
-          <div className="rounded-2xl border border-[#1E3322] bg-[#162218] overflow-hidden">
+          <div className="rounded-2xl border border-dash-border bg-dash-surface overflow-hidden">
             <div className="px-4 py-3.5">
-              <span className="font-['IBM_Plex_Mono'] text-[11px] font-bold tracking-[2px] text-[#4ADE80]">
+              <span className="font-['IBM_Plex_Mono'] text-[11px] font-bold tracking-[2px] text-dash-green">
                 HISTORIA POMIARÓW
               </span>
             </div>
@@ -294,7 +294,7 @@ export default function ProgressPage() {
       {/* Mobile add button */}
       <button
         onClick={openAdd}
-        className="fixed bottom-20 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-b from-[#16A34A] to-[#15803D] text-xl text-white shadow-lg md:hidden"
+        className="fixed bottom-20 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-b from-green-600 to-green-700 text-xl text-white shadow-lg md:hidden"
         aria-label="Dodaj pomiar"
       >
         +

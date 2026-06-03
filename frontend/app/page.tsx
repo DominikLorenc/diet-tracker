@@ -6,7 +6,10 @@ export default function Home() {
   return (
     <main
       className="min-h-screen overflow-x-hidden"
-      style={{ background: "#0F1A10", fontFamily: "var(--font-jakarta)" }}
+      style={{
+        background: "var(--background)",
+        fontFamily: "var(--font-jakarta)",
+      }}
     >
       <Navbar variant="public" />
 
@@ -16,18 +19,18 @@ export default function Home() {
           <div
             className="flex items-center gap-2 w-fit px-3.5 py-1.5 rounded-full animate-fade-in-up"
             style={{
-              background: "#162218",
-              border: "1px solid #1E3322",
+              background: "var(--color-dash-surface)",
+              border: "1px solid var(--color-dash-border)",
               animationDelay: "100ms",
             }}
           >
             <div
               className="w-2 h-2 shrink-0 rounded-full"
-              style={{ background: "#22C55E" }}
+              style={{ background: "var(--color-dash-green-mid)" }}
             />
             <span
               className="text-[13px] font-semibold"
-              style={{ color: "#4ADE80" }}
+              style={{ color: "var(--color-dash-green)" }}
             >
               Darmowy tracker kalorii i makroskładników
             </span>
@@ -40,7 +43,7 @@ export default function Home() {
             <h1
               className="text-[60px] font-bold leading-[1.1]"
               style={{
-                color: "#F3F7FF",
+                color: "var(--color-dash-fg)",
                 fontFamily: "var(--font-newsreader)",
               }}
             >
@@ -49,7 +52,7 @@ export default function Home() {
             <h1
               className="text-[60px] font-bold leading-[1.1]"
               style={{
-                background: "linear-gradient(180deg, #22C55E 0%, #16A34A 100%)",
+                background: "var(--gradient-green-logo)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 fontFamily: "var(--font-newsreader)",
@@ -61,7 +64,10 @@ export default function Home() {
 
           <p
             className="text-lg leading-relaxed max-w-[520px] animate-fade-in-up"
-            style={{ color: "#8FA0B8", animationDelay: "300ms" }}
+            style={{
+              color: "var(--color-dash-fg-muted)",
+              animationDelay: "300ms",
+            }}
           >
             Śledź kalorie, białko, węglowodany i tłuszcze.
             <br />
@@ -76,8 +82,8 @@ export default function Home() {
               href="/register"
               className="px-8 py-4 text-base font-bold text-white rounded-xl hover:scale-105 transition-all"
               style={{
-                background: "linear-gradient(180deg, #16A34A 0%, #15803D 100%)",
-                boxShadow: "0 2px 10px rgba(34,197,94,0.35)",
+                background: "var(--gradient-green-button)",
+                boxShadow: "var(--shadow-green-cta)",
               }}
             >
               Zacznij za darmo →
@@ -85,9 +91,9 @@ export default function Home() {
             <button
               className="px-8 py-4 text-base font-semibold rounded-xl hover:scale-105 transition-all"
               style={{
-                color: "#94A3B8",
-                background: "#111C14",
-                border: "1px solid #1E3322",
+                color: "var(--color-dash-fg-secondary)",
+                background: "var(--color-dash-surface-darker)",
+                border: "1px solid var(--color-dash-border)",
               }}
             >
               Zobacz demo
@@ -99,7 +105,10 @@ export default function Home() {
             style={{ animationDelay: "500ms" }}
           >
             <span className="text-base">⭐⭐⭐⭐⭐</span>
-            <span className="text-sm" style={{ color: "#8FA0B8" }}>
+            <span
+              className="text-sm"
+              style={{ color: "var(--color-dash-fg-muted)" }}
+            >
               Dołącz do 12 000+ użytkowników
             </span>
           </div>
@@ -114,27 +123,26 @@ export default function Home() {
             <div
               className="rounded-2xl overflow-hidden"
               style={{
-                background: "#111C14",
-                border: "1px solid #1E3322",
-                boxShadow:
-                  "0 24px 60px rgba(0,0,0,0.4), 0 0 60px rgba(34,197,94,0.06)",
+                background: "var(--color-dash-surface-darker)",
+                border: "1px solid var(--color-dash-border)",
+                boxShadow: "var(--shadow-mockup)",
               }}
             >
               {/* Header */}
               <div
                 className="flex items-center justify-between px-5 h-14"
-                style={{ borderBottom: "1px solid #1E3322" }}
+                style={{ borderBottom: "1px solid var(--color-dash-border)" }}
               >
                 <span
                   className="text-[15px] font-bold"
-                  style={{ color: "#F3F7FF" }}
+                  style={{ color: "var(--color-dash-fg)" }}
                 >
                   Dziennik — Wtorek, 25 marca
                 </span>
                 <span
                   className="text-[13px]"
                   style={{
-                    color: "#8FA0B8",
+                    color: "var(--color-dash-fg-muted)",
                     fontFamily: "var(--font-ibm-plex-mono)",
                   }}
                 >
@@ -145,12 +153,12 @@ export default function Home() {
               {/* Calorie summary */}
               <div
                 className="flex flex-col gap-2.5 px-5 py-4"
-                style={{ borderBottom: "1px solid #1E3322" }}
+                style={{ borderBottom: "1px solid var(--color-dash-border)" }}
               >
                 <span
                   className="text-[11px] font-bold tracking-[0.15em]"
                   style={{
-                    color: "#4ADE80",
+                    color: "var(--color-dash-green)",
                     fontFamily: "var(--font-ibm-plex-mono)",
                   }}
                 >
@@ -160,7 +168,7 @@ export default function Home() {
                   <span
                     className="text-[30px] font-bold leading-none"
                     style={{
-                      color: "#F3F7FF",
+                      color: "var(--color-dash-fg)",
                       fontFamily: "var(--font-ibm-plex-mono)",
                     }}
                   >
@@ -168,7 +176,7 @@ export default function Home() {
                   </span>
                   <span
                     className="text-[12px] font-semibold text-right"
-                    style={{ color: "#94A3B8" }}
+                    style={{ color: "var(--color-dash-fg-secondary)" }}
                   >
                     pozostało
                     <br />
@@ -177,14 +185,13 @@ export default function Home() {
                 </div>
                 <div
                   className="h-2 rounded-full"
-                  style={{ background: "#162E1C" }}
+                  style={{ background: "var(--color-macro-track)" }}
                 >
                   <div
                     className="h-2 rounded-full"
                     style={{
                       width: "92%",
-                      background:
-                        "linear-gradient(90deg, #15803D 0%, #4ADE80 100%)",
+                      background: "var(--gradient-calories)",
                     }}
                   />
                 </div>
@@ -196,19 +203,19 @@ export default function Home() {
                       label: "Białko",
                       value: "95g",
                       pct: "79%",
-                      color: "#7DB5FF",
+                      color: "var(--color-macro-protein)",
                     },
                     {
                       label: "Węgle",
                       value: "180g",
                       pct: "78%",
-                      color: "#F4C65D",
+                      color: "var(--color-macro-carbs)",
                     },
                     {
                       label: "Tłuszcze",
                       value: "55g",
                       pct: "78%",
-                      color: "#F18FA3",
+                      color: "var(--color-macro-fat)",
                     },
                   ].map((m) => (
                     <div key={m.label} className="flex-1 flex flex-col gap-1">
@@ -221,14 +228,14 @@ export default function Home() {
                         </span>
                         <span
                           className="text-[11px]"
-                          style={{ color: "#8FA0B8" }}
+                          style={{ color: "var(--color-dash-fg-muted)" }}
                         >
                           {m.value}
                         </span>
                       </div>
                       <div
                         className="h-1.5 rounded-full"
-                        style={{ background: "#162E1C" }}
+                        style={{ background: "var(--color-macro-track)" }}
                       >
                         <div
                           className="h-1.5 rounded-full"
@@ -245,14 +252,14 @@ export default function Home() {
                 <div className="flex items-center justify-between h-9">
                   <span
                     className="text-[13px] font-bold"
-                    style={{ color: "#F3F7FF" }}
+                    style={{ color: "var(--color-dash-fg)" }}
                   >
                     Śniadanie
                   </span>
                   <span
                     className="text-[13px]"
                     style={{
-                      color: "#8FA0B8",
+                      color: "var(--color-dash-fg-muted)",
                       fontFamily: "var(--font-ibm-plex-mono)",
                     }}
                   >
@@ -280,7 +287,10 @@ export default function Home() {
                     className="flex items-center justify-between h-[52px] px-3 rounded-xl"
                     style={
                       entry.highlighted
-                        ? { background: "#162218", border: "1px solid #1E3322" }
+                        ? {
+                            background: "var(--color-dash-surface)",
+                            border: "1px solid var(--color-dash-border)",
+                          }
                         : { background: "transparent" }
                     }
                   >
@@ -288,8 +298,8 @@ export default function Home() {
                       <div
                         className="w-8 h-8 rounded-lg flex items-center justify-center text-base"
                         style={{
-                          background: "#1A2B1F",
-                          border: "1px solid #1E3322",
+                          background: "var(--color-dash-surface-alt)",
+                          border: "1px solid var(--color-dash-border)",
                         }}
                       >
                         {entry.icon}
@@ -297,13 +307,13 @@ export default function Home() {
                       <div className="flex flex-col gap-0.5">
                         <span
                           className="text-[13px] font-semibold"
-                          style={{ color: "#F3F7FF" }}
+                          style={{ color: "var(--color-dash-fg)" }}
                         >
                           {entry.name}
                         </span>
                         <span
                           className="text-[11px]"
-                          style={{ color: "#8FA0B8" }}
+                          style={{ color: "var(--color-dash-fg-muted)" }}
                         >
                           {entry.detail}
                         </span>
@@ -312,7 +322,7 @@ export default function Home() {
                     <span
                       className="text-[13px] font-semibold"
                       style={{
-                        color: "#4ADE80",
+                        color: "var(--color-dash-green)",
                         fontFamily: "var(--font-ibm-plex-mono)",
                       }}
                     >
@@ -330,29 +340,32 @@ export default function Home() {
       <section
         id="funkcje"
         className="flex flex-col items-center gap-16 px-4 md:px-20 py-20"
-        style={{ background: "#0D1A0E" }}
+        style={{ background: "var(--color-landing-dark)" }}
       >
         <AnimateOnScroll className="flex flex-col items-center gap-4 text-center">
           <div
             className="px-4 py-1.5 rounded-full"
-            style={{ background: "#162218", border: "1px solid #1E3322" }}
+            style={{
+              background: "var(--color-dash-surface)",
+              border: "1px solid var(--color-dash-border)",
+            }}
           >
             <span
               className="text-[13px] font-semibold"
-              style={{ color: "#4ADE80" }}
+              style={{ color: "var(--color-dash-green)" }}
             >
               Funkcje
             </span>
           </div>
           <h2
             className="text-[40px] font-extrabold"
-            style={{ color: "#F3F7FF" }}
+            style={{ color: "var(--color-dash-fg)" }}
           >
             Wszystko czego potrzebujesz
           </h2>
           <p
             className="text-lg leading-relaxed max-w-[520px] text-center"
-            style={{ color: "#8FA0B8" }}
+            style={{ color: "var(--color-dash-fg-muted)" }}
           >
             Jeden tracker do zarządzania dietą, przepisami i postępami.
           </p>
@@ -380,23 +393,29 @@ export default function Home() {
               <div
                 className="flex flex-col gap-5 p-8 rounded-2xl hover:-translate-y-1 transition-all duration-300 h-full"
                 style={{
-                  background: "#111C14",
-                  border: "1px solid #1E3322",
-                  boxShadow: "0 1px 20px rgba(34,197,94,0.04)",
+                  background: "var(--color-dash-surface-darker)",
+                  border: "1px solid var(--color-dash-border)",
+                  boxShadow: "var(--shadow-dash-card)",
                 }}
               >
                 <div
                   className="w-[52px] h-[52px] rounded-[14px] flex items-center justify-center text-[26px]"
-                  style={{ background: "#162218", border: "1px solid #1E3322" }}
+                  style={{
+                    background: "var(--color-dash-surface)",
+                    border: "1px solid var(--color-dash-border)",
+                  }}
                 >
                   {card.emoji}
                 </div>
-                <h3 className="text-xl font-bold" style={{ color: "#F3F7FF" }}>
+                <h3
+                  className="text-xl font-bold"
+                  style={{ color: "var(--color-dash-fg)" }}
+                >
                   {card.title}
                 </h3>
                 <p
                   className="text-[15px] leading-relaxed"
-                  style={{ color: "#8FA0B8" }}
+                  style={{ color: "var(--color-dash-fg-muted)" }}
                 >
                   {card.desc}
                 </p>
@@ -410,23 +429,26 @@ export default function Home() {
       <section
         id="jak-to-dziala"
         className="flex flex-col items-center gap-16 px-4 md:px-20 py-20"
-        style={{ background: "#0F1A10" }}
+        style={{ background: "var(--background)" }}
       >
         <AnimateOnScroll className="flex flex-col items-center gap-4 text-center">
           <div
             className="px-4 py-1.5 rounded-full"
-            style={{ background: "#162218", border: "1px solid #1E3322" }}
+            style={{
+              background: "var(--color-dash-surface)",
+              border: "1px solid var(--color-dash-border)",
+            }}
           >
             <span
               className="text-[13px] font-semibold"
-              style={{ color: "#4ADE80" }}
+              style={{ color: "var(--color-dash-green)" }}
             >
               Jak to działa
             </span>
           </div>
           <h2
             className="text-[40px] font-extrabold"
-            style={{ color: "#F3F7FF" }}
+            style={{ color: "var(--color-dash-fg)" }}
           >
             Zacznij w 3 krokach
           </h2>
@@ -459,20 +481,22 @@ export default function Home() {
                 <div
                   className="w-14 h-14 rounded-full flex items-center justify-center text-[22px] font-extrabold text-white"
                   style={{
-                    background:
-                      "linear-gradient(180deg, #16A34A 0%, #15803D 100%)",
-                    boxShadow: "0 8px 24px rgba(34,197,94,0.3)",
+                    background: "var(--gradient-green-button)",
+                    boxShadow: "var(--shadow-green-step)",
                     fontFamily: "var(--font-ibm-plex-mono)",
                   }}
                 >
                   {step.num}
                 </div>
-                <h3 className="text-xl font-bold" style={{ color: "#F3F7FF" }}>
+                <h3
+                  className="text-xl font-bold"
+                  style={{ color: "var(--color-dash-fg)" }}
+                >
                   {step.title}
                 </h3>
                 <p
                   className="text-[15px] leading-relaxed"
-                  style={{ color: "#8FA0B8" }}
+                  style={{ color: "var(--color-dash-fg-muted)" }}
                 >
                   {step.desc}
                 </p>
@@ -486,15 +510,15 @@ export default function Home() {
       <section
         className="flex flex-col items-center gap-8 px-4 md:px-20 py-20"
         style={{
-          background: "linear-gradient(135deg, #162218 0%, #0F1A10 100%)",
-          borderTop: "1px solid #1E3322",
+          background: "var(--gradient-cta)",
+          borderTop: "1px solid var(--color-dash-border)",
         }}
       >
         <AnimateOnScroll className="flex flex-col items-center gap-8 w-full">
           <h2
             className="text-[48px] font-extrabold text-center"
             style={{
-              color: "#F3F7FF",
+              color: "var(--color-dash-fg)",
               fontFamily: "var(--font-newsreader)",
             }}
           >
@@ -502,7 +526,7 @@ export default function Home() {
           </h2>
           <p
             className="text-lg text-center leading-relaxed max-w-[560px]"
-            style={{ color: "#8FA0B8" }}
+            style={{ color: "var(--color-dash-fg-muted)" }}
           >
             Zacznij śledzić makra już dziś — za darmo, bez karty kredytowej.
           </p>
@@ -510,13 +534,16 @@ export default function Home() {
             href="/register"
             className="px-10 py-[18px] text-lg font-bold text-white rounded-2xl hover:scale-105 transition-all"
             style={{
-              background: "linear-gradient(180deg, #16A34A 0%, #15803D 100%)",
-              boxShadow: "0 4px 20px rgba(34,197,94,0.35)",
+              background: "var(--gradient-green-button)",
+              boxShadow: "var(--shadow-green-cta-lg)",
             }}
           >
             Stwórz darmowe konto →
           </Link>
-          <p className="text-sm text-center" style={{ color: "#8FA0B8" }}>
+          <p
+            className="text-sm text-center"
+            style={{ color: "var(--color-dash-fg-muted)" }}
+          >
             Dołącz do 12 000+ użytkowników • Brak limitu wpisów
           </p>
         </AnimateOnScroll>
@@ -525,18 +552,24 @@ export default function Home() {
       {/* Footer */}
       <footer
         className="flex items-center justify-between h-16 px-4 md:px-20"
-        style={{ background: "#111C14", borderTop: "1px solid #1E3322" }}
+        style={{
+          background: "var(--color-dash-surface-darker)",
+          borderTop: "1px solid var(--color-dash-border)",
+        }}
       >
         <div className="flex items-center gap-2.5">
           <div
             className="w-7 h-7 rounded-lg flex items-center justify-center text-sm"
             style={{
-              background: "linear-gradient(180deg, #22C55E 0%, #16A34A 100%)",
+              background: "var(--gradient-green-logo)",
             }}
           >
             🥗
           </div>
-          <span className="text-base font-bold" style={{ color: "#F3F7FF" }}>
+          <span
+            className="text-base font-bold"
+            style={{ color: "var(--color-dash-fg)" }}
+          >
             DietTracker
           </span>
         </div>
@@ -546,13 +579,16 @@ export default function Home() {
               key={link}
               href="#"
               className="text-[13px] transition-colors"
-              style={{ color: "#8FA0B8" }}
+              style={{ color: "var(--color-dash-fg-muted)" }}
             >
               {link}
             </a>
           ))}
         </div>
-        <span className="text-[13px]" style={{ color: "#8FA0B8" }}>
+        <span
+          className="text-[13px]"
+          style={{ color: "var(--color-dash-fg-muted)" }}
+        >
           © 2025 DietTracker
         </span>
       </footer>

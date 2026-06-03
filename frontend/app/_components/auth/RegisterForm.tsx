@@ -15,7 +15,7 @@ const inputWrapClass =
   "flex items-center gap-2.5 h-12 px-4 rounded-xl bg-dash-surface border border-dash-border focus-within:border-dash-green-mid focus-within:ring-2 focus-within:ring-dash-green-mid/20 transition-all";
 
 const inputClass =
-  "flex-1 bg-transparent text-sm text-dash-fg placeholder:text-[#3D5240] outline-none";
+  "flex-1 bg-transparent text-sm text-dash-fg placeholder:text-dash-input-placeholder outline-none";
 
 export const RegisterForm = () => {
   const {
@@ -172,9 +172,9 @@ export const RegisterForm = () => {
         <div
           className="text-sm rounded-xl px-4 py-3"
           style={{
-            color: "#FCA5A5",
-            background: "rgba(239,68,68,0.1)",
-            border: "1px solid rgba(239,68,68,0.25)",
+            color: "var(--color-form-error)",
+            background: "var(--color-form-error-bg)",
+            border: "1px solid var(--color-form-error-border)",
           }}
         >
           {error}
@@ -186,8 +186,8 @@ export const RegisterForm = () => {
         disabled={isLoading}
         className="mt-2 flex items-center justify-center gap-2 h-12 w-full rounded-xl text-white text-sm font-semibold hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
         style={{
-          background: "linear-gradient(180deg, #16A34A 0%, #15803D 100%)",
-          boxShadow: "0 2px 10px rgba(34,197,94,0.3)",
+          background: "var(--gradient-green-button)",
+          boxShadow: "var(--shadow-green-logo)",
         }}
       >
         {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}

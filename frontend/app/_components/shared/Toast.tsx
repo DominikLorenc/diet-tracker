@@ -5,24 +5,24 @@ import { useToastStore } from "@/store/useToastStore";
 
 const config = {
   success: {
-    color: "#22C55E",
-    border: "#D1FAE5",
-    shadow: "0 4px 20px #22C55E22, 0 1px 3px #0000001A",
-    closeBg: "#F0FFF4",
+    color: "var(--color-dash-green-mid)",
+    border: "var(--color-toast-success-border)",
+    shadow: "var(--shadow-toast-success)",
+    closeBg: "var(--color-toast-success-bg)",
     Icon: CheckIcon,
   },
   error: {
-    color: "#EF4444",
-    border: "#FECACA",
-    shadow: "0 4px 20px #EF444422, 0 1px 3px #0000001A",
-    closeBg: "#FEF2F2",
+    color: "var(--color-toast-error)",
+    border: "var(--color-toast-error-border)",
+    shadow: "var(--shadow-toast-error)",
+    closeBg: "var(--color-toast-error-bg)",
     Icon: TriangleAlertIcon,
   },
   info: {
-    color: "#6B7BFF",
-    border: "#C7D2FE",
-    shadow: "0 4px 20px #6B7BFF22, 0 1px 3px #0000001A",
-    closeBg: "#EEF2FF",
+    color: "var(--color-toast-info)",
+    border: "var(--color-toast-info-border)",
+    shadow: "var(--shadow-toast-info)",
+    closeBg: "var(--color-toast-info-bg)",
     Icon: InfoIcon,
   },
 };
@@ -46,7 +46,7 @@ export function Toast() {
     >
       <div
         style={{
-          background: "#FFFFFF",
+          background: "var(--color-toast-bg)",
           border: `1px solid ${border}`,
           borderRadius: 14,
           boxShadow: shadow,
@@ -69,14 +69,20 @@ export function Toast() {
             flexShrink: 0,
           }}
         >
-          <Icon size={18} color="#FFFFFF" />
+          <Icon size={18} color="var(--color-toast-bg)" />
         </div>
 
         {/* Tekst */}
         <div
           style={{ flex: 1, display: "flex", flexDirection: "column", gap: 2 }}
         >
-          <span style={{ fontSize: 14, fontWeight: 600, color: "#1A1A1A" }}>
+          <span
+            style={{
+              fontSize: 14,
+              fontWeight: 600,
+              color: "var(--color-toast-text)",
+            }}
+          >
             {title}
           </span>
           {subtitle && <span style={{ fontSize: 12, color }}>{subtitle}</span>}

@@ -31,12 +31,15 @@ export const DateNavigator = ({ date, onDateChange }: Props) => {
   return (
     <div
       className="flex items-center justify-between px-4 h-[46px] rounded-xl"
-      style={{ background: "#162218", border: "1px solid #1E3322" }}
+      style={{
+        background: "var(--color-dash-surface)",
+        border: "1px solid var(--color-dash-border)",
+      }}
     >
       <button
         onClick={handlePrev}
         className="text-lg font-bold leading-none transition-opacity hover:opacity-70 px-1"
-        style={{ color: "#CDD6E4" }}
+        style={{ color: "var(--color-dash-nav-arrow)" }}
       >
         ‹
       </button>
@@ -44,7 +47,7 @@ export const DateNavigator = ({ date, onDateChange }: Props) => {
       <button
         onClick={() => inputRef.current?.showPicker()}
         className="text-sm font-semibold capitalize transition-opacity hover:opacity-70"
-        style={{ color: "#EEF2FA" }}
+        style={{ color: "var(--color-dash-nav-text)" }}
       >
         {formattedDate}
       </button>
@@ -60,7 +63,7 @@ export const DateNavigator = ({ date, onDateChange }: Props) => {
       <button
         onClick={handleNext}
         className="text-lg font-bold leading-none transition-opacity hover:opacity-70 px-1"
-        style={{ color: "#CDD6E4" }}
+        style={{ color: "var(--color-dash-nav-arrow)" }}
       >
         ›
       </button>

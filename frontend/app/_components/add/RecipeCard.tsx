@@ -115,22 +115,22 @@ export const RecipeCard = ({
     <div
       className={`rounded-xl border overflow-hidden cursor-pointer mb-2 transition-colors ${
         favorite
-          ? "bg-[#1A2420] border-[#22C55E20]"
-          : "bg-[#131E15] border-[#1E3322]"
+          ? "bg-dash-surface-card border-[var(--color-green-mid-alpha-sm)]"
+          : "bg-dash-card-unselected border-dash-border"
       }`}
       onClick={() => setExpanded((v) => !v)}
     >
       {/* Wiersz nagłówka karty przepisu */}
       <div className="flex items-center gap-3 px-3 py-3">
         {/* Ikona przepisu */}
-        <div className="w-9 h-9 rounded-lg bg-[#1A2820] shrink-0 flex items-center justify-center">
+        <div className="w-9 h-9 rounded-lg bg-dash-icon-bg shrink-0 flex items-center justify-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             width={18}
             height={18}
             fill="none"
-            stroke="#4ADE80"
+            stroke="var(--color-dash-green)"
             strokeWidth={2}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -143,17 +143,17 @@ export const RecipeCard = ({
 
         {/* Nazwa + kalorie łącznie */}
         <div className="flex-1 min-w-0 flex flex-col gap-0.5">
-          <p className="text-[#F3F7FF] font-semibold text-sm truncate">
+          <p className="text-dash-fg font-semibold text-sm truncate">
             {recipe.name}
           </p>
-          <p className="text-[#8FA0B8] text-xs">
+          <p className="text-dash-fg-muted text-xs">
             {recipe.products.length} składników · ~{totalKcal.toFixed(0)} kcal
             łącznie
           </p>
         </div>
 
         {/* Kalorie */}
-        <span className="text-[#F4C65D] font-mono font-bold text-sm shrink-0">
+        <span className="text-macro-carbs font-mono font-bold text-sm shrink-0">
           {totalKcal.toFixed(0)} kcal
         </span>
 
@@ -164,10 +164,10 @@ export const RecipeCard = ({
             disabled={copying || isCopied}
             className={`shrink-0 text-xs font-semibold px-2 py-1 rounded-md transition-colors border ${
               isCopied
-                ? "bg-[#1A2420] text-[#4A5A4A] border-dash-border cursor-default"
+                ? "bg-dash-surface-card text-dash-svg-inactive border-dash-border cursor-default"
                 : copying
-                  ? "bg-[#1A2820] text-[#4ADE80] border-[#22C55E30] opacity-60"
-                  : "bg-[#1A2820] text-[#4ADE80] border-[#22C55E30] hover:border-dash-green-mid hover:bg-dash-border"
+                  ? "bg-dash-icon-bg text-dash-green border-[var(--color-green-mid-alpha)] opacity-60"
+                  : "bg-dash-icon-bg text-dash-green border-[var(--color-green-mid-alpha)] hover:border-dash-green-mid hover:bg-dash-border"
             }`}
           >
             {copying ? "..." : isCopied ? "Skopiowany" : "Kopiuj"}
@@ -185,8 +185,12 @@ export const RecipeCard = ({
             viewBox="0 0 24 24"
             width={15}
             height={15}
-            fill={favorite ? "#22C55E" : "none"}
-            stroke={favorite ? "#22C55E" : "#4A5A4A"}
+            fill={favorite ? "var(--color-dash-green-mid)" : "none"}
+            stroke={
+              favorite
+                ? "var(--color-dash-green-mid)"
+                : "var(--color-dash-svg-inactive)"
+            }
             strokeWidth={2}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -202,7 +206,7 @@ export const RecipeCard = ({
           width={15}
           height={15}
           fill="none"
-          stroke="#4A5A4A"
+          stroke="var(--color-dash-svg-inactive)"
           strokeWidth={2}
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -215,7 +219,7 @@ export const RecipeCard = ({
       {/* Panel po rozwinięciu */}
       {expanded && (
         <div
-          className="border-t border-[#1E3322] bg-[#1A2B1F] px-3 py-3 flex flex-col gap-3"
+          className="border-t border-dash-border bg-dash-surface-alt px-3 py-3 flex flex-col gap-3"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Lista składników */}
@@ -223,23 +227,27 @@ export const RecipeCard = ({
             <div className="flex flex-col gap-1">
               {recipe.products.map((ing) => (
                 <div key={ing.id} className="flex justify-between text-xs">
-                  <span className="text-[#8FA0B8]">{ing.product.name}</span>
-                  <span className="text-[#4A5A4A]">{ing.quantity}g</span>
+                  <span className="text-dash-fg-muted">{ing.product.name}</span>
+                  <span className="text-dash-svg-inactive">
+                    {ing.quantity}g
+                  </span>
                 </div>
               ))}
             </div>
           )}
 
           {/* Divider */}
-          <div className="h-px bg-[#1E3322]" />
+          <div className="h-px bg-dash-border" />
 
           {/* Porcje + przycisk */}
           <div className="flex items-center gap-3">
-            <label className="text-[#8FA0B8] text-xs shrink-0">Porcje:</label>
+            <label className="text-dash-fg-muted text-xs shrink-0">
+              Porcje:
+            </label>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setPortion((p) => Math.max(0.5, p - 0.5))}
-                className="w-7 h-7 rounded-lg bg-[#0F1A10] border border-[#1E3322] text-[#8FA0B8] hover:text-white hover:border-[#22C55E] transition-colors flex items-center justify-center text-base leading-none"
+                className="w-7 h-7 rounded-lg bg-[var(--background)] border border-dash-border text-dash-fg-muted hover:text-white hover:border-dash-green-mid transition-colors flex items-center justify-center text-base leading-none"
               >
                 −
               </button>
@@ -248,7 +256,7 @@ export const RecipeCard = ({
               </span>
               <button
                 onClick={() => setPortion((p) => p + 0.5)}
-                className="w-7 h-7 rounded-lg bg-[#0F1A10] border border-[#1E3322] text-[#8FA0B8] hover:text-white hover:border-[#22C55E] transition-colors flex items-center justify-center text-base leading-none"
+                className="w-7 h-7 rounded-lg bg-[var(--background)] border border-dash-border text-dash-fg-muted hover:text-white hover:border-dash-green-mid transition-colors flex items-center justify-center text-base leading-none"
               >
                 +
               </button>
@@ -256,7 +264,7 @@ export const RecipeCard = ({
             <button
               onClick={handleAdd}
               disabled={adding}
-              className="ml-auto bg-[#16A34A] hover:bg-[#15803D] disabled:opacity-60 text-white text-sm font-semibold px-4 py-1.5 rounded-lg transition-colors"
+              className="ml-auto bg-green-600 hover:bg-green-700 disabled:opacity-60 text-white text-sm font-semibold px-4 py-1.5 rounded-lg transition-colors"
             >
               {adding ? "Dodaję..." : "Dodaj"}
             </button>

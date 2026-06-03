@@ -6,7 +6,7 @@ type Props = {
 };
 
 export const ModeToggle = ({ mode, onChange }: Props) => (
-  <div className="flex gap-1 p-0.5 bg-[#0F1A10] border border-dash-border rounded-full">
+  <div className="flex gap-1 p-0.5 bg-[var(--background)] border border-dash-border rounded-full">
     {(["auto", "manual"] as Mode[]).map((m) => (
       <button
         key={m}

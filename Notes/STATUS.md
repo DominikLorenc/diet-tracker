@@ -1,6 +1,6 @@
 # Diet Tracker — Status projektu
 
-> Jedyne źródło prawdy o stanie projektu. Zweryfikowane z kodem 2026-06-03.
+> Jedyne źródło prawdy o stanie projektu. Zweryfikowane z kodem 2026-06-03. Ostatnia aktualizacja: 2026-06-03.
 > Zasada: nie odhaczamy w wielu plikach — aktualizujemy TYLKO ten.
 
 ---
@@ -84,7 +84,7 @@ Zweryfikowane 2026-06-03. Już zrobione (skreślone): ~~**F1**~~ useMeasurements
 
 ### Frontend
 
-- **F3 — Kolory do CSS variables** — ~80+ hardcoded w `style`; `DiaryDayView`, `MacroSummary`, `Toast`
+- ~~**F3 — Kolory do CSS variables**~~ ✅ ZROBIONE (2026-06-03) — ~120+ hardcoded hex zastąpionych CSS variables. Nowe zmienne w `globals.css` (`@theme inline`): surfaces (`dash-surface-darker`, `dash-card-unselected`, `dash-icon-bg`, `dash-badge-bg`), navigation, SVG, chart, forms, gradients (`gradient-green-logo`, `gradient-green-button`, `gradient-cta`, `gradient-calories`), shadows. Objęte: `DiaryDayView`, `MacroSummary`, `Toast`, `Navbar`, `dashboard/layout`, `login/page`, `register/page`, `page.tsx`, `DateNavigator`, auth forms, wszystkie komponenty `add/`, `barcode/`, `progress/`, `shared/ProductForm`, `MacroCalculator`.
 - **F4 — Usuń zduplikowane typy** (`User`, `UserGoals`) → `_types/`
 - **F5 — Over-fetching `/users/me`** — `useUserStore` (Zustand) zamiast wielu `useEffect` (pokrywa się z `useAuthStore` wyżej)
 - **F6 — Dokończ ProductSearch** *potwierdzone* — celowe `TODO(human)` w liniach 83 i 311 (ostatnie wyszukiwania + lokalny stan ulubionych)

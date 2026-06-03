@@ -199,7 +199,7 @@ export const ProductSearch = ({
               width={16}
               height={16}
               fill="none"
-              stroke="#8FA0B8"
+              stroke="var(--color-dash-fg-muted)"
               strokeWidth={2}
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -211,14 +211,14 @@ export const ProductSearch = ({
             <input
               type="text"
               placeholder="Szukaj produktu..."
-              className="w-full bg-[#1A2420] text-white placeholder-[#4A5A4A] pl-10 pr-4 py-2.5 rounded-xl border border-[#1E3322] focus:outline-none focus:border-[#22C55E] text-sm transition-colors"
+              className="w-full bg-dash-surface-card text-white placeholder:text-dash-svg-inactive pl-10 pr-4 py-2.5 rounded-xl border border-dash-border focus:outline-none focus:border-dash-green-mid text-sm transition-colors"
               {...register("search")}
             />
           </div>
           <button
             type="submit"
             disabled={isSearching}
-            className="bg-[#16A34A] hover:bg-[#15803D] disabled:opacity-60 transition-colors px-4 py-2.5 rounded-xl text-white font-semibold text-sm"
+            className="bg-green-600 hover:bg-green-700 disabled:opacity-60 transition-colors px-4 py-2.5 rounded-xl text-white font-semibold text-sm"
           >
             Szukaj
           </button>
@@ -230,7 +230,7 @@ export const ProductSearch = ({
             type="button"
             onClick={() => setIsScannerOpen(true)}
             title="Skanuj kod kreskowy"
-            className="shrink-0 flex items-center gap-1.5 bg-[#1A2E1A] border border-[#22C55E40] hover:border-[#22C55E] transition-colors px-3 py-2.5 rounded-xl text-[#4ADE80]"
+            className="shrink-0 flex items-center gap-1.5 bg-dash-badge-bg border border-[var(--color-green-mid-alpha-md)] hover:border-dash-green-mid transition-colors px-3 py-2.5 rounded-xl text-dash-green"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -238,7 +238,7 @@ export const ProductSearch = ({
               width={16}
               height={16}
               fill="none"
-              stroke="#4ADE80"
+              stroke="var(--color-dash-green)"
               strokeWidth={2}
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -257,7 +257,7 @@ export const ProductSearch = ({
         {/* Przycisk nowego produktu — zawsze widoczny */}
         <button
           onClick={onGoToNewProduct}
-          className="shrink-0 flex items-center gap-1.5 bg-[#1A2E1A] border border-[#22C55E40] hover:border-[#22C55E] transition-colors px-3 py-2.5 rounded-xl text-[#4ADE80] text-sm font-semibold"
+          className="shrink-0 flex items-center gap-1.5 bg-dash-badge-bg border border-[var(--color-green-mid-alpha-md)] hover:border-dash-green-mid transition-colors px-3 py-2.5 rounded-xl text-dash-green text-sm font-semibold"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -265,7 +265,7 @@ export const ProductSearch = ({
             width={14}
             height={14}
             fill="none"
-            stroke="#4ADE80"
+            stroke="var(--color-dash-green)"
             strokeWidth={2.5}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -285,16 +285,18 @@ export const ProductSearch = ({
       {hasSearched && (
         <div>
           {isSearching && (
-            <p className="text-[#8FA0B8] text-sm text-center py-6">Szukam...</p>
+            <p className="text-dash-fg-muted text-sm text-center py-6">
+              Szukam...
+            </p>
           )}
           {!isSearching && displayedProducts.length === 0 && (
-            <div className="text-center py-8 bg-[#111C14] rounded-xl border border-[#1E3322]">
-              <p className="text-[#8FA0B8] mb-3 text-sm">
+            <div className="text-center py-8 bg-dash-surface-darker rounded-xl border border-dash-border">
+              <p className="text-dash-fg-muted mb-3 text-sm">
                 Nie znaleziono produktu
               </p>
               <button
                 onClick={onGoToNewProduct}
-                className="text-[#4ADE80] text-sm font-semibold underline underline-offset-2"
+                className="text-dash-green text-sm font-semibold underline underline-offset-2"
               >
                 Nie znaleziono? → Dodaj nowy produkt
               </button>
@@ -333,12 +335,12 @@ export const ProductSearch = ({
         <div className="flex flex-col gap-5">
           {/* Ostatnio jedzone */}
           {recentProducts.length > 0 && (
-            <section className="bg-[#111C14] rounded-xl border border-[#1E3322] p-4">
+            <section className="bg-dash-surface-darker rounded-xl border border-dash-border p-4">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-[#4ADE80] font-mono text-xs font-bold tracking-widest uppercase">
+                <h2 className="text-dash-green font-mono text-xs font-bold tracking-widest uppercase">
                   Ostatnio jedzone
                 </h2>
-                <span className="text-[#4A5A4A] text-xs">
+                <span className="text-dash-svg-inactive text-xs">
                   {recentProducts.length} produktów
                 </span>
               </div>
@@ -367,9 +369,9 @@ export const ProductSearch = ({
 
           {/* Ulubione produkty */}
           {favoriteProducts.length > 0 && (
-            <section className="bg-[#111C14] rounded-xl border border-[#1E3322] p-4">
+            <section className="bg-dash-surface-darker rounded-xl border border-dash-border p-4">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-[#4ADE80] font-mono text-xs font-bold tracking-widest uppercase">
+                <h2 className="text-dash-green font-mono text-xs font-bold tracking-widest uppercase">
                   Ulubione produkty
                 </h2>
                 <svg
@@ -377,8 +379,8 @@ export const ProductSearch = ({
                   viewBox="0 0 24 24"
                   width={13}
                   height={13}
-                  fill="#4ADE80"
-                  stroke="#4ADE80"
+                  fill="var(--color-dash-green)"
+                  stroke="var(--color-dash-green)"
                   strokeWidth={2}
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -406,8 +408,8 @@ export const ProductSearch = ({
 
           {/* Stan pusty — brak historii i ulubionych */}
           {recentProducts.length === 0 && favoriteProducts.length === 0 && (
-            <div className="text-center py-12 bg-[#111C14] rounded-xl border border-[#1E3322]">
-              <p className="text-[#4A5A4A] text-sm">
+            <div className="text-center py-12 bg-dash-surface-darker rounded-xl border border-dash-border">
+              <p className="text-dash-svg-inactive text-sm">
                 Wyszukaj produkt lub dodaj nowy
               </p>
             </div>

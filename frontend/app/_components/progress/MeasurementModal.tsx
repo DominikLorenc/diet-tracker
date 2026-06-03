@@ -48,16 +48,16 @@ type FieldProps = {
 const NumberField = forwardRef<HTMLInputElement, FieldProps>(
   ({ label, unit, unitColor, error, ...props }, ref) => (
     <div className="flex flex-col gap-1.5">
-      <label className="font-['Funnel_Sans'] text-xs font-medium text-[#8FA0B8]">
+      <label className="font-['Funnel_Sans'] text-xs font-medium text-dash-fg-muted">
         {label}
       </label>
-      <div className="flex items-center gap-2 rounded-xl border border-[#1E3322] bg-[#0F1A10] px-3.5 py-2.5">
+      <div className="flex items-center gap-2 rounded-xl border border-dash-border bg-[var(--background)] px-3.5 py-2.5">
         <input
           ref={ref}
           type="number"
           step="0.1"
           placeholder="0"
-          className="flex-1 bg-transparent font-['IBM_Plex_Mono'] text-sm text-[#F3F7FF] outline-none placeholder:text-[#4B5563]"
+          className="flex-1 bg-transparent font-['IBM_Plex_Mono'] text-sm text-dash-fg outline-none placeholder:text-chart-tick"
           {...props}
         />
         <span
@@ -119,38 +119,38 @@ export const MeasurementModal = ({
       />
 
       <div
-        className="relative z-50 w-full max-w-[520px] rounded-2xl border border-[#1E3322] bg-[#111C14]"
+        className="relative z-50 w-full max-w-[520px] rounded-2xl border border-dash-border bg-dash-surface-darker"
         style={{ boxShadow: "0 24px 48px rgba(0,0,0,0.6)" }}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5">
-          <span className="font-['Newsreader'] text-2xl font-bold text-[#F3F7FF]">
+          <span className="font-['Newsreader'] text-2xl font-bold text-dash-fg">
             {initialData ? "Edytuj pomiar" : "Dodaj pomiar"}
           </span>
           <button
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#1E3322] bg-[#1A2420] text-[#94A3B8] transition-colors hover:text-[#F3F7FF]"
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-dash-border bg-dash-surface-card text-dash-fg-secondary transition-colors hover:text-dash-fg"
             aria-label="Zamknij"
           >
             ✕
           </button>
         </div>
 
-        <div className="h-px bg-[#1E3322]" />
+        <div className="h-px bg-dash-border" />
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-4 px-6 py-5">
             {/* Data */}
             <div className="flex flex-col gap-1.5">
-              <label className="font-['Funnel_Sans'] text-xs font-medium text-[#8FA0B8]">
+              <label className="font-['Funnel_Sans'] text-xs font-medium text-dash-fg-muted">
                 Data
               </label>
-              <div className="flex items-center gap-2 rounded-xl border border-[#1E3322] bg-[#0F1A10] px-3.5 py-2.5">
-                <span className="text-[#4ADE80]">📅</span>
+              <div className="flex items-center gap-2 rounded-xl border border-dash-border bg-[var(--background)] px-3.5 py-2.5">
+                <span className="text-dash-green">📅</span>
                 <input
                   {...register("date")}
                   type="date"
-                  className="flex-1 bg-transparent font-['Funnel_Sans'] text-sm text-[#D6DFEC] outline-none [color-scheme:dark]"
+                  className="flex-1 bg-transparent font-['Funnel_Sans'] text-sm text-dash-fg-bright outline-none [color-scheme:dark]"
                   max={today()}
                 />
               </div>
@@ -165,47 +165,47 @@ export const MeasurementModal = ({
               {...register("weight")}
               label="Waga (kg)"
               unit="kg"
-              unitColor="#4ADE80"
+              unitColor="var(--color-dash-green)"
               error={errors.weight?.message}
             />
             <NumberField
               {...register("waist")}
               label="Talia (cm)"
               unit="cm"
-              unitColor="#F4C65D"
+              unitColor="var(--color-macro-carbs)"
               error={errors.waist?.message}
             />
             <NumberField
               {...register("hips")}
               label="Biodra (cm)"
               unit="cm"
-              unitColor="#F18FA3"
+              unitColor="var(--color-macro-fat)"
               error={errors.hips?.message}
             />
             <NumberField
               {...register("arm")}
               label="Ramię (cm)"
               unit="cm"
-              unitColor="#7DB5FF"
+              unitColor="var(--color-macro-protein)"
               error={errors.arm?.message}
             />
           </div>
 
-          <div className="h-px bg-[#1E3322]" />
+          <div className="h-px bg-dash-border" />
 
           {/* Footer */}
           <div className="flex items-center justify-end gap-2.5 px-6 py-4">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl border border-[#1E3322] bg-[#1A2420] px-5 py-2.5 font-['Funnel_Sans'] text-sm text-[#94A3B8] transition-colors hover:text-[#F3F7FF]"
+              className="rounded-xl border border-dash-border bg-dash-surface-card px-5 py-2.5 font-['Funnel_Sans'] text-sm text-dash-fg-secondary transition-colors hover:text-dash-fg"
             >
               Anuluj
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="rounded-xl bg-gradient-to-b from-[#16A34A] to-[#15803D] px-5 py-2.5 font-['Funnel_Sans'] text-sm font-semibold text-white disabled:opacity-50"
+              className="rounded-xl bg-gradient-to-b from-green-600 to-green-700 px-5 py-2.5 font-['Funnel_Sans'] text-sm font-semibold text-white disabled:opacity-50"
               style={{ boxShadow: "0 2px 10px rgba(34,197,94,0.25)" }}
             >
               {isSubmitting ? "Zapisywanie..." : "Zapisz pomiar"}

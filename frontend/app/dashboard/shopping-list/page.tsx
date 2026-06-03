@@ -166,7 +166,7 @@ export default function ShoppingListPage() {
 
     const canvas = await html2canvas(el, {
       scale: 2,
-      backgroundColor: "#ffffff",
+      backgroundColor: "white",
     });
     document.body.removeChild(el);
 
@@ -179,7 +179,7 @@ export default function ShoppingListPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0F1A10] p-6 md:p-10">
+    <main className="min-h-screen bg-[var(--background)] p-6 md:p-10">
       <div className="max-w-2xl mx-auto flex flex-col gap-6">
         {/* Header */}
         <div className="flex items-center gap-3">
@@ -208,7 +208,7 @@ export default function ShoppingListPage() {
                 type="date"
                 value={from}
                 onChange={(e) => setFrom(e.target.value)}
-                className="bg-[#0F1A10] border border-dash-border rounded-xl px-4 py-2.5 text-dash-fg text-sm font-sans focus:outline-none focus:border-dash-green transition-colors"
+                className="bg-[var(--background)] border border-dash-border rounded-xl px-4 py-2.5 text-dash-fg text-sm font-sans focus:outline-none focus:border-dash-green transition-colors"
               />
             </label>
             <label className="flex flex-col gap-1.5 flex-1">
@@ -217,7 +217,7 @@ export default function ShoppingListPage() {
                 type="date"
                 value={to}
                 onChange={(e) => setTo(e.target.value)}
-                className="bg-[#0F1A10] border border-dash-border rounded-xl px-4 py-2.5 text-dash-fg text-sm font-sans focus:outline-none focus:border-dash-green transition-colors"
+                className="bg-[var(--background)] border border-dash-border rounded-xl px-4 py-2.5 text-dash-fg text-sm font-sans focus:outline-none focus:border-dash-green transition-colors"
               />
             </label>
           </div>

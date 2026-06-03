@@ -184,7 +184,7 @@ export const ManualForm = ({ onSuccess }: Props) => {
         </div>
       ))}
 
-      <div className="flex items-center justify-between py-2.5 px-1 border-t border-dash-border rounded-b-lg bg-[#0F1A10]">
+      <div className="flex items-center justify-between py-2.5 px-1 border-t border-dash-border rounded-b-lg bg-[var(--background)]">
         <span className="text-sm font-semibold text-dash-fg-secondary font-sans">
           Razem
         </span>

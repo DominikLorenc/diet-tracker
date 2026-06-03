@@ -231,14 +231,14 @@ export const DiaryDayView = () => {
       <div className="flex flex-col gap-1">
         <p
           className="text-sm font-medium capitalize"
-          style={{ color: "#8FA0B8" }}
+          style={{ color: "var(--color-dash-fg-muted)" }}
         >
           {today}
         </p>
         <h1
           className="text-[42px] sm:text-[56px] font-bold leading-tight"
           style={{
-            color: "#F3F7FF",
+            color: "var(--color-dash-fg)",
             fontFamily: "var(--font-newsreader)",
           }}
         >
@@ -256,7 +256,7 @@ export const DiaryDayView = () => {
       <DateNavigator date={date} onDateChange={setDate} />
 
       {error && (
-        <p className="text-sm px-1" style={{ color: "#F18FA3" }}>
+        <p className="text-sm px-1" style={{ color: "var(--color-macro-fat)" }}>
           {error}
         </p>
       )}
@@ -276,21 +276,24 @@ export const DiaryDayView = () => {
               key={mealType}
               className="rounded-xl overflow-hidden"
               style={{
-                background: "#162218",
-                border: "1px solid #1E3322",
+                background: "var(--color-dash-surface)",
+                border: "1px solid var(--color-dash-border)",
               }}
             >
               {/* Nagłówek posiłku */}
               <div
                 className="flex items-center justify-between px-4 h-[46px]"
                 style={{
-                  borderBottom: items.length > 0 ? "1px solid #1E3322" : "none",
+                  borderBottom:
+                    items.length > 0
+                      ? "1px solid var(--color-dash-border)"
+                      : "none",
                 }}
               >
                 <span
                   className="text-sm font-bold tracking-wider"
                   style={{
-                    color: "#D6DFEC",
+                    color: "var(--color-dash-fg-bright)",
                     fontFamily: "var(--font-ibm-plex-mono)",
                     letterSpacing: "0.08em",
                   }}
@@ -302,7 +305,7 @@ export const DiaryDayView = () => {
                     <span
                       className="text-sm font-bold"
                       style={{
-                        color: "#F4C65D",
+                        color: "var(--color-macro-carbs)",
                         fontFamily: "var(--font-ibm-plex-mono)",
                       }}
                     >
@@ -312,7 +315,7 @@ export const DiaryDayView = () => {
                   <Link
                     href={`/dashboard/add?mealType=${mealType}&date=${date.toISOString().split("T")[0]}`}
                     className="text-xl font-bold leading-none w-7 h-7 flex items-center justify-center rounded-lg transition-opacity hover:opacity-70"
-                    style={{ color: "#22C55E" }}
+                    style={{ color: "var(--color-dash-green-mid)" }}
                   >
                     +
                   </Link>
@@ -333,8 +336,11 @@ export const DiaryDayView = () => {
                     key={item.id}
                     className="flex items-center gap-3 px-4 h-[50px] transition-opacity duration-300"
                     style={{
-                      background: "#1A2B1F",
-                      borderTop: idx > 0 ? "1px solid #1E3322" : undefined,
+                      background: "var(--color-dash-surface-alt)",
+                      borderTop:
+                        idx > 0
+                          ? "1px solid var(--color-dash-border)"
+                          : undefined,
                       opacity: item.isEaten ? 0.5 : 1,
                     }}
                   >
@@ -343,9 +349,15 @@ export const DiaryDayView = () => {
                       onClick={() => handleEaten(item.id, !item.isEaten)}
                       className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center transition-all duration-200"
                       style={{
-                        background: item.isEaten ? "#22C55E" : "transparent",
-                        border: item.isEaten ? "none" : "1.5px solid #2E4A35",
-                        boxShadow: item.isEaten ? "0 0 8px #22C55E55" : "none",
+                        background: item.isEaten
+                          ? "var(--color-dash-green-mid)"
+                          : "transparent",
+                        border: item.isEaten
+                          ? "none"
+                          : "1.5px solid var(--color-dash-check-border)",
+                        boxShadow: item.isEaten
+                          ? "var(--shadow-check-eaten)"
+                          : "none",
                       }}
                       title={
                         item.isEaten
@@ -362,7 +374,7 @@ export const DiaryDayView = () => {
                         >
                           <path
                             d="M1 4L3.5 6.5L9 1"
-                            stroke="#0F1F13"
+                            stroke="var(--color-dash-check-mark)"
                             strokeWidth="1.8"
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -383,7 +395,7 @@ export const DiaryDayView = () => {
                     ) : (
                       <div
                         className="w-8 h-8 rounded-lg shrink-0"
-                        style={{ background: "#334155" }}
+                        style={{ background: "var(--color-dash-placeholder)" }}
                       />
                     )}
 
@@ -392,9 +404,9 @@ export const DiaryDayView = () => {
                       <span
                         className="text-sm font-medium truncate flex-1 transition-all duration-300"
                         style={{
-                          color: "#D6DFEC",
+                          color: "var(--color-dash-fg-bright)",
                           textDecoration: item.isEaten
-                            ? "line-through #3D5A45"
+                            ? "line-through var(--color-dash-eaten-line)"
                             : "none",
                         }}
                       >
@@ -404,7 +416,7 @@ export const DiaryDayView = () => {
                         {!item.recipe && !item.userRecipe && (
                           <span
                             className="text-xs"
-                            style={{ color: "#9FB0C7" }}
+                            style={{ color: "var(--color-dash-fg-dim)" }}
                           >
                             {item.quantity}g
                           </span>
@@ -412,7 +424,7 @@ export const DiaryDayView = () => {
                         <span
                           className="text-sm font-bold"
                           style={{
-                            color: "#F4C65D",
+                            color: "var(--color-macro-carbs)",
                             fontFamily: "var(--font-ibm-plex-mono)",
                           }}
                         >
@@ -421,7 +433,7 @@ export const DiaryDayView = () => {
                         <button
                           onClick={() => handleDeleteItem(item.id)}
                           className="text-xs opacity-40 hover:opacity-80 transition-opacity ml-1"
-                          style={{ color: "#F18FA3" }}
+                          style={{ color: "var(--color-macro-fat)" }}
                         >
                           ✕
                         </button>

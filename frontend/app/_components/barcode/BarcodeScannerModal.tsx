@@ -62,12 +62,12 @@ export const BarcodeScannerModal = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
-      <div className="bg-[#111C14] border border-[#1E3322] rounded-2xl p-6 w-full max-w-md">
+      <div className="bg-dash-surface-darker border border-dash-border rounded-2xl p-6 w-full max-w-md">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-white font-bold text-lg">Skanuj kod kreskowy</h2>
           <button
             onClick={onClose}
-            className="text-[#8FA0B8] hover:text-white transition-colors text-xl leading-none"
+            className="text-dash-fg-muted hover:text-white transition-colors text-xl leading-none"
           >
             ✕
           </button>
@@ -82,13 +82,13 @@ export const BarcodeScannerModal = ({
 
         {state === "loading" && (
           <div className="flex items-center justify-center py-16">
-            <p className="text-[#8FA0B8] text-sm">Wyszukuję produkt...</p>
+            <p className="text-dash-fg-muted text-sm">Wyszukuję produkt...</p>
           </div>
         )}
 
         {state === "not_found" && (
           <div className="text-center py-10">
-            <p className="text-[#8FA0B8] mb-5 text-sm">
+            <p className="text-dash-fg-muted mb-5 text-sm">
               Nie znaleziono produktu.
             </p>
             <button
@@ -96,7 +96,7 @@ export const BarcodeScannerModal = ({
                 hasScanned.current = false;
                 setState("scanning");
               }}
-              className="text-[#4ADE80] text-sm font-semibold"
+              className="text-dash-green text-sm font-semibold"
             >
               Skanuj ponownie
             </button>
@@ -105,12 +105,12 @@ export const BarcodeScannerModal = ({
 
         {state === "camera_error" && (
           <div className="text-center py-10">
-            <p className="text-[#8FA0B8] mb-5 text-sm">
+            <p className="text-dash-fg-muted mb-5 text-sm">
               Brak dostępu do kamery. Sprawdź uprawnienia w przeglądarce.
             </p>
             <button
               onClick={onClose}
-              className="text-[#4ADE80] text-sm font-semibold"
+              className="text-dash-green text-sm font-semibold"
             >
               Zamknij
             </button>

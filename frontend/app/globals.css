@@ -39,6 +39,73 @@
   --color-macro-fat: #F18FA3;
   --color-macro-calories: #4ADE80;
   --color-macro-track: #162E1C;
+
+  /* Dashboard — rozszerzony zestaw */
+  --color-dash-surface-card: #1A2420;
+  --color-dash-surface-darker: #111C14;
+  --color-dash-logo-bg: #111827;
+  --color-dash-badge-bg: #1A2E1A;
+  --color-dash-fg-bright: #D6DFEC;
+  --color-dash-fg-dim: #9FB0C7;
+  --color-dash-fg-subtle: #8D9DB4;
+  --color-dash-placeholder: #334155;
+  --color-dash-check-border: #2E4A35;
+  --color-dash-check-mark: #0F1F13;
+  --color-dash-eaten-line: #3D5A45;
+  --color-dash-input-placeholder: #3D5240;
+  --color-dash-nav-arrow: #CDD6E4;
+  --color-dash-nav-text: #EEF2FA;
+  --color-dash-nav-inactive: #AFC0D8;
+  --color-dash-svg-inactive: #4A5A4A;
+
+  /* Landing */
+  --color-landing-dark: #0D1A0E;
+
+  /* Chart */
+  --color-chart-tick: #4B5563;
+
+  /* Forms */
+  --color-form-error: #FCA5A5;
+  --color-form-error-bg: rgba(239,68,68,0.1);
+  --color-form-error-border: rgba(239,68,68,0.25);
+
+  /* Utility */
+  --color-white: #FFFFFF;
+  --color-green-mid-alpha: #22C55E30;
+  --color-green-mid-alpha-sm: #22C55E20;
+  --color-green-mid-alpha-md: #22C55E40;
+  --color-green-mid-border: rgba(34,197,94,0.25);
+  --color-dash-card-unselected: #131E15;
+  --color-dash-icon-bg: #1A2820;
+
+  /* Shadows & gradients */
+  --shadow-dash-card: 0 1px 20px rgba(34,197,94,0.09);
+  --shadow-check-eaten: 0 0 8px #22C55E55;
+  --shadow-green-logo: 0 4px 20px rgba(34,197,94,0.3);
+  --shadow-green-nav: 0 2px 10px rgba(34,197,94,0.25);
+  --shadow-green-cta: 0 2px 10px rgba(34,197,94,0.35);
+  --shadow-green-cta-lg: 0 4px 20px rgba(34,197,94,0.35);
+  --shadow-green-step: 0 8px 24px rgba(34,197,94,0.3);
+  --shadow-mockup: 0 24px 60px rgba(0,0,0,0.4), 0 0 60px rgba(34,197,94,0.06);
+  --gradient-calories: linear-gradient(90deg, #15803D 0%, #4ADE80 100%);
+  --gradient-green-logo: linear-gradient(180deg, #22C55E 0%, #16A34A 100%);
+  --gradient-green-button: linear-gradient(180deg, #16A34A 0%, #15803D 100%);
+  --gradient-cta: linear-gradient(135deg, #162218 0%, #0F1A10 100%);
+
+  /* Toast */
+  --color-toast-bg: #FFFFFF;
+  --color-toast-text: #1A1A1A;
+  --color-toast-success-border: #D1FAE5;
+  --color-toast-success-bg: #F0FFF4;
+  --color-toast-error: #EF4444;
+  --color-toast-error-border: #FECACA;
+  --color-toast-error-bg: #FEF2F2;
+  --color-toast-info: #6B7BFF;
+  --color-toast-info-border: #C7D2FE;
+  --color-toast-info-bg: #EEF2FF;
+  --shadow-toast-success: 0 4px 20px #22C55E22, 0 1px 3px #0000001A;
+  --shadow-toast-error: 0 4px 20px #EF444422, 0 1px 3px #0000001A;
+  --shadow-toast-info: 0 4px 20px #6B7BFF22, 0 1px 3px #0000001A;
 }
 
 @layer utilities {
