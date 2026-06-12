@@ -15,9 +15,15 @@ const openApiDocument = generateOpenAPIDocument();
 
 const app = express();
 
+// Dozwolone originy z env (CSV), z fallbackiem na lokalny dev.
+// Każdy element przycinamy z białych znaków, żeby spacja po przecinku nie psuła dopasowania.
+const allowedOrigins = (process.env.CORS_ORIGINS ?? 'http://localhost:3000,http://localhost:3001')
+    .split(',')
+    .map((o) => o.trim());
+
 app.use(
     cors({
-        origin: ['http://localhost:3000', 'http://localhost:3001'],
+        origin: allowedOrigins,
         credentials: true,
     }),
 );

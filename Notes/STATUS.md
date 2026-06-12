@@ -76,7 +76,7 @@ Zweryfikowane 2026-06-03. Już zrobione (skreślone): ~~**F1**~~ useMeasurements
 - ~~**B1 — Row-level authorization (diary)**~~ ✅ ZROBIONE. `diaryService` filtruje `userId` w `where` (`delete`/`update`/`deleteItem`), kontrolery biorą `req.userId`.
 - ~~**B2 — Row-level authorization (recipe)**~~ ✅ ZROBIONE — z rozróżnieniem na dwa modele: `Recipe` (globalny katalog, **bez właściciela**) chroniony przez `requireAdmin` na trasach `POST/PATCH/DELETE` (= role-based, bo nie ma czego „posiadać"); `UserRecipe` (przepis usera) filtruje `where: { id, userId }` w `update`/`delete`. Wniosek: A01 to nie zawsze `userId` w `where` — dla zasobu współdzielonego właściwa jest kontrola ról.
 - **B3 — Usuń `console.log`** z produkcji (`productController` ~99, `diaryService` ~134/153) → logger (`pino`)
-- **B4 — CORS z env** 🟠 *potwierdzone aktualne* — `app.ts` ma hardcoded `['http://localhost:3000','http://localhost:3001']` → `process.env.CORS_ORIGINS`
+- ~~**B4 — CORS z env**~~ ✅ ZROBIONE (2026-06-12) — `app.ts` czyta `process.env.CORS_ORIGINS` (CSV → `split(',').map(trim)`) z fallbackiem na localhost; udokumentowane w `.env.example`.
 - **B5 — Transakcja przy update recipe** — owinąć `deleteMany`+`create` w `prisma.$transaction`
 - **B6 — Walidacja XOR w diary schema** — `.refine()`: dokładnie jedno z `productId`/`recipeId`
 - **B8 — Spójny klucz błędów** — ujednolicić `errors` vs `message` w kontrolerach
