@@ -33,12 +33,41 @@ describe('POST /api/v1/diary', () => {
                 userId,
                 date: new Date(),
                 productId,
-                recipeId,
                 quantity,
                 mealType: 'BREAKFAST',
             })
             .set('Cookie', ['token=' + token]);
         expect(res.status).toBe(201);
+    });
+
+    it('should return 400 when no source field is provided', async () => {
+        const res = await request(app)
+            .post('/api/v1/diary')
+            .send({
+                userId,
+                date: new Date(),
+                quantity,
+                mealType: 'BREAKFAST',
+            })
+            .set('Cookie', ['token=' + token]);
+
+        expect(res.status).toBe(400);
+    });
+
+    it('should return 400 when more than one source field is provided', async () => {
+        const res = await request(app)
+            .post('/api/v1/diary')
+            .send({
+                userId,
+                date: new Date(),
+                productId,
+                recipeId,
+                quantity,
+                mealType: 'BREAKFAST',
+            })
+            .set('Cookie', ['token=' + token]);
+
+        expect(res.status).toBe(400);
     });
 
     it('should return 400 when invalid data is provided', async () => {

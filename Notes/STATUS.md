@@ -78,7 +78,7 @@ Zweryfikowane 2026-06-03. Już zrobione (skreślone): ~~**F1**~~ useMeasurements
 - **B3 — Usuń `console.log`** z produkcji (`productController` ~99, `diaryService` ~134/153) → logger (`pino`)
 - ~~**B4 — CORS z env**~~ ✅ ZROBIONE (2026-06-12) — `app.ts` czyta `process.env.CORS_ORIGINS` (CSV → `split(',').map(trim)`) z fallbackiem na localhost; udokumentowane w `.env.example`.
 - **B5 — Transakcja przy update recipe** — owinąć `deleteMany`+`create` w `prisma.$transaction`
-- **B6 — Walidacja XOR w diary schema** — `.refine()`: dokładnie jedno z `productId`/`recipeId`
+- ~~**B6 — Walidacja XOR w diary schema**~~ ✅ ZROBIONE (2026-06-12) — `.refine()` na `diaryEntrySchema`: dokładnie jedno z `productId`/`recipeId`/`userRecipeId` (suma `Number(Boolean(...))` === 1). +2 testy integracyjne (zero źródeł → 400, wiele źródeł → 400); poprawiony błędny test, który asercjował dwa źródła naraz.
 - **B8 — Spójny klucz błędów** — ujednolicić `errors` vs `message` w kontrolerach
 - **B9 — Walidacja JWT payload** — runtime check zamiast `as jwt.JwtPayload`
 
