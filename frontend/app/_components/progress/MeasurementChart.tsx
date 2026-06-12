@@ -82,7 +82,7 @@ export const MeasurementChart = ({ label, unit, color, data }: Props) => {
                   fontSize: 12,
                 }}
                 itemStyle={{ color }}
-                formatter={(value: number) => [`${value} ${unit}`, label]}
+                formatter={(value) => [`${value} ${unit}`, label]}
               />
               <Line
                 type="monotone"
