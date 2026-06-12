@@ -1031,17 +1031,21 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** Get all products */
+    /** Get all products (paginated, searchable) */
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          page?: number;
+          limit?: number;
+          search?: string;
+        };
         header?: never;
         path?: never;
         cookie?: never;
       };
       requestBody?: never;
       responses: {
-        /** @description List of products */
+        /** @description Paginated list of products */
         200: {
           headers: {
             [name: string]: unknown;
@@ -1059,6 +1063,20 @@ export interface paths {
                 barcode: string | null;
                 createdAt: string;
               }[];
+              total: number;
+              page: number;
+              limit: number;
+            };
+          };
+        };
+        /** @description Invalid query params */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
             };
           };
         };

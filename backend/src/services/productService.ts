@@ -23,10 +23,25 @@ export const createProduct = async (product: Prisma.ProductCreateInput): Promise
     return newProduct;
 };
 
-export const getAllProducts = async (): Promise<Product[]> => {
-    const products = await prisma.product.findMany();
+export const getAllProducts = async ({
+    page,
+    limit,
+    search,
+}: {
+    page: number;
+    limit: number;
+    search?: string;
+}): Promise<{ products: Product[]; total: number; page: number; limit: number }> => {
+    const where: Prisma.ProductWhereInput | undefined = search
+        ? { name: { contains: search, mode: 'insensitive' } }
+        : undefined;
 
-    return products;
+    const [products, total] = await prisma.$transaction([
+        prisma.product.findMany({ where, orderBy: { name: 'asc' }, skip: (page - 1) * limit, take: limit }),
+        prisma.product.count({ where }),
+    ]);
+
+    return { products, total, page, limit };
 };
 
 export const getProductById = async (id: string): Promise<Product> => {

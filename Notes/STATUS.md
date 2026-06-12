@@ -100,7 +100,7 @@ Zweryfikowane 2026-06-03. Już zrobione (skreślone): ~~**F1**~~ useMeasurements
 1. ~~**Merge barcode**~~ ✅ zmergowany do `main`
 2. ~~**B1 + B2 — row-level authorization**~~ ✅ zrobione (patrz dług techniczny → Backend)
 3. ~~**`/dashboard/all`**~~ ✅ zrobione (patrz „Frontend — drobne braki")
-4. **Przeglądanie listy produktów** (search + paginacja, server-side) ← **w toku** — spec: `docs/superpowers/specs/2026-06-03-products-list-browsing-design.md`
+4. ~~**Przeglądanie listy produktów**~~ ✅ zrobione (2026-06-12) — server-side search + paginacja w `GET /products` (Zod query: `page`/`limit`/`search`, cap `limit` do 100, `$transaction` na findMany+count), `AllProducts` z debounce + paginacją, 6 testów kontrolera (`toHaveBeenCalledWith`, cap, walidacja 400). Spec: `docs/superpowers/specs/2026-06-03-products-list-browsing-design.md`
 5. `**useAuthStore` / `useUserStore**` (= F5) — porządkuje stan auth, kończy over-fetching
 6. **Pierwsze testy frontend** (Vitest + RTL) — zacznij od jednego komponentu
 7. **B3, B4, B5 + F2-check** — standard produkcyjny przed deployem

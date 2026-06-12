@@ -28,3 +28,14 @@ export const searchProductSchema = z.object({
 });
 
 export const barcodeCodeSchema = z.string().regex(/^\d{8}$|^\d{13}$/, 'Barcode must be 8 or 13 digits');
+
+export const productListQuerySchema = z.object({
+    page: z.coerce.number().int().min(1).default(1),
+    limit: z.coerce
+        .number()
+        .int()
+        .min(1)
+        .default(20)
+        .transform((v) => Math.min(v, 100)),
+    search: z.string().trim().max(100).optional(),
+});

@@ -1,5 +1,5 @@
 import { registry, errorSchema } from '../swagger';
-import { productSchema } from '../schemas/productSchema';
+import { productSchema, productListQuerySchema } from '../schemas/productSchema';
 import { z } from 'zod';
 
 const errorContent = { 'application/json': { schema: errorSchema } };
@@ -53,13 +53,26 @@ registry.registerPath({
     method: 'get',
     path: '/products',
     tags: ['Products'],
-    summary: 'Get all products',
+    summary: 'Get all products (paginated, searchable)',
     security: [{ cookieAuth: [] }],
+    request: {
+        query: productListQuerySchema,
+    },
     responses: {
         200: {
-            description: 'List of products',
-            content: { 'application/json': { schema: z.object({ products: z.array(productResponseSchema) }) } },
+            description: 'Paginated list of products',
+            content: {
+                'application/json': {
+                    schema: z.object({
+                        products: z.array(productResponseSchema),
+                        total: z.number(),
+                        page: z.number(),
+                        limit: z.number(),
+                    }),
+                },
+            },
         },
+        400: { description: 'Invalid query params', content: errorContent },
         401: { description: 'Unauthorized', content: errorContent },
     },
 });

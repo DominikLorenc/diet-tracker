@@ -14,6 +14,7 @@ import {
     updateProductSchema,
     searchProductSchema,
     barcodeCodeSchema,
+    productListQuerySchema,
 } from '../schemas/productSchema';
 import { Role } from '../generated/prisma';
 
@@ -35,8 +36,15 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
 
 export const getProducts = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const products = await getAllProducts();
-        res.status(200).json({ products });
+        const resultSchema = productListQuerySchema.safeParse(req.query);
+
+        if (!resultSchema.success) {
+            res.status(400).json({ message: resultSchema.error.issues });
+            return;
+        }
+
+        const result = await getAllProducts(resultSchema.data);
+        res.status(200).json(result);
     } catch (error) {
         next(error);
     }

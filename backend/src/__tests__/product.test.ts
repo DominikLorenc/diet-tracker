@@ -101,23 +101,145 @@ describe('GET /api/v1/products', () => {
         vi.resetAllMocks();
     });
     it('should return 200 and all products', async () => {
-        vi.mocked(getAllProducts).mockResolvedValue([
-            {
-                name: 'Test product',
-                calories: new Decimal(100),
-                carbs: new Decimal(100),
-                protein: new Decimal(100),
-                fat: new Decimal(100),
-                id: productId,
-                createdAt: new Date(),
-                imageUrl: '',
-                barcode: null,
-            },
-        ]);
+        vi.mocked(getAllProducts).mockResolvedValue({
+            products: [
+                {
+                    name: 'Test product',
+                    calories: new Decimal(100),
+                    carbs: new Decimal(100),
+                    protein: new Decimal(100),
+                    fat: new Decimal(100),
+                    id: productId,
+                    createdAt: new Date(),
+                    imageUrl: '',
+                    barcode: null,
+                },
+            ],
+            total: 500,
+            page: 1,
+            limit: 1,
+        });
         const res = await request(app)
             .get('/api/v1/products')
             .set('Cookie', ['token=' + token]);
         expect(res.status).toBe(200);
+        expect(getAllProducts).toHaveBeenCalledWith({ page: 1, limit: 20, search: undefined });
+    });
+
+    it('should return 200 and products with search', async () => {
+        vi.mocked(getAllProducts).mockResolvedValue({
+            products: [
+                {
+                    name: 'Test product',
+                    calories: new Decimal(100),
+                    carbs: new Decimal(100),
+                    protein: new Decimal(100),
+                    fat: new Decimal(100),
+                    id: productId,
+                    createdAt: new Date(),
+                    imageUrl: '',
+                    barcode: null,
+                },
+            ],
+            total: 500,
+            page: 1,
+            limit: 1,
+        });
+        const res = await request(app)
+            .get('/api/v1/products')
+            .query({ search: 'apple' })
+            .set('Cookie', ['token=' + token]);
+        expect(res.status).toBe(200);
+    });
+
+    it('should return 200 and products with search and page', async () => {
+        vi.mocked(getAllProducts).mockResolvedValue({
+            products: [
+                {
+                    name: 'Test product',
+                    calories: new Decimal(100),
+                    carbs: new Decimal(100),
+                    protein: new Decimal(100),
+                    fat: new Decimal(100),
+                    id: productId,
+                    createdAt: new Date(),
+                    imageUrl: '',
+                    barcode: null,
+                },
+            ],
+            total: 500,
+            page: 1,
+            limit: 1,
+        });
+        const res = await request(app)
+            .get('/api/v1/products')
+            .query({ search: 'apple', page: 2 })
+            .set('Cookie', ['token=' + token]);
+        expect(res.status).toBe(200);
+        expect(getAllProducts).toHaveBeenCalledWith({ page: 2, limit: 20, search: 'apple' });
+    });
+
+    it('should return 200 and products with search and limit', async () => {
+        vi.mocked(getAllProducts).mockResolvedValue({
+            products: [
+                {
+                    name: 'Test product',
+                    calories: new Decimal(100),
+                    carbs: new Decimal(100),
+                    protein: new Decimal(100),
+                    fat: new Decimal(100),
+                    id: productId,
+                    createdAt: new Date(),
+                    imageUrl: '',
+                    barcode: null,
+                },
+            ],
+            total: 500,
+            page: 1,
+            limit: 1,
+        });
+        const res = await request(app)
+            .get('/api/v1/products')
+            .query({ search: 'apple', limit: 10 })
+            .set('Cookie', ['token=' + token]);
+        expect(res.status).toBe(200);
+        expect(getAllProducts).toHaveBeenCalledWith({ page: 1, limit: 10, search: 'apple' });
+    });
+
+    it('should return 200 and trim limit', async () => {
+        vi.mocked(getAllProducts).mockResolvedValue({
+            products: [
+                {
+                    name: 'Test product',
+                    calories: new Decimal(100),
+                    carbs: new Decimal(100),
+                    protein: new Decimal(100),
+                    fat: new Decimal(100),
+                    id: productId,
+                    createdAt: new Date(),
+                    imageUrl: '',
+                    barcode: null,
+                },
+            ],
+            total: 500,
+            page: 1,
+            limit: 1,
+        });
+        const res = await request(app)
+            .get('/api/v1/products')
+            .query({ search: 'apple', limit: 999999999 })
+            .set('Cookie', ['token=' + token]);
+        expect(res.status).toBe(200);
+        expect(getAllProducts).toHaveBeenCalledWith({ page: 1, limit: 100, search: 'apple' });
+    });
+
+    it('should return 400 when page is not a number', async () => {
+        const res = await request(app)
+            .get('/api/v1/products')
+            .query({ search: 'apple', page: 'not a number' })
+            .set('Cookie', ['token=' + token]);
+        expect(res.status).toBe(400);
+        expect(getAllProducts).not.toHaveBeenCalled();
     });
 
     it('should return 401 when user is not logged in', async () => {
