@@ -81,7 +81,7 @@ Zweryfikowane 2026-06-03. Już zrobione (skreślone): ~~**F1**~~ useMeasurements
 - ~~**B6 — Walidacja XOR w diary schema**~~ ✅ ZROBIONE (2026-06-12) — `.refine()` na `diaryEntrySchema`: dokładnie jedno z `productId`/`recipeId`/`userRecipeId` (suma `Number(Boolean(...))` === 1). +2 testy integracyjne (zero źródeł → 400, wiele źródeł → 400); poprawiony błędny test, który asercjował dwa źródła naraz.
 - **B8 — Spójny klucz błędów** — ujednolicić `errors` vs `message` w kontrolerach
 - **B9 — Walidacja JWT payload** — runtime check zamiast `as jwt.JwtPayload`
-- **B10 — Mocki testowe rozjechane ze schematem** (odkryte 2026-07-03) — `tsc --noEmit` zgłasza błędy w mockach: `recipa.test.ts:83,124` (mock produktu bez `imageUrl`/`barcode`), `user.test.ts:27,84` (`dailyCaloriesGoal` użyte płasko zamiast w zagnieżdżonym `userGoals`). Testy przechodzą w runtime (Vitest nie typecheckuje), więc to cichy dług — `next build`/`tsc` w CI by je złapał.
+- ~~**B10 — Mocki testowe rozjechane ze schematem**~~ ✅ ZROBIONE (2026-07-03) — weryfikacja `tsc --noEmit` pokazała, że notatka była już nieaktualna: błędy z `recipa.test.ts` zniknęły (mock dostał `imageUrl`/`barcode`), a mocki w `user.test.ts` mają już zagnieżdżoną strukturę `userGoals` (nie płaskie `dailyCaloriesGoal`). Stan końcowy: `tsc --noEmit` = 0 błędów, `npm test` = 72/72. **Lekcja (ta sama co B5):** nie ufaj notatce TODO — odpal `tsc --noEmit`, żeby zweryfikować realny stan. Cichy dług brał się stąd, że Vitest odpala testy przez esbuild (goły JS, zero typecheckingu), więc niezgodność typu przechodziła aż do `next build`/CI.
 
 ### Frontend
 
