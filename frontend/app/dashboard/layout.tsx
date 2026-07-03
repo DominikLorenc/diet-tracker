@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Toast } from "../_components/shared/Toast";
 import { apiClient } from "@/app/lib/apiClient";
+import { useUserStore } from "@/store/useUserStore";
+import { useEffect } from "react";
 
 const NAV_ITEMS = [
   { emoji: "📓", name: "Dziennik", href: "/dashboard" },
@@ -25,10 +27,18 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const router = useRouter();
 
+  const fetchUser = useUserStore((s) => s.fetchUser);
+  const clearUser = useUserStore((s) => s.clearUser);
+
   const handleLogout = async () => {
     await apiClient.DELETE("/users/logout");
+    clearUser();
     router.push("/login");
   };
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
 
   return (
     <div

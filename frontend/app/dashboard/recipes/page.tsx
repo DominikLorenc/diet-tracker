@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { apiClient } from "@/app/lib/apiClient";
+import { useUserStore } from "@/store/useUserStore";
 
 export interface Product {
   id: string;
@@ -35,19 +36,15 @@ export interface RecipesResponse {
 
 export default function Recipes() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [isAdmin, setIsAdmin] = useState(false);
+
+  const user = useUserStore((s) => s.user);
+  const isAdmin = user?.role === "ADMIN";
 
   useEffect(() => {
     const fetchData = async () => {
-      const [recipesRes, meRes] = await Promise.all([
-        apiClient.GET("/recipes"),
-        apiClient.GET("/users/me"),
-      ]);
+      const recipesRes = await apiClient.GET("/recipes");
       if (recipesRes.data) {
         setRecipes(recipesRes.data.recipes as Recipe[]);
-      }
-      if (meRes.data?.user) {
-        setIsAdmin(meRes.data.user.role === "ADMIN");
       }
     };
     fetchData();

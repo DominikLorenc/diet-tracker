@@ -1,27 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { apiClient } from "@/app/lib/apiClient";
 import { DiaryItem, getItemMacros } from "./DiaryDayView";
-
-type UserGoals = {
-  id: string;
-  dailyCaloriesGoal: number | null;
-  dailyProteinGoal: number | null;
-  dailyCarbsGoal: number | null;
-  dailyFatGoal: number | null;
-};
-
-type User = {
-  id: string;
-  username: string;
-  email: string;
-  role: string;
-  imageUrl: string | null;
-  createdAt: string;
-  updatedAt: string;
-  userGoals: UserGoals | null;
-};
+import { useUserStore } from "@/store/useUserStore";
 
 type MacroBarProps = {
   label: string;
@@ -75,23 +55,10 @@ const MacroBar = ({
 
 type Props = {
   items: DiaryItem[];
-  user?: User | null;
 };
 
-export const MacroSummary = ({ items, user: userProp }: Props) => {
-  const [fetchedUser, setFetchedUser] = useState<User | null>(null);
-
-  /* jeśli user przekazany z rodzica, nie fetchujemy ponownie */
-  useEffect(() => {
-    if (userProp !== undefined) return;
-    const fetchUser = async () => {
-      const { data } = await apiClient.GET("/users/me");
-      if (data) setFetchedUser(data.user as User);
-    };
-    fetchUser();
-  }, [userProp]);
-
-  const user = userProp !== undefined ? userProp : fetchedUser;
+export const MacroSummary = ({ items }: Props) => {
+  const user = useUserStore((s) => s.user);
 
   const eaten = items.reduce(
     (sum, item) => {

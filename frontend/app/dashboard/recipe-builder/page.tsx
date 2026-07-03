@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { apiClient } from "@/app/lib/apiClient";
 import { Search } from "@/app/_components/search/Search";
 import Image from "next/image";
+import { useUserStore } from "@/store/useUserStore";
 
 type Product = {
   id: string;
@@ -36,12 +37,12 @@ function RecipeBuilderContent() {
   const [error, setError] = useState("");
   const [role, setRole] = useState<"USER" | "ADMIN" | null>(null);
   const [saving, setSaving] = useState(false);
+  const user = useUserStore((state) => state.user);
 
   useEffect(() => {
     const init = async () => {
-      const { data } = await apiClient.GET("/users/me");
-      if (!data?.user) return;
-      const userRole = data.user.role as "USER" | "ADMIN";
+      if (!user) return;
+      const userRole = user.role as "USER" | "ADMIN";
       setRole(userRole);
 
       if (!editId) return;
@@ -80,7 +81,7 @@ function RecipeBuilderContent() {
       }
     };
     init();
-  }, [editId]);
+  }, [editId, isUserRecipe, user]);
 
   const handleAddIngredient = (product: Product) => {
     if (ingredients.some((i) => i.productId === product.id)) return;

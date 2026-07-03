@@ -52,7 +52,7 @@
 
 ### Faza 3 — Testy + Zustand
 
-- `**useAuthStore`** — istnieje tylko `useToastStore`
+- ~~`**useUserStore`**~~ ✅ ZROBIONE (2026-07-03) — `store/useUserStore.ts` (Zustand, wzorzec jak `useToastStore`): `user`, `isLoading`, `fetchUser` (guard `user!==null` + `try/catch/finally`), `setUser`, `setUserGoals` (merge celów), `clearUser`. Napełniany raz w `dashboard/layout.tsx`. (Świadomie **nie** „auth store" — token żyje w httpOnly cookie, o dostępie decyduje middleware; store trzyma tylko dane usera. Patrz spec `docs/superpowers/specs/2026-07-03-user-store-design.md`.)
 - **Testy frontend** — 0 plików testowych, brak `vitest.config`, brak `@testing-library` w deps
 - **E2E Playwright** — brak `playwright.config`
 
@@ -81,13 +81,14 @@ Zweryfikowane 2026-06-03. Już zrobione (skreślone): ~~**F1**~~ useMeasurements
 - ~~**B6 — Walidacja XOR w diary schema**~~ ✅ ZROBIONE (2026-06-12) — `.refine()` na `diaryEntrySchema`: dokładnie jedno z `productId`/`recipeId`/`userRecipeId` (suma `Number(Boolean(...))` === 1). +2 testy integracyjne (zero źródeł → 400, wiele źródeł → 400); poprawiony błędny test, który asercjował dwa źródła naraz.
 - **B8 — Spójny klucz błędów** — ujednolicić `errors` vs `message` w kontrolerach
 - **B9 — Walidacja JWT payload** — runtime check zamiast `as jwt.JwtPayload`
+- **B11 — Serwis zwraca więcej niż deklaruje kontrakt** (odkryte 2026-07-03 przy F5/B2) — `updateGoalsService` zwraca **całego `User`** (`User & { userGoals }`), a dok OpenAPI (`userDocs.ts:141`) i wygenerowany typ we froncie deklarują `updated` jako **sam `UserGoals`**. Runtime rozjechał się z kontraktem → frontendowy `setUserGoals(data.updated)` dostawał usera zamiast celów i wpychał go w slot `userGoals` → UI pokazywał zera do czasu refreshu. **Doraźnie naprawione** (2026-07-03): kontroler `updateGoals` odsyła `updated.userGoals` (runtime = kontrakt). **Zostaje jako dług:** (a) serwis nadal over-zwraca całego usera — zawęzić `Promise<UserGoal>` albo `select` tylko celów; (b) niespójna konwencja odpowiedzi mutacji: PATCH goals zwraca `updated` (cele), a GET `/users/me` zwraca `user` (pełny) — rozważyć standard „mutacja zwraca zaktualizowany zasób" spójnie w całym API (pokrewne B8). **Lekcja:** `tsc` był zielony, bo typ z `schema.d.ts` (z doka) kłamał — wygenerowany typ jest tak dobry jak dok, z którego powstał; nie zastępuje weryfikacji runtime.
 - ~~**B10 — Mocki testowe rozjechane ze schematem**~~ ✅ ZROBIONE (2026-07-03) — weryfikacja `tsc --noEmit` pokazała, że notatka była już nieaktualna: błędy z `recipa.test.ts` zniknęły (mock dostał `imageUrl`/`barcode`), a mocki w `user.test.ts` mają już zagnieżdżoną strukturę `userGoals` (nie płaskie `dailyCaloriesGoal`). Stan końcowy: `tsc --noEmit` = 0 błędów, `npm test` = 72/72. **Lekcja (ta sama co B5):** nie ufaj notatce TODO — odpal `tsc --noEmit`, żeby zweryfikować realny stan. Cichy dług brał się stąd, że Vitest odpala testy przez esbuild (goły JS, zero typecheckingu), więc niezgodność typu przechodziła aż do `next build`/CI.
 
 ### Frontend
 
 - ~~**F3 — Kolory do CSS variables**~~ ✅ ZROBIONE (2026-06-03) — ~120+ hardcoded hex zastąpionych CSS variables. Nowe zmienne w `globals.css` (`@theme inline`): surfaces (`dash-surface-darker`, `dash-card-unselected`, `dash-icon-bg`, `dash-badge-bg`), navigation, SVG, chart, forms, gradients (`gradient-green-logo`, `gradient-green-button`, `gradient-cta`, `gradient-calories`), shadows. Objęte: `DiaryDayView`, `MacroSummary`, `Toast`, `Navbar`, `dashboard/layout`, `login/page`, `register/page`, `page.tsx`, `DateNavigator`, auth forms, wszystkie komponenty `add/`, `barcode/`, `progress/`, `shared/ProductForm`, `MacroCalculator`.
-- **F4 — Usuń zduplikowane typy** (`User`, `UserGoals`) → `_types/`
-- **F5 — Over-fetching `/users/me`** — `useUserStore` (Zustand) zamiast wielu `useEffect` (pokrywa się z `useAuthStore` wyżej)
+- ~~**F4 — Usuń zduplikowane typy** (`User`, `UserGoals`)~~ ✅ ZROBIONE (2026-07-03) — jeden wspólny typ w `app/_types/user.ts`, importowany przez store i konsumentów; skasowane 4 lokalne duplikaty (`profile`, `MacroSummary`, `DiaryDayView`, martwy `UserInfo`).
+- ~~**F5 — Over-fetching `/users/me`**~~ ✅ ZROBIONE (2026-07-03) — 6 niezależnych fetchy zredukowanych do **1** (pobranie raz w layoutcie, reszta czyta ze store'a). Zmigrowani konsumenci: `MacroSummary`, `DiaryDayView`, `recipe-builder`, `recipes`, `profile`. Po zapisie celów store aktualizowany z odpowiedzi PATCH (B2) zamiast `window.location.reload()`. Przy okazji: usunięty martwy `UserInfo`+`SetGoalsForm`, `clearUser` przy logout, naprawiony bug B11 (kontrakt/runtime), `isAdmin` w `recipes` zmienione ze stanu na wartość pochodną.
 - **F6 — Dokończ ProductSearch** *potwierdzone* — celowe `TODO(human)` w liniach 83 i 311 (ostatnie wyszukiwania + lokalny stan ulubionych)
 - ~~**F11 — Błąd typów blokujący `next build`**~~ ✅ ZROBIONE (2026-06-12) — `MeasurementChart.tsx` `formatter`: usunięto błędną adnotację `(value: number)`, TS wnioskuje `ValueType` z propsa recharts. Cały frontend `tsc --noEmit` = 0 błędów.
 - **F8 — Modal a11y** — focus trap + `aria-modal`/`role="dialog"` w `Modal.tsx`
@@ -102,7 +103,7 @@ Zweryfikowane 2026-06-03. Już zrobione (skreślone): ~~**F1**~~ useMeasurements
 2. ~~**B1 + B2 — row-level authorization**~~ ✅ zrobione (patrz dług techniczny → Backend)
 3. ~~**`/dashboard/all`**~~ ✅ zrobione (patrz „Frontend — drobne braki")
 4. ~~**Przeglądanie listy produktów**~~ ✅ zrobione (2026-06-12) — server-side search + paginacja w `GET /products` (Zod query: `page`/`limit`/`search`, cap `limit` do 100, `$transaction` na findMany+count), `AllProducts` z debounce + paginacją, 6 testów kontrolera (`toHaveBeenCalledWith`, cap, walidacja 400). Spec: `docs/superpowers/specs/2026-06-03-products-list-browsing-design.md`
-5. `**useAuthStore` / `useUserStore**` (= F5) — porządkuje stan auth, kończy over-fetching
+5. ~~`**useUserStore**` (= F5/F4)~~ ✅ zrobione (2026-07-03) — patrz „Faza 3" i dług F4/F5
 6. **Pierwsze testy frontend** (Vitest + RTL) — zacznij od jednego komponentu
 7. **B3, B4, B5 + F2-check** — standard produkcyjny przed deployem
 8. **Deploy** (Railway + Vercel + README) — żeby projekt żył publicznie

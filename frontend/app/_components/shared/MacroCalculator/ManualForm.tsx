@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button } from "@/app/_components/ui/Button";
 import { apiClient } from "@/app/lib/apiClient";
 import { MacroValues, recalculate } from "@/utils/macroCalculator";
+import { UserGoals } from "@/app/_types/user";
 
 type ManualInputs = MacroValues & { kcal: number };
 
@@ -47,7 +48,7 @@ const inputPct = `${inputBase} w-16`;
 const inputKcal = `${inputBase} w-24 border-macro-calories/40 text-macro-calories`;
 
 type Props = {
-  onSuccess?: () => void;
+  onSuccess?: (userGoals: UserGoals) => void;
 };
 
 export const ManualForm = ({ onSuccess }: Props) => {
@@ -75,20 +76,23 @@ export const ManualForm = ({ onSuccess }: Props) => {
     setIsLoading(true);
     setError("");
 
-    const { error } = await apiClient.PATCH("/users/goals", {
-      body: {
-        dailyCaloriesGoal: data.kcal,
-        dailyProteinGoal: data.protein_g,
-        dailyCarbsGoal: data.carbs_g,
-        dailyFatGoal: data.fat_g,
+    const { data: goalsResponse, error } = await apiClient.PATCH(
+      "/users/goals",
+      {
+        body: {
+          dailyCaloriesGoal: data.kcal,
+          dailyProteinGoal: data.protein_g,
+          dailyCarbsGoal: data.carbs_g,
+          dailyFatGoal: data.fat_g,
+        },
       },
-    });
+    );
 
     if (error) {
       setError(error.message ?? "Błąd połączenia z serwerem.");
     } else {
       setSuccess(true);
-      onSuccess?.();
+      if (goalsResponse?.updated) onSuccess?.(goalsResponse.updated);
     }
 
     setIsLoading(false);

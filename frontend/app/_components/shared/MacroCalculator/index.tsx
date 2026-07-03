@@ -7,9 +7,10 @@ import { ModeToggle } from "./ModeToggle";
 import { AutoForm } from "./AutoForm";
 import { ManualForm } from "./ManualForm";
 import { Mode } from "./types";
+import { UserGoals } from "@/app/_types/user";
 
 type Props = {
-  onSuccess?: () => void;
+  onSuccess?: (userGoals: UserGoals) => void;
 };
 
 export const MacroCalculator = ({ onSuccess }: Props) => {

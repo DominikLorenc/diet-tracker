@@ -11,6 +11,7 @@ import {
 } from "@/schemas/goalsSchema";
 import { apiClient } from "@/app/lib/apiClient";
 import { Button } from "@/app/_components/ui/Button";
+import { UserGoals } from "@/app/_types/user";
 
 const inputClass =
   "bg-dash-surface-alt border border-dash-border rounded-xl px-3 py-2.5 text-sm text-dash-fg focus:outline-none w-full font-sans [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
@@ -27,7 +28,7 @@ const numberFields = [
 ];
 
 type Props = {
-  onSuccess?: () => void;
+  onSuccess?: (userGoals: UserGoals) => void;
 };
 
 export const AutoForm = ({ onSuccess }: Props) => {
@@ -52,7 +53,7 @@ export const AutoForm = ({ onSuccess }: Props) => {
     setIsLoading(true);
     setError("");
 
-    const { error } = await apiClient.PATCH("/users/goals", {
+    const { data, error } = await apiClient.PATCH("/users/goals", {
       body: {
         dailyCaloriesGoal: result.calories,
         dailyProteinGoal: result.protein,
@@ -65,7 +66,7 @@ export const AutoForm = ({ onSuccess }: Props) => {
       setError(error.message ?? "Błąd połączenia z serwerem.");
     } else {
       setSuccess(true);
-      onSuccess?.();
+      if (data?.updated) onSuccess?.(data.updated);
     }
 
     setIsLoading(false);

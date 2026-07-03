@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Apple } from "lucide-react";
 import { apiClient } from "@/app/lib/apiClient";
+import { useUserStore } from "@/store/useUserStore";
 
 type NavbarProps = {
   variant: "public" | "dashboard";
@@ -11,9 +12,11 @@ type NavbarProps = {
 
 export default function Navbar({ variant }: NavbarProps) {
   const router = useRouter();
+  const clearUser = useUserStore((s) => s.clearUser);
 
   const handleLogout = async () => {
     await apiClient.DELETE("/users/logout");
+    clearUser();
     router.push("/login");
   };
 

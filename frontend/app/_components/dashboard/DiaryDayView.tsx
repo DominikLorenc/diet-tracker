@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useToastStore } from "@/store/useToastStore";
 import { apiClient } from "@/app/lib/apiClient";
+import { useUserStore } from "@/store/useUserStore";
 
 export type MealType = "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
 
@@ -111,25 +112,6 @@ export interface DiaryEntry {
 
 export type DiaryEntriesResponse = DiaryEntry[];
 
-type UserGoals = {
-  id: string;
-  dailyCaloriesGoal: number | null;
-  dailyProteinGoal: number | null;
-  dailyCarbsGoal: number | null;
-  dailyFatGoal: number | null;
-};
-
-type User = {
-  id: string;
-  username: string;
-  email: string;
-  role: string;
-  imageUrl: string | null;
-  createdAt: string;
-  updatedAt: string;
-  userGoals: UserGoals | null;
-};
-
 const MEAL_TYPES: MealType[] = ["BREAKFAST", "LUNCH", "DINNER", "SNACK"];
 
 const MEAL_CONFIG: Record<MealType, { label: string; emoji: string }> = {
@@ -142,8 +124,8 @@ const MEAL_CONFIG: Record<MealType, { label: string; emoji: string }> = {
 export const DiaryDayView = () => {
   const [date, setDate] = useState(new Date());
   const [entries, setEntries] = useState<DiaryEntry[]>([]);
-  const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const user = useUserStore((state) => state.user);
 
   const allItems = entries[0]?.items ?? [];
   const showToast = useToastStore((state) => state.showToast);
@@ -154,14 +136,6 @@ export const DiaryDayView = () => {
     month: "long",
     day: "numeric",
   });
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const { data } = await apiClient.GET("/users/me");
-      if (data) setUser(data.user as User);
-    };
-    fetchUser();
-  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -247,10 +221,7 @@ export const DiaryDayView = () => {
       </div>
 
       {/* ── Podsumowanie kalorii + makro ─────────────────────────── */}
-      <MacroSummary
-        items={allItems.filter((item) => item.isEaten)}
-        user={user}
-      />
+      <MacroSummary items={allItems.filter((item) => item.isEaten)} />
 
       {/* ── Nawigacja dat ────────────────────────────────────────── */}
       <DateNavigator date={date} onDateChange={setDate} />

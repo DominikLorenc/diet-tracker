@@ -92,7 +92,9 @@ export const updateGoals = async (req: Request, res: Response, next: NextFunctio
             dailyCarbsGoal,
             dailyFatGoal,
         );
-        return res.status(200).json({ message: 'Goals updated', updated });
+        // Serwis zwraca całego usera (z zagnieżdżonym userGoals), ale kontrakt (OpenAPI)
+        // deklaruje `updated` jako sam obiekt celów — odsyłamy więc tylko userGoals.
+        return res.status(200).json({ message: 'Goals updated', updated: updated.userGoals });
     } catch (error) {
         next(error);
     }

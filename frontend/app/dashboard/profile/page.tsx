@@ -3,8 +3,7 @@
 import { AvatarCard } from "@/app/_components/profile/AvatarCard";
 import { MacroGoals } from "@/app/_components/profile/MacroGoals";
 import { MacroCalculator } from "@/app/_components/shared/MacroCalculator";
-import { apiClient } from "@/app/lib/apiClient";
-import { useEffect, useState } from "react";
+import { useUserStore } from "@/store/useUserStore";
 
 const stats = [
   {
@@ -33,53 +32,13 @@ const stats = [
   },
 ];
 
-type UserGoal = {
-  id: string;
-  dailyCaloriesGoal: number | null;
-  dailyProteinGoal: number | null;
-  dailyCarbsGoal: number | null;
-  dailyFatGoal: number | null;
-};
-
-type User = {
-  id: string;
-  createdAt: string;
-  username: string;
-  email: string;
-  role: string;
-  updatedAt: string;
-  userGoals: UserGoal | null;
-  imageUrl: string | null;
-};
-
 export default function Profile() {
-  const [user, setUser] = useState<User | null>(null);
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const user = useUserStore((s) => s.user);
+  const setUserGoals = useUserStore((s) => s.setUserGoals);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      setIsLoading(true);
-      const { data, error } = await apiClient.GET("/users/me");
-      if (error) {
-        setError(error.message ?? "Coś poszło nie tak");
-      } else if (data?.user) {
-        setUser(data.user);
-      }
-      setIsLoading(false);
-    };
-    fetchUser();
-  }, []);
-
-  if (isLoading) {
+  if (!user) {
     return <div className="text-dash-fg-muted font-sans p-6">Ładowanie...</div>;
   }
-
-  if (error) {
-    return <div className="text-red-400 font-sans p-6">Błąd: {error}</div>;
-  }
-
-  if (!user) return;
 
   const { username, email, imageUrl } = user;
   const { dailyCaloriesGoal, dailyProteinGoal, dailyCarbsGoal, dailyFatGoal } =
@@ -135,7 +94,7 @@ export default function Profile() {
 
         {/* Prawa kolumna — kalkulator + cele */}
         <div className="flex flex-col gap-4 flex-1 w-full">
-          <MacroCalculator onSuccess={() => window.location.reload()} />
+          <MacroCalculator onSuccess={setUserGoals} />
           <MacroGoals
             dailyCaloriesGoal={dailyCaloriesGoal}
             dailyProteinGoal={dailyProteinGoal}
