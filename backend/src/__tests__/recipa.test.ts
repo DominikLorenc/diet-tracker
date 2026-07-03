@@ -16,7 +16,7 @@ process.env.JWT_SECRET = 'test-secret';
 
 vi.mock('../services/recipeService');
 
-const token = jwt.sign({ id: '1' }, process.env.JWT_SECRET!);
+const token = jwt.sign({ id: '1', role: 'ADMIN' }, process.env.JWT_SECRET!);
 const productId = 'e87f94c7-0e0c-46ab-90a2-6537a30fa688';
 const recipeName = 'Test recipe';
 const recipeId = 'e87f94c7-0e0c-46ab-90a2-6537a30fa688';
@@ -88,6 +88,8 @@ describe('GET /api/v1/recipes', () => {
                             protein: new Decimal(100),
                             fat: new Decimal(100),
                             createdAt: new Date(),
+                            imageUrl: 'https://example.com/image.jpg',
+                            barcode: '1234567890',
                         },
                     },
                 ],
@@ -129,6 +131,8 @@ describe('GET /api/v1/recipes/:id', () => {
                         protein: new Decimal(100),
                         fat: new Decimal(100),
                         createdAt: new Date(),
+                        imageUrl: 'https://example.com/image.jpg',
+                        barcode: '1234567890',
                     },
                 },
             ],
@@ -201,6 +205,16 @@ describe('PATCH /api/v1/recipes/:id', () => {
             .send(recipe)
             .set('Cookie', ['token=' + token]);
         expect(res.status).toBe(404);
+    });
+
+    it('should return 409 when recipe already exists', async () => {
+        vi.mocked(updateRecipeValues).mockRejectedValue(new AppError('Recipe already exists', 409));
+
+        const res = await request(app)
+            .patch(`/api/v1/recipes/${recipeId}`)
+            .send(recipe)
+            .set('Cookie', ['token=' + token]);
+        expect(res.status).toBe(409);
     });
 });
 

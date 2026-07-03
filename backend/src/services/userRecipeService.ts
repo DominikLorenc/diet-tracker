@@ -101,30 +101,37 @@ export const updateUserRecipe = async (
     name: string,
     products: ProductInput[],
 ): Promise<UserRecipeWithIngredients> => {
-    const userRecipe = await prisma.userRecipe.update({
-        where: {
-            id: userRecipeId,
-            userId,
-        },
-        data: {
-            name,
-            userRecipeIngredients: {
-                deleteMany: {},
-                createMany: {
-                    data: products.map(({ productId, quantity }) => ({
-                        productId,
-                        quantity,
-                    })),
+    try {
+        const userRecipe = await prisma.userRecipe.update({
+            where: {
+                id: userRecipeId,
+                userId,
+            },
+            data: {
+                name,
+                userRecipeIngredients: {
+                    deleteMany: {},
+                    createMany: {
+                        data: products.map(({ productId, quantity }) => ({
+                            productId,
+                            quantity,
+                        })),
+                    },
                 },
             },
-        },
-        include: {
-            userRecipeIngredients: {
-                include: { product: true },
+            include: {
+                userRecipeIngredients: {
+                    include: { product: true },
+                },
             },
-        },
-    });
-    return userRecipe;
+        });
+        return userRecipe;
+    } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+            throw new AppError('User recipe already exists', 409);
+        }
+        throw error;
+    }
 };
 
 export const deleteUserRecipe = async (userId: string, userRecipeId: string): Promise<UserRecipeWithIngredients> => {

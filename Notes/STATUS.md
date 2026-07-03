@@ -1,6 +1,6 @@
 # Diet Tracker — Status projektu
 
-> Jedyne źródło prawdy o stanie projektu. Zweryfikowane z kodem 2026-06-03. Ostatnia aktualizacja: 2026-06-03.
+> Jedyne źródło prawdy o stanie projektu. Zweryfikowane z kodem 2026-06-03. Ostatnia aktualizacja: 2026-07-03.
 > Zasada: nie odhaczamy w wielu plikach — aktualizujemy TYLKO ten.
 
 ---
@@ -77,10 +77,11 @@ Zweryfikowane 2026-06-03. Już zrobione (skreślone): ~~**F1**~~ useMeasurements
 - ~~**B2 — Row-level authorization (recipe)**~~ ✅ ZROBIONE — z rozróżnieniem na dwa modele: `Recipe` (globalny katalog, **bez właściciela**) chroniony przez `requireAdmin` na trasach `POST/PATCH/DELETE` (= role-based, bo nie ma czego „posiadać"); `UserRecipe` (przepis usera) filtruje `where: { id, userId }` w `update`/`delete`. Wniosek: A01 to nie zawsze `userId` w `where` — dla zasobu współdzielonego właściwa jest kontrola ról.
 - **B3 — Usuń `console.log`** z produkcji (`productController` ~99, `diaryService` ~134/153) → logger (`pino`)
 - ~~**B4 — CORS z env**~~ ✅ ZROBIONE (2026-06-12) — `app.ts` czyta `process.env.CORS_ORIGINS` (CSV → `split(',').map(trim)`) z fallbackiem na localhost; udokumentowane w `.env.example`.
-- **B5 — Transakcja przy update recipe** — owinąć `deleteMany`+`create` w `prisma.$transaction`
+- ~~**B5 — Transakcja przy update recipe**~~ ✅ ZBADANE + DOMKNIĘTE (2026-07-03). Pierwotne założenie było **błędne**: `deleteMany`+`create` to *nested write* w jednym `prisma.update`, więc Prisma już owija je w transakcję (atomowe). Unikalność nazwy też już chroniona na poziomie bazy: `Recipe.name @unique` + `UserRecipe @@unique([userId, name])` — czyli wyścig TOCTOU na `recipeExists` łapie baza (`P2002`), nie 500. Realna (kosmetyczna) poprawka: `try/catch` na `update` w `recipeService.updateRecipeValues` i `userRecipeService.updateUserRecipe` mapujący `P2002` → `AppError(409)`. +test integracyjny „PATCH recipes → 409" (uwaga: mockuje serwis, więc sprawdza mapowanie w kontrolerze, nie samo tłumaczenie P2002). Przy okazji naprawiony token testowy w `recipa.test.ts` (dodane `role: 'ADMIN'`) — odblokował 8 testów `POST/PATCH/DELETE`, które padały na `requireAdmin` (403) od czasu B2. **Lekcja:** nie ufaj notatce TODO — zweryfikuj co ORM i baza już gwarantują.
 - ~~**B6 — Walidacja XOR w diary schema**~~ ✅ ZROBIONE (2026-06-12) — `.refine()` na `diaryEntrySchema`: dokładnie jedno z `productId`/`recipeId`/`userRecipeId` (suma `Number(Boolean(...))` === 1). +2 testy integracyjne (zero źródeł → 400, wiele źródeł → 400); poprawiony błędny test, który asercjował dwa źródła naraz.
 - **B8 — Spójny klucz błędów** — ujednolicić `errors` vs `message` w kontrolerach
 - **B9 — Walidacja JWT payload** — runtime check zamiast `as jwt.JwtPayload`
+- **B10 — Mocki testowe rozjechane ze schematem** (odkryte 2026-07-03) — `tsc --noEmit` zgłasza błędy w mockach: `recipa.test.ts:83,124` (mock produktu bez `imageUrl`/`barcode`), `user.test.ts:27,84` (`dailyCaloriesGoal` użyte płasko zamiast w zagnieżdżonym `userGoals`). Testy przechodzą w runtime (Vitest nie typecheckuje), więc to cichy dług — `next build`/`tsc` w CI by je złapał.
 
 ### Frontend
 
