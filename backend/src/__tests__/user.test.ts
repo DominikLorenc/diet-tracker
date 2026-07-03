@@ -24,10 +24,17 @@ describe('PATCH /api/v1/users/goals', () => {
             role: 'USER',
             createdAt: new Date(),
             updatedAt: new Date(),
-            dailyCaloriesGoal: 0,
-            dailyProteinGoal: 0,
-            dailyCarbsGoal: 0,
-            dailyFatGoal: 0,
+            userGoals: {
+                id: '1',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                userId: '1',
+                dailyCaloriesGoal: 0,
+                dailyProteinGoal: 0,
+                dailyCarbsGoal: 0,
+                dailyFatGoal: 0,
+            },
+            imageUrl: 'https://example.com/image.jpg',
         });
         const res = await request(app)
             .patch(`/api/v1/users/goals`)
@@ -81,10 +88,17 @@ describe('GET /api/v1/users/me', () => {
             role: 'USER',
             createdAt: new Date(),
             updatedAt: new Date(),
-            dailyCaloriesGoal: 0,
-            dailyProteinGoal: 0,
-            dailyCarbsGoal: 0,
-            dailyFatGoal: 0,
+            userGoals: {
+                id: '1',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                userId: '1',
+                dailyCaloriesGoal: 0,
+                dailyProteinGoal: 0,
+                dailyCarbsGoal: 0,
+                dailyFatGoal: 0,
+            },
+            imageUrl: 'https://example.com/image.jpg',
         });
         const res = await request(app)
             .get(`/api/v1/users/me`)
