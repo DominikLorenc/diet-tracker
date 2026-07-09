@@ -17,6 +17,17 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Proxy API calls through the frontend origin so the auth cookie is set first-party
+  // to the Vercel domain (otherwise it lives on the Render domain and the proxy.ts
+  // middleware can't read it). Server-side rewrite -> no CORS, no third-party cookies.
+  async rewrites() {
+    return [
+      {
+        source: "/api/v1/:path*",
+        destination: "https://diet-tracker-fprp.onrender.com/api/v1/:path*",
+      },
+    ];
+  },
 };
 
 export default nextConfig;
