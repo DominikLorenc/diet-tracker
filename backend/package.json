@@ -6,6 +6,7 @@
     "scripts": {
         "dev": "nodemon --exec ts-node src/index.ts",
         "build": "tsc",
+        "postbuild": "rm -rf dist/generated && cp -r src/generated dist/generated",
         "typecheck": "tsc --noEmit",
         "start": "node dist/index.js",
         "studio": "prisma studio",
