@@ -15,8 +15,12 @@ const openApiDocument = generateOpenAPIDocument();
 
 const app = express();
 
-// Dozwolone originy z env (CSV), z fallbackiem na lokalny dev.
-// Każdy element przycinamy z białych znaków, żeby spacja po przecinku nie psuła dopasowania.
+// Trust EXACTLY one proxy hop (Railway) so Express reads the real client IP from
+// X-Forwarded-For. Without it the rate limiter would see one shared proxy IP for everyone.
+// Intentionally `1`, not `true`: `true` trusts the whole chain, letting a client spoof
+// X-Forwarded-For to bypass rate limiting (a new IP = a fresh bucket).
+app.set('trust proxy', 1);
+
 const allowedOrigins = (process.env.CORS_ORIGINS ?? 'http://localhost:3000,http://localhost:3001')
     .split(',')
     .map((o) => o.trim());

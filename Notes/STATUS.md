@@ -1,6 +1,6 @@
 # Diet Tracker — Status projektu
 
-> Jedyne źródło prawdy o stanie projektu. Zweryfikowane z kodem 2026-06-03. Ostatnia aktualizacja: 2026-07-03.
+> Jedyne źródło prawdy o stanie projektu. Zweryfikowane z kodem 2026-06-03. Ostatnia aktualizacja: 2026-07-09.
 > Zasada: nie odhaczamy w wielu plikach — aktualizujemy TYLKO ten.
 
 ---
@@ -83,6 +83,7 @@ Zweryfikowane 2026-06-03. Już zrobione (skreślone): ~~**F1**~~ useMeasurements
 - **B9 — Walidacja JWT payload** — runtime check zamiast `as jwt.JwtPayload`
 - **B11 — Serwis zwraca więcej niż deklaruje kontrakt** (odkryte 2026-07-03 przy F5/B2) — `updateGoalsService` zwraca **całego `User`** (`User & { userGoals }`), a dok OpenAPI (`userDocs.ts:141`) i wygenerowany typ we froncie deklarują `updated` jako **sam `UserGoals`**. Runtime rozjechał się z kontraktem → frontendowy `setUserGoals(data.updated)` dostawał usera zamiast celów i wpychał go w slot `userGoals` → UI pokazywał zera do czasu refreshu. **Doraźnie naprawione** (2026-07-03): kontroler `updateGoals` odsyła `updated.userGoals` (runtime = kontrakt). **Zostaje jako dług:** (a) serwis nadal over-zwraca całego usera — zawęzić `Promise<UserGoal>` albo `select` tylko celów; (b) niespójna konwencja odpowiedzi mutacji: PATCH goals zwraca `updated` (cele), a GET `/users/me` zwraca `user` (pełny) — rozważyć standard „mutacja zwraca zaktualizowany zasób" spójnie w całym API (pokrewne B8). **Lekcja:** `tsc` był zielony, bo typ z `schema.d.ts` (z doka) kłamał — wygenerowany typ jest tak dobry jak dok, z którego powstał; nie zastępuje weryfikacji runtime.
 - ~~**B10 — Mocki testowe rozjechane ze schematem**~~ ✅ ZROBIONE (2026-07-03) — weryfikacja `tsc --noEmit` pokazała, że notatka była już nieaktualna: błędy z `recipa.test.ts` zniknęły (mock dostał `imageUrl`/`barcode`), a mocki w `user.test.ts` mają już zagnieżdżoną strukturę `userGoals` (nie płaskie `dailyCaloriesGoal`). Stan końcowy: `tsc --noEmit` = 0 błędów, `npm test` = 72/72. **Lekcja (ta sama co B5):** nie ufaj notatce TODO — odpal `tsc --noEmit`, żeby zweryfikować realny stan. Cichy dług brał się stąd, że Vitest odpala testy przez esbuild (goły JS, zero typecheckingu), więc niezgodność typu przechodziła aż do `next build`/CI.
+- **B12 — `clearCookie` bez opcji przy logout** (odkryte 2026-07-09 przy audycie pre-deploy) — `logout` w `userController.ts:58` robi `res.clearCookie('token')` bez opcji, podczas gdy `login` ustawia cookie z `sameSite`/`secure`/`httpOnly`. Kasowanie działa (dopasowanie po nazwie+domenie+path, a te się zgadzają — path domyślnie `/`), więc **to nie bug**, tylko kosmetyka. Best practice: przekazać te same atrybuty przy kasowaniu (`sameSite`/`secure` zależne od `NODE_ENV` jak w `login`), żeby nigdy się nie rozjechały. Rozważyć wspólny helper na opcje cookie, żeby login i logout czytały z jednego źródła.
 
 ### Frontend
 
