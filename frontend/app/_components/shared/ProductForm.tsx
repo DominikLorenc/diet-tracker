@@ -377,11 +377,15 @@ export const ProductForm = ({
         </button>
         {error && <p className="text-sm text-red-400">{error}</p>}
       </form>
-      <BarcodeScannerModal
-        isOpen={isScannerOpen}
-        onClose={() => setIsScannerOpen(false)}
-        onProductFound={handleBarcodeFound}
-      />
+      {/* Mount only while open so the scanner unmounts on close and its
+          internal state resets — otherwise it stays stuck on "loading". */}
+      {isScannerOpen && (
+        <BarcodeScannerModal
+          isOpen={isScannerOpen}
+          onClose={() => setIsScannerOpen(false)}
+          onProductFound={handleBarcodeFound}
+        />
+      )}
     </>
   );
 };

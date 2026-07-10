@@ -142,16 +142,16 @@ export const Search = ({
   return (
     <div>
       <form
-        className="flex items-center gap-3"
+        className="flex items-center gap-2"
         onSubmit={handleSubmit(onSubmit)}
       >
         <input
           type="text"
           placeholder="Szukaj produktu..."
-          className="flex-1 bg-gray-800 text-white placeholder-gray-500 px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:border-indigo-500"
+          className="flex-1 min-w-0 bg-dash-surface-card text-dash-fg placeholder:text-dash-fg-muted px-4 py-3 rounded-xl border border-dash-border focus:outline-none focus:border-dash-green-mid transition-colors"
           {...register("search")}
         />
-        <button className="bg-indigo-600 hover:bg-indigo-700 transition-colors px-5 py-2 rounded-lg text-white font-medium">
+        <button className="shrink-0 bg-green-600 hover:bg-green-700 transition-colors px-5 py-3 rounded-xl text-white font-semibold">
           Szukaj
         </button>
       </form>
@@ -165,7 +165,7 @@ export const Search = ({
       {isLoading && (
         <div className="flex justify-center mt-8">
           <svg
-            className="animate-spin h-8 w-8 text-indigo-500"
+            className="animate-spin h-8 w-8 text-dash-green"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -188,8 +188,8 @@ export const Search = ({
       )}
 
       {recentSearches.length > 0 && (
-        <div className="mt-6">
-          <h2 className="text-xl font-bold text-white mb-4">
+        <div className="mt-8">
+          <h2 className="text-xs font-bold text-dash-fg-muted uppercase tracking-wider font-mono mb-3">
             Ostatnie wyszukiwania
           </h2>
           {recentSearches.map((result) => (
@@ -216,10 +216,10 @@ export const Search = ({
 
       {hasSearched && results.length === 0 && !isLoading && (
         <div className="mt-8 flex flex-col items-center gap-4 text-center">
-          <span className="text-gray-400">Nie znaleziono produktów</span>
+          <span className="text-dash-fg-muted">Nie znaleziono produktów</span>
           <button
             onClick={() => setOpenModal(true)}
-            className="bg-indigo-600 hover:bg-indigo-700 transition-colors px-5 py-2 rounded-lg text-white font-medium"
+            className="bg-green-600 hover:bg-green-700 transition-colors px-5 py-2.5 rounded-xl text-white font-semibold"
           >
             + Dodaj produkt
           </button>
