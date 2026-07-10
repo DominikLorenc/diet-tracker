@@ -26,18 +26,18 @@ function getDatesInRange(from: string, to: string): string[] {
 }
 
 const fetchData = async (dates: string[]) => {
-  const result = await Promise.all(
-    dates.map(async (date) => {
-      const { data, error } = await apiClient.GET("/diary", {
-        params: { query: { date } },
-      });
-      if (error) {
-        console.log("Błąd pobierania danych");
-      } else if (data) {
-        return data.diaryEntries;
-      }
-    }),
-  );
+  const result = [];
+
+  for (const date of dates) {
+    const { data, error } = await apiClient.GET("/diary", {
+      params: { query: { date } },
+    });
+    if (error) {
+      console.log("Błąd pobierania danych");
+    } else if (data) {
+      result.push(data.diaryEntries);
+    }
+  }
 
   return result;
 };
