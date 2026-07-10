@@ -25,10 +25,12 @@ function getDatesInRange(from: string, to: string): string[] {
   return dates;
 }
 
-const fetchData = async (dates: string[]) => {
+type OnProgress = (current: number, total: number) => void;
+
+const fetchData = async (dates: string[], onProgress?: OnProgress) => {
   const result = [];
 
-  for (const date of dates) {
+  for (const [index, date] of dates.entries()) {
     const { data, error } = await apiClient.GET("/diary", {
       params: { query: { date } },
     });
@@ -37,6 +39,7 @@ const fetchData = async (dates: string[]) => {
     } else if (data) {
       result.push(data.diaryEntries);
     }
+    onProgress?.(index + 1, dates.length);
   }
 
   return result;
@@ -45,10 +48,11 @@ const fetchData = async (dates: string[]) => {
 async function generateShoppingList(
   from: string,
   to: string,
+  onProgress?: OnProgress,
 ): Promise<ShoppingItem[]> {
   const dates = getDatesInRange(from, to);
 
-  const entries = await fetchData(dates);
+  const entries = await fetchData(dates, onProgress);
 
   const map = new Map<string, number>();
 
@@ -121,6 +125,10 @@ export default function ShoppingListPage() {
   const [items, setItems] = useState<ShoppingItem[] | null>(null);
   const [removed, setRemoved] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState<{
+    current: number;
+    total: number;
+  } | null>(null);
 
   const visibleItems = items?.filter((i) => !removed.has(i.name)) ?? [];
 
@@ -130,9 +138,12 @@ export default function ShoppingListPage() {
     if (!from || !to) return;
 
     setIsLoading(true);
-    const items = await generateShoppingList(from, to);
+    const items = await generateShoppingList(from, to, (current, total) =>
+      setProgress({ current, total }),
+    );
     setItems(items);
     setIsLoading(false);
+    setProgress(null);
   }
 
   function handleRemove(name: string) {
@@ -229,6 +240,11 @@ export default function ShoppingListPage() {
           >
             Generuj listę
           </Button>
+          {progress && (
+            <p className="text-dash-fg-muted text-xs font-sans text-center">
+              Pobieranie {progress.current} z {progress.total} dni...
+            </p>
+          )}
           {isDateRangeInvalid && (
             <p className="text-red-400 text-sm">
               Data &apos;Od&apos; musi być wcześniejsza niż data &apos;Do&apos;
