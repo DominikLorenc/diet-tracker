@@ -173,8 +173,6 @@ export const getProductByBarcode = async (code: string, isAdmin: boolean): Promi
 
     const json: OpenFoodFactsResponse = await response.json();
 
-    console.log(json);
-
     if (json.status !== 1 || !json.product) {
         throw new AppError('Product not found', 404);
     }

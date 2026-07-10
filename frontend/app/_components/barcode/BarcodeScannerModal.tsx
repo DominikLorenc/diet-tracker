@@ -33,7 +33,6 @@ export const BarcodeScannerModal = ({
 
   const handleScan = useCallback(
     async (code: string) => {
-      console.log(code, "code");
       if (hasScanned.current) return;
       hasScanned.current = true;
       setState("loading");

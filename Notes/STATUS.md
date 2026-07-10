@@ -58,9 +58,23 @@
 
 ### Faza 4 — Deployment
 
-- Backend → Railway
-- Frontend → Vercel
-- README.md
+- ~~**Backend → Railway**~~ ✅ ZROBIONE (2026-07-09) — **poszło na Render** (nie Railway: Railway free to trial, Render ma darmowy tier na stałe; apka głównie dla 2 osób, cold start ~30-50s akceptowalny). Free web service, region Frankfurt (blisko bazy w eu-west-1). Root Directory `backend`. **Build Command:** `npm install --include=dev && npx prisma generate && npm run build` (`--include=dev` bo `NODE_ENV=production` pomija devDeps → bez tego `tsc`/`prisma` się nie instalują). **Env:** `DATABASE_URL` (Supabase session pooler), `JWT_SECRET` (openssl rand), `NODE_ENV=production`, `CORS_ORIGINS` (już nieużywane — patrz proxy niżej), `HUSKY=0` (żeby `prepare` nie wywalił builda).
+- ~~**Baza produkcyjna**~~ ✅ ZROBIONE (2026-07-09) — **Postgres w istniejącym projekcie Supabase** (`diest-tracker`, plan FREE). Uwaga: dev nadal na `localhost`, prod na Supabase. Connection string: **Session pooler** (port 5432, `pooler.supabase.com`, IPv4) — NIE direct (IPv6, Render nie dogada) ani transaction pooler (psuje migracje). 15 migracji zaaplikowanych przez `prisma migrate deploy` z lokalu.
+- ~~**Frontend → Vercel**~~ ✅ ZROBIONE (2026-07-09) — Root Directory `frontend`, **Framework Preset = Next.js** (nie „Services" — ten multi-serwisowy preset chciał deployować też backend i wywalał build na „No Output Directory public"). Env: `NEXT_PUBLIC_API_URL=/api/v1` (relatywny!), `NEXT_PUBLIC_SUPABASE_*`.
+- ~~**Cross-domain cookie**~~ ✅ ROZWIĄZANE (2026-07-09) — **kluczowy problem deploya.** Backend (Render) i frontend (Vercel) to różne domeny → cookie ustawiane przez backend ląduje w słoiku `onrender.com`, a `proxy.ts` (route protection) na `vercel.app` go nie widzi → wieczny redirect na `/login`. Rozwiązanie: **Next.js rewrite** w `next.config.ts` (`/api/v1/:path*` → `https://diet-tracker-fprp.onrender.com/api/v1/:path*`) + `NEXT_PUBLIC_API_URL=/api/v1`. Przeglądarka gada tylko z vercel.app, Vercel proxuje server-side do Render, cookie ustawia się **first-party** do vercel.app → `proxy.ts` je czyta, znika też problem third-party cookie (Safari). Backend: `sameSite: NODE_ENV==='production' ? 'none' : 'strict'` + `secure` zależny od env. **Pułapka która zjadła najwięcej czasu:** zmiana `NEXT_PUBLIC_API_URL` wymaga **redeploy bez cache** — `NEXT_PUBLIC_*` jest wkompilowane przy buildzie, stara wartość (onrender.com) siedziała w bundlu mimo zmiany env.
+- ~~**Bezpieczeństwo bazy (Supabase RLS)**~~ ✅ ZROBIONE (2026-07-09) — Advisor krzyczał „RLS Disabled" (15×). Tabele robione migracjami Prismy → domyślne uprawnienia Supabase dają roli `anon` dostęp, a klucz anon jest publiczny (frontend) → Data API (PostgREST) było „drugimi drzwiami" do bazy omijającymi Express. **Fix:** wyłączony **Data API** (Settings → API → Enable Data API OFF) — nie używamy PostgREST, dane idą przez Express. Storage (obrazki) nietknięty, bo to osobna usługa.
+- **README.md** — dalej do zrobienia.
+
+**Live URL-e:**
+- Frontend: `https://diet-tracker-lime.vercel.app`
+- Backend: `https://diet-tracker-fprp.onrender.com` (health: `/health`)
+
+**Dług z deploya (do posprzątania):**
+- `frontend/next.config.ts` — URL backendu w rewrite **zahardkodowany**; przenieść do env (server-side, np. `BACKEND_URL`).
+- Upload obrazków leci **kluczem anon (publicznym)** wprost do Supabase Storage → bucket zapisywalny przez każdego z kluczem. Prawdziwy fix: upload przez backend `service_role`. Niski priorytet (2 userów).
+- `CORS_ORIGINS` na Render nieużywane (ruch Vercel→Render jest server-side) — można usunąć.
+- `vitest.config.ts` nie wyklucza `dist/` → `build` przed `test` daje widmowe faile (`exclude: ['dist/**']`).
+- Testowy user `rendertest@example.com` w prod bazie — do usunięcia (Table Editor).
 
 ---
 
@@ -107,7 +121,7 @@ Zweryfikowane 2026-06-03. Już zrobione (skreślone): ~~**F1**~~ useMeasurements
 5. ~~`**useUserStore**` (= F5/F4)~~ ✅ zrobione (2026-07-03) — patrz „Faza 3" i dług F4/F5
 6. **Pierwsze testy frontend** (Vitest + RTL) — zacznij od jednego komponentu
 7. **B3, B4, B5 + F2-check** — standard produkcyjny przed deployem
-8. **Deploy** (Railway + Vercel + README) — żeby projekt żył publicznie
+8. ~~**Deploy**~~ ✅ ZROBIONE (2026-07-09) — **Render (backend) + Vercel (frontend) + Supabase (baza)**. Apka live end-to-end. Szczegóły + pułapki: patrz „Faza 4 — Deployment". Zostaje: README.md.
 9. Reszta długu technicznego + skeletony + shared `Input` — w wolnym czasie
 10. **Quick Stats w profilu** (feature na przyszłość) — podpiąć zahardkodowane wartości pod realne dane
 

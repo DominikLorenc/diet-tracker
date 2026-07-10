@@ -9,6 +9,21 @@ interface BarcodeScannerProps {
 
 export const BarcodeScanner = ({ onScan, onError }: BarcodeScannerProps) => {
   const { ref } = useZxing({
+    constraints: {
+      video: {
+        // Rear camera on phones
+        facingMode: "environment",
+        // Ask for a sharp, high-res stream so thin barcode lines stay separable
+        width: { ideal: 1920 },
+        height: { ideal: 1080 },
+        // Continuous autofocus is not in the standard TS type and is best-effort
+        // per device, so the constraint set is cast to satisfy the compiler.
+        advanced: [
+          { focusMode: "continuous" } as unknown as MediaTrackConstraintSet,
+        ],
+      },
+      audio: false,
+    },
     onDecodeResult(result) {
       onScan(result.getText());
     },
