@@ -70,10 +70,10 @@
 - Backend: `https://diet-tracker-fprp.onrender.com` (health: `/health`)
 
 **Dług z deploya (do posprzątania):**
-- `frontend/next.config.ts` — URL backendu w rewrite **zahardkodowany**; przenieść do env (server-side, np. `BACKEND_URL`).
+- ~~`frontend/next.config.ts` — URL backendu w rewrite **zahardkodowany**~~ ✅ ZROBIONE (2026-07-14) — `destination` czyta `process.env.BACKEND_URL` z fallbackiem na `http://localhost:4000` (rewrite lokalnie i tak uśpiony, więc localhost nieszkodliwy; `next dev`/`build` nie pada na `undefined`). Zmienna udokumentowana w `frontend/.env.example`. Na Vercel dodane `BACKEND_URL` (scope: **tylko Production** — jak użyjesz preview deployów, dodać też do Preview). Uwaga: to zmienna server-side (nie `NEXT_PUBLIC_`), więc zmiana wymaga **zwykłego** redeployu, nie „bez cache".
 - Upload obrazków leci **kluczem anon (publicznym)** wprost do Supabase Storage → bucket zapisywalny przez każdego z kluczem. Prawdziwy fix: upload przez backend `service_role`. Niski priorytet (2 userów).
 - `CORS_ORIGINS` na Render nieużywane (ruch Vercel→Render jest server-side) — można usunąć.
-- `vitest.config.ts` nie wyklucza `dist/` → `build` przed `test` daje widmowe faile (`exclude: ['dist/**']`).
+- ~~`vitest.config.ts` nie wyklucza `dist/` → `build` przed `test` daje widmowe faile~~ ✅ ZROBIONE (2026-07-14) — `exclude: ['**/dist/**', '**/node_modules/**']`. **Pułapka:** w vitest 4 domyślny `exclude` to TYLKO `node_modules` + `.git` (nie merge'uje — `exclude` **zastępuje** defaulty), więc trzeba było ręcznie dopisać `node_modules`, inaczej vitest zacząłby skanować zależności. Zweryfikowane: `build` (5 skompilowanych `*.test.js` w `dist/`) + `test` = dalej 72/72, kopie z `dist/` ignorowane. Alternatywa bardziej future-proof: `[...configDefaults.exclude, 'dist/**']`.
 - Testowy user `rendertest@example.com` w prod bazie — do usunięcia (Table Editor).
 
 ---
