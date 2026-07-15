@@ -74,3 +74,12 @@ export const copyRecipeSchema = z.object({
 });
 
 export const UUIDScheme = z.uuid();
+
+// Runtime shape of the decoded JWT payload. jwt.verify() only proves the token
+// was signed with our secret — it does NOT guarantee the payload shape. We
+// assert it here so a structurally-wrong (but validly-signed) token is rejected
+// at the boundary instead of leaking `undefined` into `req.userId`/`req.role`.
+export const JWTSchema = z.object({
+    id: UUIDScheme,
+    role: z.enum(['ADMIN', 'USER']),
+});

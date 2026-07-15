@@ -9,7 +9,7 @@ process.env.JWT_SECRET = 'test-secret';
 
 vi.mock('../services/diaryService');
 
-const token = jwt.sign({ id: '1' }, process.env.JWT_SECRET!);
+const token = jwt.sign({ id: crypto.randomUUID(), role: 'USER' }, process.env.JWT_SECRET!);
 const productId = 'e87f94c7-0e0c-46ab-90a2-6537a30fa688';
 const userId = 'e87f94c7-0e0c-46ab-90a2-6537a30fa688';
 const recipeId = 'e87f94c7-0e0c-46ab-90a2-6537a30fa688';

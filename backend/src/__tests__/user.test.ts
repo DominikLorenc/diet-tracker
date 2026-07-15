@@ -9,7 +9,7 @@ process.env.JWT_SECRET = 'test-secret';
 
 vi.mock('../services/userService');
 
-const token = jwt.sign({ id: '1' }, process.env.JWT_SECRET!);
+const token = jwt.sign({ id: crypto.randomUUID(), role: 'USER' }, process.env.JWT_SECRET!);
 
 describe('PATCH /api/v1/users/goals', () => {
     beforeEach(() => {

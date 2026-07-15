@@ -74,12 +74,6 @@ export const RecipeCard = ({
     const next = !favorite;
     setFavorite(next); // optimistic update
 
-    // TODO(human): wywołaj odpowiedni endpoint:
-    //   - next === true  → POST /favorites/recipes { body: { recipeId } }
-    //   - next === false → DELETE /favorites/recipes/{recipeId}
-    // Jeśli error: cofnij stan setFavorite(!next) i pokaż toast
-    // Po sukcesie: onFavoriteToggle?.(recipe.id, next)
-
     if (next) {
       const { error } = await apiClient.POST("/favorites/recipes", {
         body: { recipeId: recipe.id },

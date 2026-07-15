@@ -1,7 +1,18 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, CookieOptions } from 'express';
 import { loginSchema, registerSchema, updateGoalsSchema, updateImageUrlSchema } from '../schemas/userSchema';
 import { registerUser, loginUser, getUserById, updateGoalsService, updateImageUrl } from '../services/userService';
 import { AppError } from '../utils/AppError';
+
+// Single source of truth for auth-cookie attributes, shared by login (set) and
+// logout (clear) so they can never drift apart. Excludes maxAge on purpose —
+// that is login-specific; clearCookie deletes by expiring the cookie itself.
+const getCookieOptions = (): CookieOptions => {
+    return {
+        httpOnly: true,
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+        secure: process.env.NODE_ENV === 'production',
+    };
+};
 
 export const register = async (req: Request, res: Response, next: NextFunction) => {
     const result = registerSchema.safeParse(req.body);
@@ -43,10 +54,8 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
         return res
             .cookie('token', token, {
-                httpOnly: true,
+                ...getCookieOptions(),
                 maxAge: 60 * 60 * 1000 * 5,
-                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-                secure: process.env.NODE_ENV === 'production',
             })
             .json({ message: 'User logged in', user: userData });
     } catch (error) {
@@ -55,7 +64,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 };
 
 export const logout = async (req: Request, res: Response) => {
-    return res.clearCookie('token').json({ message: 'User logged out' });
+    return res.clearCookie('token', getCookieOptions()).json({ message: 'User logged out' });
 };
 
 export const me = async (req: Request, res: Response, next: NextFunction) => {

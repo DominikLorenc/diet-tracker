@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -46,6 +46,10 @@ type Props = {
   newlyCreatedProduct?: Product | null;
 };
 
+// Camera capability never changes at runtime, so there is nothing to subscribe
+// to — a stable no-op keeps React from re-subscribing on every render.
+const subscribeNoop = () => () => {};
+
 export const ProductSearch = ({
   onGoToNewProduct,
   newlyCreatedProduct,
@@ -64,8 +68,14 @@ export const ProductSearch = ({
     string | null
   >(null);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
-  const [isCameraSupported] = useState(
-    typeof navigator !== "undefined" && !!navigator.mediaDevices?.getUserMedia,
+  // Read the camera capability in an SSR-safe way: useSyncExternalStore returns
+  // the server snapshot (false) during SSR and the first hydration render — so the
+  // client's first render matches the server HTML — then swaps to the real client
+  // value. No setState-in-effect, no double render, no hydration mismatch.
+  const isCameraSupported = useSyncExternalStore(
+    subscribeNoop,
+    () => !!navigator.mediaDevices?.getUserMedia, // client snapshot
+    () => false, // server snapshot (also used for the first client render)
   );
 
   const {
@@ -78,13 +88,7 @@ export const ProductSearch = ({
     reValidateMode: "onSubmit",
   });
 
-  // Ładujemy ostatnie wyszukiwania i ulubione przy pierwszym renderze
   useEffect(() => {
-    // TODO(human): pobierz dane z API:
-    //   1. GET /recent-searches  → setRecentSearches(data.recentSearches)
-    //   2. GET /favorites/products → setFavoriteProducts(data.favorites)
-    // Użyj Promise.all żeby oba requesty leciały równolegle
-
     const load = async () => {
       const [recentRes, favRes] = await Promise.all([
         apiClient.GET("/recent-searches"),
@@ -310,10 +314,6 @@ export const ProductSearch = ({
               onAddToDiary={addToDiary}
               defaultExpanded={expandedProductId === product.id}
               onFavoriteToggle={(id, now) => {
-                // TODO(human): zaktualizuj lokalny stan favoriteProducts
-                // - jeśli now === true → dodaj tymczasowy obiekt do listy
-                // - jeśli now === false → usuń z listy
-
                 if (now) {
                   setFavoriteProducts((prev) => [
                     ...prev,

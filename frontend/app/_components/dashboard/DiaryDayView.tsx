@@ -315,7 +315,6 @@ export const DiaryDayView = () => {
                       opacity: item.isEaten ? 0.5 : 1,
                     }}
                   >
-                    {/* TODO(human): onClick -> wywołaj PATCH /diary/:id/eaten i zaktualizuj lokalny stan entries */}
                     <button
                       onClick={() => handleEaten(item.id, !item.isEaten)}
                       className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center transition-all duration-200"

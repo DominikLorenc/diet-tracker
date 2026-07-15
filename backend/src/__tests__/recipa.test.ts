@@ -16,7 +16,7 @@ process.env.JWT_SECRET = 'test-secret';
 
 vi.mock('../services/recipeService');
 
-const token = jwt.sign({ id: '1', role: 'ADMIN' }, process.env.JWT_SECRET!);
+const token = jwt.sign({ id: crypto.randomUUID(), role: 'ADMIN' }, process.env.JWT_SECRET!);
 const productId = 'e87f94c7-0e0c-46ab-90a2-6537a30fa688';
 const recipeName = 'Test recipe';
 const recipeId = 'e87f94c7-0e0c-46ab-90a2-6537a30fa688';

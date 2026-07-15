@@ -105,7 +105,7 @@ describe('POST /api/v1/users/login', () => {
 
 describe('DELETE /api/v1/logout', () => {
     it('should return 200 when user is logged in', async () => {
-        const token = jwt.sign({ id: '1' }, process.env.JWT_SECRET!);
+        const token = jwt.sign({ id: crypto.randomUUID(), role: 'USER' }, process.env.JWT_SECRET!);
         const res = await request(app)
             .delete('/api/v1/users/logout')
             .set('Cookie', ['token=' + token]);

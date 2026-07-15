@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { AppError } from '../utils/AppError';
+import { JWTSchema } from '../schemas/userSchema';
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -8,12 +9,16 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
         if (!token) {
             return res.status(401).json({ message: 'Unauthorized' });
         }
-        const decoded = verifyToken(token) as jwt.JwtPayload;
-        if (!decoded) {
+        const decoded = verifyToken(token);
+
+        const JWT = JWTSchema.safeParse(decoded);
+
+        if (!JWT.success) {
             return res.status(401).json({ message: 'Unauthorized' });
         }
-        req.userId = decoded.id;
-        req.role = decoded.role;
+
+        req.userId = JWT.data.id;
+        req.role = JWT.data.role;
 
         next();
     } catch (error) {

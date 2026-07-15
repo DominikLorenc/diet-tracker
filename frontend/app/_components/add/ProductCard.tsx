@@ -40,14 +40,7 @@ export const AddProductCard = ({
   const toggleFavorite = async (e: React.MouseEvent) => {
     e.stopPropagation();
     const next = !favorite;
-    setFavorite(next); // optimistic update — najpierw zmieniamy UI, potem wysyłamy request
-
-    // TODO(human): wywołaj odpowiedni endpoint w zależności od `next`:
-    //   - jeśli next === true  → POST /favorites/products { body: { productId } }
-    //   - jeśli next === false → DELETE /favorites/products/{productId}
-    // Jeśli request się nie powiedzie (error), cofnij stan: setFavorite(!next)
-    // i pokaż toast błędu
-    // Po sukcesie wywołaj: onFavoriteToggle?.(product.id, next)
+    setFavorite(next);
 
     if (next) {
       const { error } = await apiClient.POST("/favorites/products", {

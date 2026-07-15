@@ -98,7 +98,6 @@ export default function ProgressPage() {
     setModalOpen(true);
   };
 
-  // TODO(human): wywołaj POST /measurements z data, potem refetch()
   const handleAdd = async (_data: MeasurementFormData) => {
     const { error } = await apiClient.POST("/measurements", {
       body: _data,
@@ -112,7 +111,6 @@ export default function ProgressPage() {
     refetch();
   };
 
-  // TODO(human): wywołaj PATCH /measurements/:editingMeasurement.id z data, potem refetch()
   const handleEdit = async (_data: MeasurementFormData) => {
     if (!editingMeasurement) {
       return;
