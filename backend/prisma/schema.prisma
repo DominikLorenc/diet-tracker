@@ -37,6 +37,18 @@ model User {
     productFavorites ProductFavorite[]
     recipeFavorites  RecipeFavorite[]
     userRecipes UserRecipe[]
+    passwordResetToken PasswordResetToken[]
+  }
+
+  model PasswordResetToken {
+    id        String   @id @default(uuid())
+    userId    String
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    createdAt DateTime @default(now())
+    expiresAt DateTime 
+    hash      String @unique
+    isUsed    Boolean  @default(false)
+    
   }
 
   model ProductFavorite {

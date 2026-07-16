@@ -2528,6 +2528,117 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/users/forgot-password": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Request a password reset link */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: {
+        content: {
+          "application/json": {
+            email: string;
+          };
+        };
+      };
+      responses: {
+        /** @description If the email exists, a reset link has been sent */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Validation error */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/users/reset-password": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Reset password using a token */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: {
+        content: {
+          "application/json": {
+            token: string;
+            password: string;
+          };
+        };
+      };
+      responses: {
+        /** @description Password reset successfully */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Validation error or invalid/expired token */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/users/me": {
     parameters: {
       query?: never;

@@ -1,5 +1,12 @@
 import { registry, errorSchema } from '../swagger';
-import { registerSchema, loginSchema, updateGoalsSchema, updateImageUrlSchema } from '../schemas/userSchema';
+import {
+    registerSchema,
+    loginSchema,
+    updateGoalsSchema,
+    updateImageUrlSchema,
+    forgotPasswordSchema,
+    resetPasswordSchema,
+} from '../schemas/userSchema';
 import { z } from 'zod';
 
 const errorContent = { 'application/json': { schema: errorSchema } };
@@ -51,6 +58,43 @@ registry.registerPath({
         },
         400: { description: 'Validation error', content: errorContent },
         401: { description: 'Invalid credentials', content: errorContent },
+    },
+});
+
+registry.registerPath({
+    method: 'post',
+    path: '/users/forgot-password',
+    tags: ['Users'],
+    summary: 'Request a password reset link',
+    request: {
+        body: { content: { 'application/json': { schema: forgotPasswordSchema } } },
+    },
+    responses: {
+        // Always 200 regardless of whether the email exists — anti-enumeration.
+        // The frontend must never be able to tell registered emails apart.
+        200: {
+            description: 'If the email exists, a reset link has been sent',
+            content: { 'application/json': { schema: z.object({ message: z.string() }) } },
+        },
+        400: { description: 'Validation error', content: errorContent },
+    },
+});
+
+registry.registerPath({
+    method: 'post',
+    path: '/users/reset-password',
+    tags: ['Users'],
+    summary: 'Reset password using a token',
+    request: {
+        body: { content: { 'application/json': { schema: resetPasswordSchema } } },
+    },
+    responses: {
+        200: {
+            description: 'Password reset successfully',
+            content: { 'application/json': { schema: z.object({ message: z.string() }) } },
+        },
+        // Covers both Zod validation failures and an invalid/expired/used token.
+        400: { description: 'Validation error or invalid/expired token', content: errorContent },
     },
 });
 

@@ -3,6 +3,9 @@ import prisma from '../lib/prisma';
 import { AppError } from '../utils/AppError';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import crypto from 'node:crypto';
+import { hashToken } from '../utils/hashToken';
+import { sendPasswordResetEmail } from './emailService';
 
 const userExists = async (email: string): Promise<boolean> => {
     const user = await prisma.user.findUnique({
@@ -129,4 +132,73 @@ export const updateImageUrl = async (userId: string, imageUrl: string): Promise<
     });
 
     return updated.imageUrl;
+};
+
+export const requestPasswordReset = async (email: string): Promise<void> => {
+    const user = await prisma.user.findUnique({
+        where: {
+            email,
+        },
+    });
+
+    if (user) {
+        const token = crypto.randomBytes(32).toString('hex');
+        const hashedToken = hashToken(token);
+        const expiresAt = new Date(Date.now() + 1000 * 60 * 30);
+        const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:3000';
+        const resetLink = `${frontendUrl}/reset-password?token=${token}`;
+        await prisma.passwordResetToken.deleteMany({ where: { userId: user.id } });
+
+        await prisma.passwordResetToken.create({
+            data: {
+                userId: user.id,
+                expiresAt,
+                hash: hashedToken,
+            },
+        });
+
+        try {
+            await sendPasswordResetEmail(user.email, resetLink);
+        } catch (err) {
+            // Deliberate swallow — but LOGGED, which is what makes it safe, not the
+            // "silent success" antipattern. Anti-enumeration requires the HTTP response
+            // to be identical whether the email exists or delivery failed; leaking a 500
+            // only for real accounts would tell an attacker which emails are registered.
+            // We hide the failure from the attacker, but never from ourselves (ops logs).
+            console.error('Password reset email failed to send:', err);
+        }
+    }
+};
+
+export const resetPasswordService = async (token: string, password: string): Promise<void> => {
+    const hashedToken = hashToken(token);
+    const resetToken = await prisma.passwordResetToken.findUnique({
+        where: {
+            hash: hashedToken,
+        },
+    });
+
+    if (!resetToken || resetToken.expiresAt < new Date() || resetToken.isUsed) {
+        throw new AppError('Invalid token', 400);
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await prisma.$transaction([
+        prisma.passwordResetToken.update({
+            where: {
+                hash: hashedToken,
+            },
+            data: {
+                isUsed: true,
+            },
+        }),
+        prisma.user.update({
+            where: {
+                id: resetToken.userId,
+            },
+            data: {
+                password: hashedPassword,
+            },
+        }),
+    ]);
 };

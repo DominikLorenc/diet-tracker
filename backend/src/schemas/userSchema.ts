@@ -1,6 +1,24 @@
 import { z } from 'zod';
 import { registry } from '../swagger';
 
+const passwordSchema = z
+    .string({
+        error: (issue) => (issue.input === undefined ? 'Password is required' : 'Password must be a string'),
+    })
+    .min(8, 'Password must be at least 8 characters long')
+    .max(64, 'Password cannot exceed 64 characters')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .regex(/[0-9]/, 'Password must contain at least one number')
+    .regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character');
+
+const emailSchema = z
+    .string({
+        error: (issue) => (issue.input === undefined ? 'Email is required' : 'Email must be a string'),
+    })
+    .trim()
+    .pipe(z.email('Please provide a valid email address'));
+
 const userSchema = registry.register(
     'User',
     z.object({
@@ -11,23 +29,9 @@ const userSchema = registry.register(
             .trim()
             .min(1, 'Username cannot be empty'),
 
-        email: z
-            .string({
-                error: (issue) => (issue.input === undefined ? 'Email is required' : 'Email must be a string'),
-            })
-            .trim()
-            .pipe(z.email('Please provide a valid email address')),
+        email: emailSchema,
 
-        password: z
-            .string({
-                error: (issue) => (issue.input === undefined ? 'Password is required' : 'Password must be a string'),
-            })
-            .min(8, 'Password must be at least 8 characters long')
-            .max(64, 'Password cannot exceed 64 characters')
-            .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-            .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-            .regex(/[0-9]/, 'Password must contain at least one number')
-            .regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character'),
+        password: passwordSchema,
     }),
 );
 
@@ -82,4 +86,13 @@ export const UUIDScheme = z.uuid();
 export const JWTSchema = z.object({
     id: UUIDScheme,
     role: z.enum(['ADMIN', 'USER']),
+});
+
+export const forgotPasswordSchema = z.object({
+    email: emailSchema,
+});
+
+export const resetPasswordSchema = z.object({
+    token: z.string().length(64),
+    password: passwordSchema,
 });

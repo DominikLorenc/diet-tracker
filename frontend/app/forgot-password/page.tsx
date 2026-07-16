@@ -1,19 +1,13 @@
-import { LoginForm } from "@/app/_components/auth/LoginForm";
-import Link from "next/link";
-import { Apple, Zap, TrendingUp, Target, CheckCircle2 } from "lucide-react";
+import { ForgotPasswordForm } from "@/app/_components/auth/ForgotPasswordForm";
+import { Apple, KeyRound, ShieldCheck, Clock } from "lucide-react";
 
 const features = [
-  { icon: Zap, text: "Śledź kalorie i makroskładniki" },
-  { icon: TrendingUp, text: "Analizuj swoje postępy" },
-  { icon: Target, text: "Osiągaj swoje cele zdrowotne" },
+  { icon: KeyRound, text: "Bezpieczny, jednorazowy link resetujący" },
+  { icon: Clock, text: "Link ważny przez ograniczony czas" },
+  { icon: ShieldCheck, text: "Twoje dane pozostają chronione" },
 ];
 
-export default async function Login({
-  searchParams,
-}: {
-  searchParams: Promise<{ reset?: string }>;
-}) {
-  const { reset } = await searchParams;
+export default function ForgotPassword() {
   return (
     <div
       className="flex min-h-screen"
@@ -51,7 +45,7 @@ export default async function Login({
               className="mt-2 text-sm"
               style={{ color: "var(--color-dash-fg-muted)" }}
             >
-              Twój inteligentny dziennik kalorii
+              Odzyskaj dostęp do swojego konta
             </p>
           </div>
         </div>
@@ -90,45 +84,17 @@ export default async function Login({
               className="text-3xl font-bold"
               style={{ color: "var(--color-dash-fg)" }}
             >
-              Witaj ponownie
+              Zapomniałeś hasła?
             </h2>
             <p
               className="mt-2 text-sm"
               style={{ color: "var(--color-dash-fg-muted)" }}
             >
-              Zaloguj się do swojego konta
+              Podaj swój email, a wyślemy Ci link do zresetowania hasła
             </p>
           </div>
 
-          {reset === "success" && (
-            <div
-              className="mb-6 flex items-center gap-2.5 text-sm rounded-xl px-4 py-3"
-              style={{
-                color: "var(--color-dash-green)",
-                background: "var(--color-dash-surface)",
-                border: "1px solid var(--color-dash-border)",
-              }}
-            >
-              <CheckCircle2 className="w-4 h-4 shrink-0" />
-              Hasło zostało zmienione. Możesz się teraz zalogować.
-            </div>
-          )}
-
-          <LoginForm />
-
-          <p
-            className="mt-6 text-center text-sm"
-            style={{ color: "var(--color-dash-fg-muted)" }}
-          >
-            Nie masz konta?{" "}
-            <Link
-              href="/register"
-              className="font-semibold hover:opacity-80 transition-opacity"
-              style={{ color: "var(--color-dash-green)" }}
-            >
-              Zarejestruj się
-            </Link>
-          </p>
+          <ForgotPasswordForm />
         </div>
       </div>
     </div>

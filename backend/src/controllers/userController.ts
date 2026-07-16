@@ -1,6 +1,21 @@
 import { Request, Response, NextFunction, CookieOptions } from 'express';
-import { loginSchema, registerSchema, updateGoalsSchema, updateImageUrlSchema } from '../schemas/userSchema';
-import { registerUser, loginUser, getUserById, updateGoalsService, updateImageUrl } from '../services/userService';
+import {
+    forgotPasswordSchema,
+    loginSchema,
+    registerSchema,
+    updateGoalsSchema,
+    updateImageUrlSchema,
+    resetPasswordSchema,
+} from '../schemas/userSchema';
+import {
+    registerUser,
+    loginUser,
+    getUserById,
+    updateGoalsService,
+    updateImageUrl,
+    requestPasswordReset,
+    resetPasswordService,
+} from '../services/userService';
 import { AppError } from '../utils/AppError';
 
 // Single source of truth for auth-cookie attributes, shared by login (set) and
@@ -124,6 +139,37 @@ export const updateImageUrlController = async (req: Request, res: Response, next
         const { imageUrl } = validation.data;
         const updated = await updateImageUrl(userId, imageUrl);
         return res.status(200).json({ message: 'Image URL updated', updated });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const result = forgotPasswordSchema.safeParse(req.body);
+        if (!result.success) {
+            return res.status(400).json({ message: result.error.issues });
+        }
+
+        const { email } = result.data;
+
+        await requestPasswordReset(email);
+
+        return res.status(200).json({ message: 'If an account with that email exists, a reset link has been sent' });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const result = resetPasswordSchema.safeParse(req.body);
+        if (!result.success) {
+            return res.status(400).json({ message: result.error.issues });
+        }
+        const { token, password } = result.data;
+        await resetPasswordService(token, password);
+        return res.status(200).json({ message: 'Password reset successfully' });
     } catch (error) {
         next(error);
     }

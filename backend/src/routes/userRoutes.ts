@@ -1,5 +1,14 @@
 import { Router } from 'express';
-import { register, login, logout, me, updateGoals, updateImageUrlController } from '../controllers/userController';
+import {
+    register,
+    login,
+    logout,
+    me,
+    updateGoals,
+    updateImageUrlController,
+    forgotPassword,
+    resetPassword,
+} from '../controllers/userController';
 import { authMiddleware } from '../middleware/authMiddleware';
 import { authRateLimiter } from '../middleware/rateLimiter';
 
@@ -7,6 +16,8 @@ const router = Router();
 
 router.post('/register', authRateLimiter, register);
 router.post('/login', authRateLimiter, login);
+router.post('/forgot-password', authRateLimiter, forgotPassword);
+router.post('/reset-password', authRateLimiter, resetPassword);
 
 router.use(authMiddleware);
 
