@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 
 import { ProductCard } from "../search/ProductCard";
 import { Modal } from "../shared/Modal";
@@ -36,6 +36,7 @@ export const AllProducts = () => {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search, DEBOUNCE_DELAY);
+  const titleId = useId();
 
   const totalPages = Math.ceil(total / LIMIT);
 
@@ -187,8 +188,13 @@ export const AllProducts = () => {
         </>
       )}
 
-      <Modal open={openModal} onClose={() => setOpenModal(false)}>
+      <Modal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        labelledBy={titleId}
+      >
         <ProductForm
+          titleId={titleId}
           closeModal={() => setOpenModal(false)}
           productToEdit={productToEdit}
           onSuccess={(product) => {

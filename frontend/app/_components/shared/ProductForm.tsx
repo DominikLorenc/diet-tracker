@@ -32,10 +32,13 @@ export const ProductForm = ({
   closeModal = () => {},
   onSuccess,
   productToEdit,
+  titleId,
 }: {
   closeModal?: () => void;
   onSuccess?: (product: Product) => void;
   productToEdit?: Product | null;
+  // Set by a parent that needs to point aria-labelledby at this heading.
+  titleId?: string;
 }) => {
   const initialValues = {
     name: productToEdit?.name ?? "",
@@ -216,7 +219,10 @@ export const ProductForm = ({
       )}
       <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-1.5 items-center">
-          <h1 className="text-center text-3xl font-bold tracking-tight text-white">
+          <h1
+            id={titleId}
+            className="text-center text-3xl font-bold tracking-tight text-white"
+          >
             {submitButtonText}
           </h1>
         </div>

@@ -4,7 +4,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { searchSchema } from "@/schemas/searchSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { ProductCard } from "./ProductCard";
 import { ProductForm } from "@/app/_components/shared/ProductForm";
 import { Modal } from "@/app/_components/shared/Modal";
@@ -57,6 +57,8 @@ export const Search = ({
   const [results, setResults] = useState<Product[]>([]);
   const [openModal, setOpenModal] = useState(false);
   const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([]);
+
+  const titleId = useId();
 
   useEffect(() => {
     const fetchRecentSearches = async () => {
@@ -226,8 +228,12 @@ export const Search = ({
         </div>
       )}
 
-      <Modal open={openModal} onClose={() => setOpenModal(false)}>
-        <ProductForm closeModal={() => setOpenModal(false)} />
+      <Modal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        labelledBy={titleId}
+      >
+        <ProductForm closeModal={() => setOpenModal(false)} titleId={titleId} />
       </Modal>
     </div>
   );
