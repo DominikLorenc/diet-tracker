@@ -10,6 +10,7 @@ import { ProductForm } from "@/app/_components/shared/ProductForm";
 import { Modal } from "@/app/_components/shared/Modal";
 import { useSearchParams } from "next/navigation";
 import { useToastStore } from "@/store/useToastStore";
+import { useUserStore } from "@/store/useUserStore";
 import { apiClient } from "@/app/lib/apiClient";
 
 type Product = {
@@ -50,6 +51,8 @@ export const Search = ({
 
   const searchParams = useSearchParams();
   const showToast = useToastStore((state) => state.showToast);
+  // UI gate only — POST /products is admin-only on the API side
+  const isAdmin = useUserStore((state) => state.user?.role === "ADMIN");
 
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setIsSearched] = useState(false);
@@ -219,22 +222,34 @@ export const Search = ({
       {hasSearched && results.length === 0 && !isLoading && (
         <div className="mt-8 flex flex-col items-center gap-4 text-center">
           <span className="text-dash-fg-muted">Nie znaleziono produktów</span>
-          <button
-            onClick={() => setOpenModal(true)}
-            className="bg-green-600 hover:bg-green-700 transition-colors px-5 py-2.5 rounded-xl text-white font-semibold"
-          >
-            + Dodaj produkt
-          </button>
+          {isAdmin ? (
+            <button
+              onClick={() => setOpenModal(true)}
+              className="bg-green-600 hover:bg-green-700 transition-colors px-5 py-2.5 rounded-xl text-white font-semibold"
+            >
+              + Dodaj produkt
+            </button>
+          ) : (
+            <span className="text-dash-fg-dim text-sm">
+              Bazę produktów uzupełnia administrator — zgłoś mu brakujący
+              produkt.
+            </span>
+          )}
         </div>
       )}
 
-      <Modal
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        labelledBy={titleId}
-      >
-        <ProductForm closeModal={() => setOpenModal(false)} titleId={titleId} />
-      </Modal>
+      {isAdmin && (
+        <Modal
+          open={openModal}
+          onClose={() => setOpenModal(false)}
+          labelledBy={titleId}
+        >
+          <ProductForm
+            closeModal={() => setOpenModal(false)}
+            titleId={titleId}
+          />
+        </Modal>
+      )}
     </div>
   );
 };

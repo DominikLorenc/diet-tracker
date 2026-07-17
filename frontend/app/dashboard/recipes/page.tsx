@@ -69,7 +69,7 @@ export default function Recipes() {
 
   return (
     <div className="flex flex-col gap-4 p-6 w-full max-w-3xl">
-      <h2 className="text-2xl font-bold text-white">Twoje przepisy</h2>
+      <h2 className="text-2xl font-bold text-white">Lista przepisów</h2>
       {recipes.map((recipe) => (
         <div
           key={recipe.id}

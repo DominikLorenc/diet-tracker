@@ -7,17 +7,59 @@ import { apiClient } from "@/app/lib/apiClient";
 import { useUserStore } from "@/store/useUserStore";
 import { useEffect } from "react";
 
-const NAV_ITEMS = [
-  { emoji: "📓", name: "Dziennik", href: "/dashboard" },
-  { emoji: "📈", name: "Postępy", href: "/dashboard/progress" },
-  { emoji: "🥦", name: "Produkty", href: "/dashboard/products" },
-  { emoji: "👤", name: "Profil", href: "/dashboard/profile" },
-  { emoji: "📦", name: "Wszystkie produkty", href: "/dashboard/all" },
-  { emoji: "🍳", name: "Przepisy", href: "/dashboard/recipes" },
-  { emoji: "🛒", name: "Lista zakupów", href: "/dashboard/shopping-list" },
+type NavItem = {
+  emoji: string;
+  name: string;
+  /** Shorter label for the mobile bottom bar, where space is tight */
+  shortName: string;
+  href: string;
+  adminOnly?: boolean;
+};
+
+const NAV_ITEMS: NavItem[] = [
+  { emoji: "📓", name: "Dziennik", shortName: "Dziennik", href: "/dashboard" },
+  {
+    emoji: "📈",
+    name: "Postępy",
+    shortName: "Postępy",
+    href: "/dashboard/progress",
+  },
+  {
+    emoji: "🥦",
+    name: "Produkty",
+    shortName: "Produkty",
+    href: "/dashboard/products",
+  },
+  {
+    emoji: "🍳",
+    name: "Przepisy",
+    shortName: "Przepisy",
+    href: "/dashboard/recipes",
+  },
+  {
+    emoji: "🛒",
+    name: "Lista zakupów",
+    shortName: "Zakupy",
+    href: "/dashboard/shopping-list",
+  },
+  {
+    emoji: "👤",
+    name: "Profil",
+    shortName: "Profil",
+    href: "/dashboard/profile",
+  },
+  {
+    emoji: "📦",
+    name: "Baza produktów",
+    shortName: "Baza",
+    href: "/dashboard/all",
+    adminOnly: true,
+  },
 ];
 
-const MOBILE_NAV = NAV_ITEMS.slice(0, 4);
+// Admin tooling stays on desktop: a seventh tab does not fit the mobile bar,
+// and managing the catalog is not a phone task.
+const MOBILE_NAV = NAV_ITEMS.filter((item) => !item.adminOnly);
 
 export default function DashboardLayout({
   children,
@@ -29,6 +71,9 @@ export default function DashboardLayout({
 
   const fetchUser = useUserStore((s) => s.fetchUser);
   const clearUser = useUserStore((s) => s.clearUser);
+  const isAdmin = useUserStore((s) => s.user?.role === "ADMIN");
+
+  const sidebarItems = NAV_ITEMS.filter((item) => !item.adminOnly || isAdmin);
 
   const handleLogout = async () => {
     await apiClient.DELETE("/users/logout");
@@ -80,7 +125,7 @@ export default function DashboardLayout({
 
         {/* Nav items */}
         <nav className="flex flex-col gap-1.5 px-3 mt-2 flex-1">
-          {NAV_ITEMS.map((item) => {
+          {sidebarItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
@@ -178,7 +223,7 @@ export default function DashboardLayout({
                     : "var(--color-dash-fg-dim)",
                 }}
               >
-                {item.name}
+                {item.shortName}
               </span>
             </Link>
           );

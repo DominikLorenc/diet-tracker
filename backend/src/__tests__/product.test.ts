@@ -19,6 +19,7 @@ process.env.JWT_SECRET = 'test-secret';
 vi.mock('../services/productService');
 
 const token = jwt.sign({ id: crypto.randomUUID(), role: 'USER' }, process.env.JWT_SECRET!);
+const adminToken = jwt.sign({ id: crypto.randomUUID(), role: 'ADMIN' }, process.env.JWT_SECRET!);
 const productId = 'e87f94c7-0e0c-46ab-90a2-6537a30fa688';
 
 describe('POST /api/v1/products/', () => {
@@ -47,7 +48,7 @@ describe('POST /api/v1/products/', () => {
                 protein: 100,
                 fat: 100,
             })
-            .set('Cookie', ['token=' + token]);
+            .set('Cookie', ['token=' + adminToken]);
 
         expect(res.status).toBe(201);
     });
@@ -64,7 +65,7 @@ describe('POST /api/v1/products/', () => {
                 protein: 100,
                 fat: 100,
             })
-            .set('Cookie', ['token=' + token]);
+            .set('Cookie', ['token=' + adminToken]);
 
         expect(res.status).toBe(409);
     });
@@ -78,7 +79,7 @@ describe('POST /api/v1/products/', () => {
                 protein: 100,
                 fat: 100,
             })
-            .set('Cookie', ['token=' + token]);
+            .set('Cookie', ['token=' + adminToken]);
 
         expect(res.status).toBe(400);
     });
@@ -93,6 +94,22 @@ describe('POST /api/v1/products/', () => {
         });
 
         expect(res.status).toBe(401);
+    });
+
+    it('should return 403 when a non-admin user tries to create a product', async () => {
+        const res = await request(app)
+            .post('/api/v1/products')
+            .send({
+                name: 'Test product',
+                calories: 100,
+                carbs: 100,
+                protein: 100,
+                fat: 100,
+            })
+            .set('Cookie', ['token=' + token]);
+
+        expect(res.status).toBe(403);
+        expect(createProduct).not.toHaveBeenCalled();
     });
 });
 
@@ -344,7 +361,7 @@ describe('PATCH /api/v1/products/:id', () => {
                 protein: 100,
                 fat: 100,
             })
-            .set('Cookie', ['token=' + token]);
+            .set('Cookie', ['token=' + adminToken]);
         expect(res.status).toBe(200);
     });
 
@@ -360,7 +377,7 @@ describe('PATCH /api/v1/products/:id', () => {
                 protein: 100,
                 fat: 100,
             })
-            .set('Cookie', ['token=' + token]);
+            .set('Cookie', ['token=' + adminToken]);
         expect(res.status).toBe(404);
     });
 
@@ -375,6 +392,21 @@ describe('PATCH /api/v1/products/:id', () => {
         expect(res.status).toBe(401);
     });
 
+    it('should return 403 when a non-admin user tries to update a product', async () => {
+        const res = await request(app)
+            .patch(`/api/v1/products/${productId}`)
+            .send({
+                name: 'Test product',
+                calories: 100,
+                carbs: 100,
+                protein: 100,
+                fat: 100,
+            })
+            .set('Cookie', ['token=' + token]);
+        expect(res.status).toBe(403);
+        expect(updateProductValues).not.toHaveBeenCalled();
+    });
+
     it('should return 409 when product already exists', async () => {
         vi.mocked(updateProductValues).mockRejectedValue(new AppError('Product already exists', 409));
 
@@ -387,7 +419,7 @@ describe('PATCH /api/v1/products/:id', () => {
                 protein: 100,
                 fat: 100,
             })
-            .set('Cookie', ['token=' + token]);
+            .set('Cookie', ['token=' + adminToken]);
         expect(res.status).toBe(409);
     });
 
@@ -397,7 +429,7 @@ describe('PATCH /api/v1/products/:id', () => {
             .send({
                 someValue: 'Test product',
             })
-            .set('Cookie', ['token=' + token]);
+            .set('Cookie', ['token=' + adminToken]);
         expect(res.status).toBe(400);
     });
 });
@@ -420,7 +452,7 @@ describe('DELETE /api/v1/products/:id', () => {
         });
         const res = await request(app)
             .delete(`/api/v1/products/${productId}`)
-            .set('Cookie', ['token=' + token]);
+            .set('Cookie', ['token=' + adminToken]);
         expect(res.status).toBe(200);
     });
 
@@ -429,13 +461,21 @@ describe('DELETE /api/v1/products/:id', () => {
 
         const res = await request(app)
             .delete(`/api/v1/products/${productId}`)
-            .set('Cookie', ['token=' + token]);
+            .set('Cookie', ['token=' + adminToken]);
         expect(res.status).toBe(404);
     });
 
     it('should return 401 when user is not logged in', async () => {
         const res = await request(app).delete(`/api/v1/products/${productId}`);
         expect(res.status).toBe(401);
+    });
+
+    it('should return 403 when a non-admin user tries to delete a product', async () => {
+        const res = await request(app)
+            .delete(`/api/v1/products/${productId}`)
+            .set('Cookie', ['token=' + token]);
+        expect(res.status).toBe(403);
+        expect(deleteProductService).not.toHaveBeenCalled();
     });
 });
 

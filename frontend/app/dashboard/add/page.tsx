@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ProductSearch } from "@/app/_components/add/ProductSearch";
 import { RecipeSearch } from "@/app/_components/add/RecipeSearch";
 import { ProductForm } from "@/app/_components/shared/ProductForm";
+import { useUserStore } from "@/store/useUserStore";
 
 type Tab = "products" | "recipes" | "new";
 
@@ -39,7 +40,15 @@ function AddPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const currentTab = (searchParams.get("tab") as Tab) ?? "products";
+  // UI gate only — POST /products is admin-only, so this just avoids offering
+  // a form that the API would reject anyway.
+  const isAdmin = useUserStore((state) => state.user?.role === "ADMIN");
+
+  const requestedTab = (searchParams.get("tab") as Tab) ?? "products";
+  // ?tab=new is reachable by hand-editing the URL, so fall back for non-admins
+  // instead of rendering an empty page.
+  const currentTab =
+    requestedTab === "new" && !isAdmin ? "products" : requestedTab;
   const mealType = searchParams.get("mealType") ?? "";
   const date = searchParams.get("date") ?? "";
   const [newlyCreatedProduct, setNewlyCreatedProduct] =
@@ -68,7 +77,12 @@ function AddPageContent() {
       })
     : "";
 
-  const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
+  const tabs: {
+    id: Tab;
+    label: string;
+    icon: React.ReactNode;
+    adminOnly?: boolean;
+  }[] = [
     {
       id: "products",
       label: "Produkty",
@@ -129,8 +143,11 @@ function AddPageContent() {
           <line x1="8" y1="12" x2="16" y2="12" />
         </svg>
       ),
+      adminOnly: true,
     },
   ];
+
+  const visibleTabs = tabs.filter((tab) => !tab.adminOnly || isAdmin);
 
   return (
     <div className="max-w-3xl mx-auto w-full py-8 px-4">
@@ -179,7 +196,7 @@ function AddPageContent() {
 
       {/* ── Tab bar ── */}
       <div className="flex gap-1 mb-6 bg-dash-surface-darker p-1 rounded-xl border border-dash-border">
-        {tabs.map((tab) => (
+        {visibleTabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setTab(tab.id)}
@@ -199,7 +216,7 @@ function AddPageContent() {
 
       {currentTab === "products" && (
         <ProductSearch
-          onGoToNewProduct={() => setTab("new")}
+          onGoToNewProduct={isAdmin ? () => setTab("new") : undefined}
           newlyCreatedProduct={newlyCreatedProduct}
         />
       )}
@@ -208,7 +225,7 @@ function AddPageContent() {
         <RecipeSearch mealType={mealType} date={date} />
       )}
 
-      {currentTab === "new" && (
+      {currentTab === "new" && isAdmin && (
         <div className="bg-dash-surface-darker rounded-2xl border border-dash-border p-6">
           <h2 className="text-dash-fg font-bold text-lg mb-6">Nowy produkt</h2>
           {/* ProductForm — po zapisaniu wraca do zakładki Produkty i otwiera kartę nowego */}

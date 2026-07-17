@@ -6,6 +6,7 @@ import { ProductCard } from "../search/ProductCard";
 import { Modal } from "../shared/Modal";
 import { ProductForm } from "../shared/ProductForm";
 import { useToastStore } from "@/store/useToastStore";
+import { useUserStore } from "@/store/useUserStore";
 import { apiClient } from "@/app/lib/apiClient";
 import { Spinner } from "../ui/Spinner";
 import { Button } from "../ui/Button";
@@ -32,6 +33,8 @@ export const AllProducts = () => {
   const [productToEdit, setProductToEdit] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const showToast = useToastStore((state) => state.showToast);
+  // UI gate only — the API is what actually enforces this (PATCH/DELETE are admin-only)
+  const isAdmin = useUserStore((state) => state.user?.role === "ADMIN");
   const [search, setSearch] = useState("");
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -153,10 +156,10 @@ export const AllProducts = () => {
               <ProductCard
                 key={product.id}
                 product={product}
-                canBeDeleted
+                canBeDeleted={isAdmin}
                 onDelete={onDelete}
                 handleEdit={handleEdit}
-                canBeEdited
+                canBeEdited={isAdmin}
               />
             ))}
           </div>

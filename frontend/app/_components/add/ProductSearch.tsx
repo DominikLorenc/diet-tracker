@@ -42,7 +42,8 @@ type RecentSearch = {
 };
 
 type Props = {
-  onGoToNewProduct: () => void;
+  /** Omitted when the viewer may not create products — hides every entry point to the form */
+  onGoToNewProduct?: () => void;
   newlyCreatedProduct?: Product | null;
 };
 
@@ -258,27 +259,29 @@ export const ProductSearch = ({
           </button>
         )}
 
-        {/* Przycisk nowego produktu — zawsze widoczny */}
-        <button
-          onClick={onGoToNewProduct}
-          className="shrink-0 flex items-center gap-1.5 bg-dash-badge-bg border border-[var(--color-green-mid-alpha-md)] hover:border-dash-green-mid transition-colors px-3 py-2.5 rounded-xl text-dash-green text-sm font-semibold"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width={14}
-            height={14}
-            fill="none"
-            stroke="var(--color-dash-green)"
-            strokeWidth={2.5}
-            strokeLinecap="round"
-            strokeLinejoin="round"
+        {/* Przycisk nowego produktu — tylko dla admina */}
+        {onGoToNewProduct && (
+          <button
+            onClick={onGoToNewProduct}
+            className="shrink-0 flex items-center gap-1.5 bg-dash-badge-bg border border-[var(--color-green-mid-alpha-md)] hover:border-dash-green-mid transition-colors px-3 py-2.5 rounded-xl text-dash-green text-sm font-semibold"
           >
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          Nowy
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width={14}
+              height={14}
+              fill="none"
+              stroke="var(--color-dash-green)"
+              strokeWidth={2.5}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Nowy
+          </button>
+        )}
       </div>
 
       {errors.search && (
@@ -298,12 +301,19 @@ export const ProductSearch = ({
               <p className="text-dash-fg-muted mb-3 text-sm">
                 Nie znaleziono produktu
               </p>
-              <button
-                onClick={onGoToNewProduct}
-                className="text-dash-green text-sm font-semibold underline underline-offset-2"
-              >
-                Nie znaleziono? → Dodaj nowy produkt
-              </button>
+              {onGoToNewProduct ? (
+                <button
+                  onClick={onGoToNewProduct}
+                  className="text-dash-green text-sm font-semibold underline underline-offset-2"
+                >
+                  Nie znaleziono? → Dodaj nowy produkt
+                </button>
+              ) : (
+                <p className="text-dash-fg-dim text-xs px-4">
+                  Bazę produktów uzupełnia administrator — zgłoś mu brakujący
+                  produkt.
+                </p>
+              )}
             </div>
           )}
           {displayedProducts.map((product) => (
