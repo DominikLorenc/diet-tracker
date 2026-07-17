@@ -11,7 +11,7 @@ export default function Home() {
         fontFamily: "var(--font-jakarta)",
       }}
     >
-      <Navbar variant="public" />
+      <Navbar />
 
       {/* Hero */}
       <section className="flex flex-col lg:flex-row items-center justify-between min-h-[640px] px-4 md:px-20 py-16 gap-12">
