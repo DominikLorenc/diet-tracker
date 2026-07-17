@@ -20,6 +20,18 @@ datasource db {
     ADMIN
   }
 
+  enum ProductCategory {
+  BREAD
+  DAIRY
+  MEAT
+  VEGETABLES
+  FRUITS
+  BEVERAGES
+  DRY_GOODS
+  SPICES
+  OTHER
+}
+
 
 model User {
     id        String   @id @default(uuid())
@@ -131,6 +143,7 @@ model Product {
   imageUrl     String        @default("")
   barcode      String?       @unique
   createdAt    DateTime      @default(now())
+  category ProductCategory @default(OTHER)
   diaryEntriesItems DiaryEntryItem[]
   recipeIngredient RecipeIngredient[]
   recentSearches RecentSearch[]

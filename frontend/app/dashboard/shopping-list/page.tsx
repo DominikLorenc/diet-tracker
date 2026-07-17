@@ -6,10 +6,16 @@ import { Button } from "@/app/_components/ui/Button";
 import { apiClient } from "@/app/lib/apiClient";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import {
+  CATEGORY_LABELS,
+  CATEGORY_ORDER,
+  type ProductCategory,
+} from "@/app/lib/productCategories";
 
 type ShoppingItem = {
   name: string;
   grams: number;
+  category: ProductCategory;
 };
 
 function getDatesInRange(from: string, to: string): string[] {
@@ -54,15 +60,28 @@ async function generateShoppingList(
 
   const entries = await fetchData(dates, onProgress);
 
-  const map = new Map<string, number>();
+  // Keyed by product name (unique in the catalog). Grams accumulate across every
+  // diary hit, while the category belongs to the product itself and is simply
+  // carried along rather than combined.
+  const map = new Map<string, { grams: number; category: ProductCategory }>();
+
+  const addToList = (
+    product: { name: string; category: ProductCategory },
+    grams: number,
+  ) => {
+    const current = map.get(product.name);
+    map.set(product.name, {
+      grams: (current?.grams ?? 0) + grams,
+      category: product.category,
+    });
+  };
 
   for (const item of entries) {
     item?.forEach((entry) => {
       if (entry.items) {
         entry.items.forEach((item) => {
           if (item.product) {
-            const quantity = map.get(item.product.name) ?? 0;
-            map.set(item.product.name, quantity + Number(item.quantity));
+            addToList(item.product, Number(item.quantity));
           }
 
           if (item.recipe?.products) {
@@ -73,11 +92,7 @@ async function generateShoppingList(
             const scale = Number(item.quantity) / totalWeight;
 
             item.recipe.products.forEach((product) => {
-              const quantity = map.get(product.product.name) ?? 0;
-              map.set(
-                product.product.name,
-                quantity + Number(product.quantity) * scale,
-              );
+              addToList(product.product, Number(product.quantity) * scale);
             });
           }
 
@@ -91,10 +106,9 @@ async function generateShoppingList(
             const scale = Number(item.quantity) / totalIngridentSum;
 
             item.userRecipe.userRecipeIngredients.forEach((ingredient) => {
-              const quantity = map.get(ingredient.product.name) ?? 0;
-              map.set(
-                ingredient.product.name,
-                quantity + Number(ingredient.quantity) * scale,
+              addToList(
+                ingredient.product,
+                Number(ingredient.quantity) * scale,
               );
             });
           }
@@ -103,8 +117,24 @@ async function generateShoppingList(
     });
   }
   return Array.from(map.entries())
-    .map(([name, grams]) => ({ name, grams: Math.round(grams) }))
+    .map(([name, { grams, category }]) => ({
+      name,
+      grams: Math.round(grams),
+      category,
+    }))
     .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+// Sections follow CATEGORY_ORDER (the in-store route) rather than the order
+// items happen to appear in. Empty categories are dropped so no aisle shows up
+// with nothing under it.
+function groupByCategory(
+  items: ShoppingItem[],
+): { category: ProductCategory; items: ShoppingItem[] }[] {
+  return CATEGORY_ORDER.map((category) => ({
+    category,
+    items: items.filter((item) => item.category === category),
+  })).filter((section) => section.items.length > 0);
 }
 
 function getDefaultDates() {
@@ -131,6 +161,7 @@ export default function ShoppingListPage() {
   } | null>(null);
 
   const visibleItems = items?.filter((i) => !removed.has(i.name)) ?? [];
+  const sections = groupByCategory(visibleItems);
 
   const isDateRangeInvalid = from > to;
 
@@ -155,13 +186,22 @@ export default function ShoppingListPage() {
   }
 
   async function handleExportPDF() {
-    const rows = visibleItems
+    // Mirrors the on-screen sections so the printout matches what was reviewed.
+    const rows = sections
       .map(
-        (item) => `
+        (section) => `
+        <h3 style="margin:20px 0 4px;font-size:11px;font-weight:bold;color:#6b7280;text-transform:uppercase;letter-spacing:0.08em;">
+          ${CATEGORY_LABELS[section.category]}
+        </h3>
+        ${section.items
+          .map(
+            (item) => `
         <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e5e7eb;font-size:14px;">
           <span>${item.name}</span>
           <span style="color:#6b7280;margin-left:16px;">${item.grams} g</span>
         </div>`,
+          )
+          .join("")}`,
       )
       .join("");
 
@@ -281,38 +321,48 @@ export default function ShoppingListPage() {
             </div>
 
             {/* Pozycje */}
-            <ul className="flex flex-col divide-y divide-dash-border">
-              {visibleItems.length === 0 ? (
-                <li className="py-8 text-center text-dash-fg-muted text-sm font-sans">
-                  Wszystko masz już w domu 🎉
-                </li>
-              ) : (
-                visibleItems.map((item) => (
-                  <li
-                    key={item.name}
-                    className="flex items-center justify-between py-3 gap-4"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <span className="w-1.5 h-1.5 rounded-full bg-dash-green shrink-0" />
-                      <span className="text-dash-fg font-sans text-sm truncate">
-                        {item.name}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3 shrink-0">
-                      <span className="text-dash-fg-muted font-sans text-sm tabular-nums">
-                        {item.grams} g
-                      </span>
-                      <button
-                        onClick={() => handleRemove(item.name)}
-                        className="text-xs font-sans text-dash-fg-muted border border-dash-border rounded-lg px-3 py-1 hover:border-dash-green hover:text-dash-green transition-colors cursor-pointer"
+            {visibleItems.length === 0 ? (
+              <p className="py-8 text-center text-dash-fg-muted text-sm font-sans">
+                Wszystko masz już w domu 🎉
+              </p>
+            ) : (
+              sections.map((section) => (
+                <section key={section.category} className="pt-4">
+                  <h2 className="text-dash-fg-secondary text-xs font-sans font-semibold uppercase tracking-widest pb-2">
+                    {CATEGORY_LABELS[section.category]}
+                    <span className="text-dash-fg-muted ml-2 normal-case tracking-normal font-normal">
+                      {section.items.length}
+                    </span>
+                  </h2>
+                  <ul className="flex flex-col divide-y divide-dash-border">
+                    {section.items.map((item) => (
+                      <li
+                        key={item.name}
+                        className="flex items-center justify-between py-3 gap-4"
                       >
-                        Mam już
-                      </button>
-                    </div>
-                  </li>
-                ))
-              )}
-            </ul>
+                        <div className="flex items-center gap-3 min-w-0">
+                          <span className="w-1.5 h-1.5 rounded-full bg-dash-green shrink-0" />
+                          <span className="text-dash-fg font-sans text-sm truncate">
+                            {item.name}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3 shrink-0">
+                          <span className="text-dash-fg-muted font-sans text-sm tabular-nums">
+                            {item.grams} g
+                          </span>
+                          <button
+                            onClick={() => handleRemove(item.name)}
+                            className="text-xs font-sans text-dash-fg-muted border border-dash-border rounded-lg px-3 py-1 hover:border-dash-green hover:text-dash-green transition-colors cursor-pointer"
+                          >
+                            Mam już
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ))
+            )}
           </Card>
         )}
 

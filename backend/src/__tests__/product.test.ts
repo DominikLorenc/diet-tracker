@@ -37,6 +37,7 @@ describe('POST /api/v1/products/', () => {
             createdAt: new Date(),
             imageUrl: '',
             barcode: null,
+            category: 'OTHER',
         });
 
         const res = await request(app)
@@ -47,6 +48,7 @@ describe('POST /api/v1/products/', () => {
                 carbs: 100,
                 protein: 100,
                 fat: 100,
+                category: 'OTHER',
             })
             .set('Cookie', ['token=' + adminToken]);
 
@@ -64,10 +66,44 @@ describe('POST /api/v1/products/', () => {
                 carbs: 100,
                 protein: 100,
                 fat: 100,
+                category: 'OTHER',
             })
             .set('Cookie', ['token=' + adminToken]);
 
         expect(res.status).toBe(409);
+    });
+
+    it('should return 400 when category is missing', async () => {
+        const res = await request(app)
+            .post('/api/v1/products')
+            .send({
+                name: 'Test product',
+                calories: 100,
+                carbs: 100,
+                protein: 100,
+                fat: 100,
+            })
+            .set('Cookie', ['token=' + adminToken]);
+
+        expect(res.status).toBe(400);
+        expect(createProduct).not.toHaveBeenCalled();
+    });
+
+    it('should return 400 when category is not a known enum value', async () => {
+        const res = await request(app)
+            .post('/api/v1/products')
+            .send({
+                name: 'Test product',
+                calories: 100,
+                carbs: 100,
+                protein: 100,
+                fat: 100,
+                category: 'HAKER',
+            })
+            .set('Cookie', ['token=' + adminToken]);
+
+        expect(res.status).toBe(400);
+        expect(createProduct).not.toHaveBeenCalled();
     });
 
     it('should return 400 when invalid data is provided', async () => {
@@ -130,6 +166,7 @@ describe('GET /api/v1/products', () => {
                     createdAt: new Date(),
                     imageUrl: '',
                     barcode: null,
+                    category: 'OTHER',
                 },
             ],
             total: 500,
@@ -156,6 +193,7 @@ describe('GET /api/v1/products', () => {
                     createdAt: new Date(),
                     imageUrl: '',
                     barcode: null,
+                    category: 'OTHER',
                 },
             ],
             total: 500,
@@ -182,6 +220,7 @@ describe('GET /api/v1/products', () => {
                     createdAt: new Date(),
                     imageUrl: '',
                     barcode: null,
+                    category: 'OTHER',
                 },
             ],
             total: 500,
@@ -209,6 +248,7 @@ describe('GET /api/v1/products', () => {
                     createdAt: new Date(),
                     imageUrl: '',
                     barcode: null,
+                    category: 'OTHER',
                 },
             ],
             total: 500,
@@ -236,6 +276,7 @@ describe('GET /api/v1/products', () => {
                     createdAt: new Date(),
                     imageUrl: '',
                     barcode: null,
+                    category: 'OTHER',
                 },
             ],
             total: 500,
@@ -280,6 +321,7 @@ describe(`GET /api/v1/products/${productId}`, () => {
             createdAt: new Date(),
             imageUrl: '',
             barcode: null,
+            category: 'OTHER',
         });
         const res = await request(app)
             .get(`/api/v1/products/${productId}`)
@@ -317,6 +359,7 @@ describe(`GET /api/v1/products/search?q=apple`, () => {
                 createdAt: new Date(),
                 imageUrl: '',
                 barcode: null,
+                category: 'OTHER',
             },
         ]);
         const res = await request(app)
@@ -351,6 +394,7 @@ describe('PATCH /api/v1/products/:id', () => {
             createdAt: new Date(),
             imageUrl: '',
             barcode: null,
+            category: 'OTHER',
         });
         const res = await request(app)
             .patch(`/api/v1/products/${productId}`)
@@ -449,6 +493,7 @@ describe('DELETE /api/v1/products/:id', () => {
             createdAt: new Date(),
             imageUrl: '',
             barcode: null,
+            category: 'OTHER',
         });
         const res = await request(app)
             .delete(`/api/v1/products/${productId}`)

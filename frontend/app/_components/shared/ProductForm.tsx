@@ -13,6 +13,11 @@ import {
   BarcodeScannerModal,
   type ScannedProduct,
 } from "@/app/_components/barcode/BarcodeScannerModal";
+import {
+  CATEGORY_ORDER,
+  CATEGORY_LABELS,
+  type ProductCategory,
+} from "@/app/lib/productCategories";
 
 type Inputs = z.infer<typeof productSchema>;
 
@@ -26,6 +31,7 @@ type Product = {
   fat: number;
   imageUrl: string;
   barcode?: string;
+  category: ProductCategory;
 };
 
 export const ProductForm = ({
@@ -47,6 +53,9 @@ export const ProductForm = ({
     protein: productToEdit?.protein ?? 0,
     fat: productToEdit?.fat ?? 0,
     barcode: productToEdit?.barcode ?? "",
+    // Left undefined on create so the admin has to pick a category explicitly
+    // rather than silently accepting whichever option renders first.
+    category: productToEdit?.category,
   };
 
   const {
@@ -239,6 +248,32 @@ export const ProductForm = ({
           />
           {errors.name && (
             <p className="text-sm text-red-400">{errors.name.message}</p>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="category" className={labelClass}>
+            Kategoria
+          </label>
+          {/* defaultValue="" keeps the placeholder selected on create; "" is not
+              a valid enum value, so submitting it fails validation by design. */}
+          <select
+            id="category"
+            className={inputClass}
+            defaultValue=""
+            {...register("category")}
+          >
+            <option value="" disabled>
+              Wybierz kategorię…
+            </option>
+            {CATEGORY_ORDER.map((category) => (
+              <option key={category} value={category}>
+                {CATEGORY_LABELS[category]}
+              </option>
+            ))}
+          </select>
+          {errors.category && (
+            <p className="text-sm text-red-400">{errors.category.message}</p>
           )}
         </div>
 

@@ -11,6 +11,7 @@ import { apiClient } from "@/app/lib/apiClient";
 import { Spinner } from "../ui/Spinner";
 import { Button } from "../ui/Button";
 import { useDebounce } from "@/app/_hooks/useDebounce";
+import type { ProductCategory } from "@/app/lib/productCategories";
 
 type Product = {
   name: string;
@@ -22,6 +23,7 @@ type Product = {
 
   fat: number;
   imageUrl: string;
+  category: ProductCategory;
 };
 
 const DEBOUNCE_DELAY = 300;

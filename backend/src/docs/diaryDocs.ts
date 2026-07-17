@@ -1,5 +1,6 @@
 import { registry, errorSchema } from '../swagger';
 import { diaryEntrySchema } from '../schemas/diarySchema';
+import { ProductCategory } from '../generated/prisma';
 import { z } from 'zod';
 
 const errorContent = { 'application/json': { schema: errorSchema } };
@@ -13,6 +14,7 @@ const productSchema = z.object({
     fat: z.string(),
     imageUrl: z.string(),
     createdAt: z.string(),
+    category: z.enum(ProductCategory),
 });
 
 const diaryItemSchema = z.object({

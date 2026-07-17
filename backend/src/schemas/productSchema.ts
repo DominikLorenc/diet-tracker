@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { registry } from '../swagger';
+import { ProductCategory } from '../generated/prisma';
 
 export const productSchema = registry.register(
     'Product',
@@ -9,6 +10,7 @@ export const productSchema = registry.register(
         carbs: z.number().nonnegative('Carbs must be a positive number'),
         protein: z.number().nonnegative('Protein must be a positive number'),
         fat: z.number().nonnegative('Fat must be a positive number'),
+        category: z.enum(ProductCategory),
         imageUrl: z.string().optional(),
         barcode: z
             .string()

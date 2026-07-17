@@ -1,5 +1,6 @@
 import { registry, errorSchema } from '../swagger';
 import { productSchema, productListQuerySchema } from '../schemas/productSchema';
+import { ProductCategory } from '../generated/prisma';
 import { z } from 'zod';
 
 const errorContent = { 'application/json': { schema: errorSchema } };
@@ -14,6 +15,7 @@ const productResponseSchema = z.object({
     imageUrl: z.string(),
     barcode: z.string().nullable(),
     createdAt: z.string(),
+    category: z.enum(ProductCategory),
 });
 
 const barcodeProductResponseSchema = z.object({

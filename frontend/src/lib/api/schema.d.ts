@@ -435,6 +435,17 @@ export interface paths {
                     fat: string;
                     imageUrl: string;
                     createdAt: string;
+                    /** @enum {string} */
+                    category:
+                      | "BREAD"
+                      | "DAIRY"
+                      | "MEAT"
+                      | "VEGETABLES"
+                      | "FRUITS"
+                      | "BEVERAGES"
+                      | "DRY_GOODS"
+                      | "SPICES"
+                      | "OTHER";
                   } | null;
                   recipe: {
                     id: string;
@@ -450,6 +461,17 @@ export interface paths {
                         fat: string;
                         imageUrl: string;
                         createdAt: string;
+                        /** @enum {string} */
+                        category:
+                          | "BREAD"
+                          | "DAIRY"
+                          | "MEAT"
+                          | "VEGETABLES"
+                          | "FRUITS"
+                          | "BEVERAGES"
+                          | "DRY_GOODS"
+                          | "SPICES"
+                          | "OTHER";
                       };
                     }[];
                   } | null;
@@ -476,6 +498,17 @@ export interface paths {
                         fat: string;
                         imageUrl: string;
                         createdAt: string;
+                        /** @enum {string} */
+                        category:
+                          | "BREAD"
+                          | "DAIRY"
+                          | "MEAT"
+                          | "VEGETABLES"
+                          | "FRUITS"
+                          | "BEVERAGES"
+                          | "DRY_GOODS"
+                          | "SPICES"
+                          | "OTHER";
                       };
                     }[];
                   } | null;
@@ -544,6 +577,17 @@ export interface paths {
                     fat: string;
                     imageUrl: string;
                     createdAt: string;
+                    /** @enum {string} */
+                    category:
+                      | "BREAD"
+                      | "DAIRY"
+                      | "MEAT"
+                      | "VEGETABLES"
+                      | "FRUITS"
+                      | "BEVERAGES"
+                      | "DRY_GOODS"
+                      | "SPICES"
+                      | "OTHER";
                   } | null;
                   recipe: {
                     id: string;
@@ -559,6 +603,17 @@ export interface paths {
                         fat: string;
                         imageUrl: string;
                         createdAt: string;
+                        /** @enum {string} */
+                        category:
+                          | "BREAD"
+                          | "DAIRY"
+                          | "MEAT"
+                          | "VEGETABLES"
+                          | "FRUITS"
+                          | "BEVERAGES"
+                          | "DRY_GOODS"
+                          | "SPICES"
+                          | "OTHER";
                       };
                     }[];
                   } | null;
@@ -585,6 +640,17 @@ export interface paths {
                         fat: string;
                         imageUrl: string;
                         createdAt: string;
+                        /** @enum {string} */
+                        category:
+                          | "BREAD"
+                          | "DAIRY"
+                          | "MEAT"
+                          | "VEGETABLES"
+                          | "FRUITS"
+                          | "BEVERAGES"
+                          | "DRY_GOODS"
+                          | "SPICES"
+                          | "OTHER";
                       };
                     }[];
                   } | null;
@@ -677,6 +743,17 @@ export interface paths {
                     fat: string;
                     imageUrl: string;
                     createdAt: string;
+                    /** @enum {string} */
+                    category:
+                      | "BREAD"
+                      | "DAIRY"
+                      | "MEAT"
+                      | "VEGETABLES"
+                      | "FRUITS"
+                      | "BEVERAGES"
+                      | "DRY_GOODS"
+                      | "SPICES"
+                      | "OTHER";
                   } | null;
                   recipe: {
                     id: string;
@@ -692,6 +769,17 @@ export interface paths {
                         fat: string;
                         imageUrl: string;
                         createdAt: string;
+                        /** @enum {string} */
+                        category:
+                          | "BREAD"
+                          | "DAIRY"
+                          | "MEAT"
+                          | "VEGETABLES"
+                          | "FRUITS"
+                          | "BEVERAGES"
+                          | "DRY_GOODS"
+                          | "SPICES"
+                          | "OTHER";
                       };
                     }[];
                   } | null;
@@ -718,6 +806,17 @@ export interface paths {
                         fat: string;
                         imageUrl: string;
                         createdAt: string;
+                        /** @enum {string} */
+                        category:
+                          | "BREAD"
+                          | "DAIRY"
+                          | "MEAT"
+                          | "VEGETABLES"
+                          | "FRUITS"
+                          | "BEVERAGES"
+                          | "DRY_GOODS"
+                          | "SPICES"
+                          | "OTHER";
                       };
                     }[];
                   } | null;
@@ -813,6 +912,17 @@ export interface paths {
                   fat: string;
                   imageUrl: string;
                   createdAt: string;
+                  /** @enum {string} */
+                  category:
+                    | "BREAD"
+                    | "DAIRY"
+                    | "MEAT"
+                    | "VEGETABLES"
+                    | "FRUITS"
+                    | "BEVERAGES"
+                    | "DRY_GOODS"
+                    | "SPICES"
+                    | "OTHER";
                 } | null;
                 recipe: {
                   id: string;
@@ -828,6 +938,17 @@ export interface paths {
                       fat: string;
                       imageUrl: string;
                       createdAt: string;
+                      /** @enum {string} */
+                      category:
+                        | "BREAD"
+                        | "DAIRY"
+                        | "MEAT"
+                        | "VEGETABLES"
+                        | "FRUITS"
+                        | "BEVERAGES"
+                        | "DRY_GOODS"
+                        | "SPICES"
+                        | "OTHER";
                     };
                   }[];
                 } | null;
@@ -854,6 +975,17 @@ export interface paths {
                       fat: string;
                       imageUrl: string;
                       createdAt: string;
+                      /** @enum {string} */
+                      category:
+                        | "BREAD"
+                        | "DAIRY"
+                        | "MEAT"
+                        | "VEGETABLES"
+                        | "FRUITS"
+                        | "BEVERAGES"
+                        | "DRY_GOODS"
+                        | "SPICES"
+                        | "OTHER";
                     };
                   }[];
                 } | null;
@@ -947,6 +1079,17 @@ export interface paths {
                   fat: string;
                   imageUrl: string;
                   createdAt: string;
+                  /** @enum {string} */
+                  category:
+                    | "BREAD"
+                    | "DAIRY"
+                    | "MEAT"
+                    | "VEGETABLES"
+                    | "FRUITS"
+                    | "BEVERAGES"
+                    | "DRY_GOODS"
+                    | "SPICES"
+                    | "OTHER";
                 } | null;
                 recipe: {
                   id: string;
@@ -962,6 +1105,17 @@ export interface paths {
                       fat: string;
                       imageUrl: string;
                       createdAt: string;
+                      /** @enum {string} */
+                      category:
+                        | "BREAD"
+                        | "DAIRY"
+                        | "MEAT"
+                        | "VEGETABLES"
+                        | "FRUITS"
+                        | "BEVERAGES"
+                        | "DRY_GOODS"
+                        | "SPICES"
+                        | "OTHER";
                     };
                   }[];
                 } | null;
@@ -988,6 +1142,17 @@ export interface paths {
                       fat: string;
                       imageUrl: string;
                       createdAt: string;
+                      /** @enum {string} */
+                      category:
+                        | "BREAD"
+                        | "DAIRY"
+                        | "MEAT"
+                        | "VEGETABLES"
+                        | "FRUITS"
+                        | "BEVERAGES"
+                        | "DRY_GOODS"
+                        | "SPICES"
+                        | "OTHER";
                     };
                   }[];
                 } | null;
@@ -1062,6 +1227,17 @@ export interface paths {
                 imageUrl: string;
                 barcode: string | null;
                 createdAt: string;
+                /** @enum {string} */
+                category:
+                  | "BREAD"
+                  | "DAIRY"
+                  | "MEAT"
+                  | "VEGETABLES"
+                  | "FRUITS"
+                  | "BEVERAGES"
+                  | "DRY_GOODS"
+                  | "SPICES"
+                  | "OTHER";
               }[];
               total: number;
               page: number;
@@ -1126,6 +1302,17 @@ export interface paths {
                 imageUrl: string;
                 barcode: string | null;
                 createdAt: string;
+                /** @enum {string} */
+                category:
+                  | "BREAD"
+                  | "DAIRY"
+                  | "MEAT"
+                  | "VEGETABLES"
+                  | "FRUITS"
+                  | "BEVERAGES"
+                  | "DRY_GOODS"
+                  | "SPICES"
+                  | "OTHER";
               };
             };
           };
@@ -1196,6 +1383,17 @@ export interface paths {
                 imageUrl: string;
                 barcode: string | null;
                 createdAt: string;
+                /** @enum {string} */
+                category:
+                  | "BREAD"
+                  | "DAIRY"
+                  | "MEAT"
+                  | "VEGETABLES"
+                  | "FRUITS"
+                  | "BEVERAGES"
+                  | "DRY_GOODS"
+                  | "SPICES"
+                  | "OTHER";
               }[];
             };
           };
@@ -1355,6 +1553,17 @@ export interface paths {
                 imageUrl: string;
                 barcode: string | null;
                 createdAt: string;
+                /** @enum {string} */
+                category:
+                  | "BREAD"
+                  | "DAIRY"
+                  | "MEAT"
+                  | "VEGETABLES"
+                  | "FRUITS"
+                  | "BEVERAGES"
+                  | "DRY_GOODS"
+                  | "SPICES"
+                  | "OTHER";
               };
             };
           };
@@ -1415,6 +1624,17 @@ export interface paths {
                 imageUrl: string;
                 barcode: string | null;
                 createdAt: string;
+                /** @enum {string} */
+                category:
+                  | "BREAD"
+                  | "DAIRY"
+                  | "MEAT"
+                  | "VEGETABLES"
+                  | "FRUITS"
+                  | "BEVERAGES"
+                  | "DRY_GOODS"
+                  | "SPICES"
+                  | "OTHER";
               };
             };
           };
@@ -1463,6 +1683,17 @@ export interface paths {
             carbs?: number;
             protein?: number;
             fat?: number;
+            /** @enum {string} */
+            category?:
+              | "BREAD"
+              | "DAIRY"
+              | "MEAT"
+              | "VEGETABLES"
+              | "FRUITS"
+              | "BEVERAGES"
+              | "DRY_GOODS"
+              | "SPICES"
+              | "OTHER";
             imageUrl?: string;
             barcode?: string;
           };
@@ -1486,6 +1717,17 @@ export interface paths {
                 imageUrl: string;
                 barcode: string | null;
                 createdAt: string;
+                /** @enum {string} */
+                category:
+                  | "BREAD"
+                  | "DAIRY"
+                  | "MEAT"
+                  | "VEGETABLES"
+                  | "FRUITS"
+                  | "BEVERAGES"
+                  | "DRY_GOODS"
+                  | "SPICES"
+                  | "OTHER";
               };
             };
           };
@@ -3454,6 +3696,17 @@ export interface components {
       carbs: number;
       protein: number;
       fat: number;
+      /** @enum {string} */
+      category:
+        | "BREAD"
+        | "DAIRY"
+        | "MEAT"
+        | "VEGETABLES"
+        | "FRUITS"
+        | "BEVERAGES"
+        | "DRY_GOODS"
+        | "SPICES"
+        | "OTHER";
       imageUrl?: string;
       barcode?: string;
     };
