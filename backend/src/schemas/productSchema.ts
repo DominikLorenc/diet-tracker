@@ -12,10 +12,13 @@ export const productSchema = registry.register(
         fat: z.number().nonnegative('Fat must be a positive number'),
         category: z.enum(ProductCategory),
         imageUrl: z.string().optional(),
-        barcode: z
-            .string()
-            .regex(/^\d{8}$|^\d{13}$/, 'Barcode must be 8 or 13 digits')
-            .optional(),
+        barcode: z.preprocess(
+            (val) => (val === '' ? undefined : val),
+            z
+                .string()
+                .regex(/^\d{8}$|^\d{13}$/, 'Barcode must be 8 or 13 digits')
+                .optional(),
+        ),
     }),
 );
 

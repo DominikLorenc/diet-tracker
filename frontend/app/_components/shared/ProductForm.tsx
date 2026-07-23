@@ -95,7 +95,11 @@ export const ProductForm = ({
       const imageUrl = imageFile
         ? await uploadImage(imageFile)
         : offImageUrl || null;
-      const preparedData = imageUrl ? { ...data, imageUrl } : data;
+      const { barcode, ...dataWithoutBarcode } = data;
+      const dataWithBarcode = barcode ? data : dataWithoutBarcode;
+      const preparedData = imageUrl
+        ? { ...dataWithBarcode, imageUrl }
+        : dataWithBarcode;
 
       const { data: responseData, error: postError } = await apiClient.POST(
         "/products",
