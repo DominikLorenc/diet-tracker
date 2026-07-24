@@ -38,7 +38,7 @@ export function Toast() {
 
   return (
     <div
-      className={`fixed bottom-6 right-6 z-50 w-[400px] transition-all duration-300 ${
+      className={`fixed bottom-6 left-6 right-6 z-50 sm:left-auto sm:w-[400px] transition-all duration-300 ${
         isActive
           ? "translate-y-0 opacity-100"
           : "translate-y-4 opacity-0 pointer-events-none"
