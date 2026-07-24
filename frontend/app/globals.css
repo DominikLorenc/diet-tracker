@@ -1,8 +1,12 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0F1A10;
-  --foreground: #F3F7FF;
+  --background: #0f1a10;
+  --foreground: #f3f7ff;
+}
+
+html {
+  background: var(--background);
 }
 
 @theme inline {
@@ -25,125 +29,151 @@
 
   /* Dashboard */
   --color-dash-surface: #162218;
-  --color-dash-surface-alt: #1A2B1F;
-  --color-dash-border: #1E3322;
-  --color-dash-fg: #F3F7FF;
-  --color-dash-fg-secondary: #94A3B8;
-  --color-dash-fg-muted: #8FA0B8;
-  --color-dash-green: #4ADE80;
-  --color-dash-green-mid: #22C55E;
+  --color-dash-surface-alt: #1a2b1f;
+  --color-dash-border: #1e3322;
+  --color-dash-fg: #f3f7ff;
+  --color-dash-fg-secondary: #94a3b8;
+  --color-dash-fg-muted: #8fa0b8;
+  --color-dash-green: #4ade80;
+  --color-dash-green-mid: #22c55e;
 
   /* Macros — kolory zgodne z designem */
-  --color-macro-protein: #7DB5FF;
-  --color-macro-carbs: #F4C65D;
-  --color-macro-fat: #F18FA3;
-  --color-macro-calories: #4ADE80;
-  --color-macro-track: #162E1C;
+  --color-macro-protein: #7db5ff;
+  --color-macro-carbs: #f4c65d;
+  --color-macro-fat: #f18fa3;
+  --color-macro-calories: #4ade80;
+  --color-macro-track: #162e1c;
 
   /* Dashboard — rozszerzony zestaw */
-  --color-dash-surface-card: #1A2420;
-  --color-dash-surface-darker: #111C14;
+  --color-dash-surface-card: #1a2420;
+  --color-dash-surface-darker: #111c14;
   --color-dash-logo-bg: #111827;
-  --color-dash-badge-bg: #1A2E1A;
-  --color-dash-fg-bright: #D6DFEC;
-  --color-dash-fg-dim: #9FB0C7;
-  --color-dash-fg-subtle: #8D9DB4;
+  --color-dash-badge-bg: #1a2e1a;
+  --color-dash-fg-bright: #d6dfec;
+  --color-dash-fg-dim: #9fb0c7;
+  --color-dash-fg-subtle: #8d9db4;
   --color-dash-placeholder: #334155;
-  --color-dash-check-border: #2E4A35;
-  --color-dash-check-mark: #0F1F13;
-  --color-dash-eaten-line: #3D5A45;
-  --color-dash-input-placeholder: #3D5240;
-  --color-dash-nav-arrow: #CDD6E4;
-  --color-dash-nav-text: #EEF2FA;
-  --color-dash-nav-inactive: #AFC0D8;
-  --color-dash-svg-inactive: #4A5A4A;
+  --color-dash-check-border: #2e4a35;
+  --color-dash-check-mark: #0f1f13;
+  --color-dash-eaten-line: #3d5a45;
+  --color-dash-input-placeholder: #3d5240;
+  --color-dash-nav-arrow: #cdd6e4;
+  --color-dash-nav-text: #eef2fa;
+  --color-dash-nav-inactive: #afc0d8;
+  --color-dash-svg-inactive: #4a5a4a;
 
   /* Landing */
-  --color-landing-dark: #0D1A0E;
+  --color-landing-dark: #0d1a0e;
 
   /* Chart */
-  --color-chart-tick: #4B5563;
+  --color-chart-tick: #4b5563;
 
   /* Forms */
-  --color-form-error: #FCA5A5;
-  --color-form-error-bg: rgba(239,68,68,0.1);
-  --color-form-error-border: rgba(239,68,68,0.25);
+  --color-form-error: #fca5a5;
+  --color-form-error-bg: rgba(239, 68, 68, 0.1);
+  --color-form-error-border: rgba(239, 68, 68, 0.25);
 
   /* Utility */
-  --color-white: #FFFFFF;
-  --color-green-mid-alpha: #22C55E30;
-  --color-green-mid-alpha-sm: #22C55E20;
-  --color-green-mid-alpha-md: #22C55E40;
-  --color-green-mid-border: rgba(34,197,94,0.25);
-  --color-dash-card-unselected: #131E15;
-  --color-dash-icon-bg: #1A2820;
+  --color-white: #ffffff;
+  --color-green-mid-alpha: #22c55e30;
+  --color-green-mid-alpha-sm: #22c55e20;
+  --color-green-mid-alpha-md: #22c55e40;
+  --color-green-mid-border: rgba(34, 197, 94, 0.25);
+  --color-dash-card-unselected: #131e15;
+  --color-dash-icon-bg: #1a2820;
 
   /* Shadows & gradients */
-  --shadow-dash-card: 0 1px 20px rgba(34,197,94,0.09);
-  --shadow-check-eaten: 0 0 8px #22C55E55;
-  --shadow-green-logo: 0 4px 20px rgba(34,197,94,0.3);
-  --shadow-green-nav: 0 2px 10px rgba(34,197,94,0.25);
-  --shadow-green-cta: 0 2px 10px rgba(34,197,94,0.35);
-  --shadow-green-cta-lg: 0 4px 20px rgba(34,197,94,0.35);
-  --shadow-green-step: 0 8px 24px rgba(34,197,94,0.3);
-  --shadow-mockup: 0 24px 60px rgba(0,0,0,0.4), 0 0 60px rgba(34,197,94,0.06);
-  --gradient-calories: linear-gradient(90deg, #15803D 0%, #4ADE80 100%);
-  --gradient-green-logo: linear-gradient(180deg, #22C55E 0%, #16A34A 100%);
-  --gradient-green-button: linear-gradient(180deg, #16A34A 0%, #15803D 100%);
-  --gradient-cta: linear-gradient(135deg, #162218 0%, #0F1A10 100%);
+  --shadow-dash-card: 0 1px 20px rgba(34, 197, 94, 0.09);
+  --shadow-check-eaten: 0 0 8px #22c55e55;
+  --shadow-green-logo: 0 4px 20px rgba(34, 197, 94, 0.3);
+  --shadow-green-nav: 0 2px 10px rgba(34, 197, 94, 0.25);
+  --shadow-green-cta: 0 2px 10px rgba(34, 197, 94, 0.35);
+  --shadow-green-cta-lg: 0 4px 20px rgba(34, 197, 94, 0.35);
+  --shadow-green-step: 0 8px 24px rgba(34, 197, 94, 0.3);
+  --shadow-mockup:
+    0 24px 60px rgba(0, 0, 0, 0.4), 0 0 60px rgba(34, 197, 94, 0.06);
+  --gradient-calories: linear-gradient(90deg, #15803d 0%, #4ade80 100%);
+  --gradient-green-logo: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+  --gradient-green-button: linear-gradient(180deg, #16a34a 0%, #15803d 100%);
+  --gradient-cta: linear-gradient(135deg, #162218 0%, #0f1a10 100%);
 
   /* Toast */
-  --color-toast-bg: #FFFFFF;
-  --color-toast-text: #1A1A1A;
-  --color-toast-success-border: #D1FAE5;
-  --color-toast-success-bg: #F0FFF4;
-  --color-toast-error: #EF4444;
-  --color-toast-error-border: #FECACA;
-  --color-toast-error-bg: #FEF2F2;
-  --color-toast-info: #6B7BFF;
-  --color-toast-info-border: #C7D2FE;
-  --color-toast-info-bg: #EEF2FF;
-  --shadow-toast-success: 0 4px 20px #22C55E22, 0 1px 3px #0000001A;
-  --shadow-toast-error: 0 4px 20px #EF444422, 0 1px 3px #0000001A;
-  --shadow-toast-info: 0 4px 20px #6B7BFF22, 0 1px 3px #0000001A;
+  --color-toast-bg: #ffffff;
+  --color-toast-text: #1a1a1a;
+  --color-toast-success-border: #d1fae5;
+  --color-toast-success-bg: #f0fff4;
+  --color-toast-error: #ef4444;
+  --color-toast-error-border: #fecaca;
+  --color-toast-error-bg: #fef2f2;
+  --color-toast-info: #6b7bff;
+  --color-toast-info-border: #c7d2fe;
+  --color-toast-info-bg: #eef2ff;
+  --shadow-toast-success: 0 4px 20px #22c55e22, 0 1px 3px #0000001a;
+  --shadow-toast-error: 0 4px 20px #ef444422, 0 1px 3px #0000001a;
+  --shadow-toast-info: 0 4px 20px #6b7bff22, 0 1px 3px #0000001a;
 }
 
 @layer utilities {
   .bg-gradient-green {
-    background: linear-gradient(180deg, #16A34A 0%, #15803D 100%);
+    background: linear-gradient(180deg, #16a34a 0%, #15803d 100%);
   }
   .shadow-green-glow {
     box-shadow: 0 2px 10px rgba(34, 197, 94, 0.25);
   }
   .ring-avatar-green {
-    box-shadow: 0 0 0 3px #1E3322, 0 4px 16px rgba(34, 197, 94, 0.3);
+    box-shadow:
+      0 0 0 3px #1e3322,
+      0 4px 16px rgba(34, 197, 94, 0.3);
   }
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(28px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeInRight {
-  from { opacity: 0; transform: translateX(40px); }
-  to   { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-10px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.85); }
-  to   { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
   -webkit-box-shadow: 0 0 0px 1000px #162218 inset !important;
-  -webkit-text-fill-color: #F3F7FF !important;
-  caret-color: #F3F7FF;
+  -webkit-text-fill-color: #f3f7ff !important;
+  caret-color: #f3f7ff;
 }

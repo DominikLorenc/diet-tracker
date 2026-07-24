@@ -128,12 +128,16 @@ export const ProductSearch = ({
       return;
     }
 
+    const today = new Date().toISOString().split("T")[0];
+    const isToday = date === today;
+
     const { error } = await apiClient.POST("/diary", {
       body: {
         date,
         productId: product.id,
         quantity,
         mealType: mealType as "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK",
+        isEaten: isToday,
       },
     });
 

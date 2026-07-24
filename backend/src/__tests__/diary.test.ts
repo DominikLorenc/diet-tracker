@@ -112,6 +112,27 @@ describe('POST /api/v1/diary', () => {
         expect(res.status).toBe(201);
         expect(addDiaryService).toHaveBeenCalledWith(expect.objectContaining({ userRecipeId }));
     });
+
+    it('should accept isEaten in body and call service with it', async () => {
+        vi.mocked(addDiaryService).mockResolvedValue({
+            id: '1',
+            date: new Date(),
+            userId,
+            createdAt: new Date(),
+        });
+        const res = await request(app)
+            .post('/api/v1/diary')
+            .send({
+                date: new Date().toISOString(),
+                productId,
+                quantity,
+                mealType: 'BREAKFAST',
+                isEaten: true,
+            })
+            .set('Cookie', ['token=' + token]);
+        expect(res.status).toBe(201);
+        expect(addDiaryService).toHaveBeenCalledWith(expect.objectContaining({ isEaten: true }));
+    });
 });
 
 describe('GET /api/v1/diary', () => {

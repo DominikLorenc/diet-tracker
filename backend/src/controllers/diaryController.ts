@@ -16,7 +16,7 @@ export const createDiaryEntry = async (req: Request, res: Response, next: NextFu
             return;
         }
 
-        const { date, productId, recipeId, userRecipeId, quantity, mealType } = result.data;
+        const { date, productId, recipeId, userRecipeId, quantity, mealType, isEaten } = result.data;
 
         const userId = req.userId;
 
@@ -33,6 +33,7 @@ export const createDiaryEntry = async (req: Request, res: Response, next: NextFu
             quantity,
             mealType,
             userId,
+            isEaten,
         });
 
         res.status(201).json({ message: 'Diary entry created', newDiaryEntry });

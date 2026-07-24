@@ -11,6 +11,7 @@ export const diaryEntrySchema = registry.register(
             recipeId: z.uuid().optional(),
             userRecipeId: z.uuid().optional(),
             quantity: z.number().min(0),
+            isEaten: z.boolean().optional(),
         })
         .refine(
             (data) =>

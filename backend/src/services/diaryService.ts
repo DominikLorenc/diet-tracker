@@ -46,6 +46,7 @@ type AddDiaryEntryInput = {
     userRecipeId?: string;
     quantity: number;
     mealType: MealType;
+    isEaten?: boolean;
 };
 
 export const addDiaryService = async (entry: AddDiaryEntryInput): Promise<DiaryEntry> => {
@@ -59,6 +60,7 @@ export const addDiaryService = async (entry: AddDiaryEntryInput): Promise<DiaryE
             userRecipeId: entry?.userRecipeId,
             quantity: entry.quantity,
             mealType: entry?.mealType,
+            isEaten: entry?.isEaten,
         });
 
         return entryExist;
@@ -75,6 +77,7 @@ export const addDiaryService = async (entry: AddDiaryEntryInput): Promise<DiaryE
                     userRecipeId: entry.userRecipeId,
                     quantity: entry.quantity,
                     mealType: entry.mealType,
+                    isEaten: entry?.isEaten,
                 },
             },
         },
