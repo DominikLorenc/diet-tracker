@@ -90,6 +90,7 @@ export const AutoForm = ({ onSuccess }: Props) => {
                 min={0}
                 placeholder={field.placeholder}
                 className={inputClass}
+                onFocus={(e) => e.target.select()}
                 {...register(field.name, { valueAsNumber: true })}
               />
               <span className="text-xs text-dash-fg-muted shrink-0 font-sans">

@@ -32,7 +32,8 @@ export const AddProductCard = ({
   defaultExpanded = false,
 }: Props) => {
   const [expanded, setExpanded] = useState(defaultExpanded);
-  const [quantity, setQuantity] = useState(100);
+  const [quantityInput, setQuantityInput] = useState("100");
+  const quantity = quantityInput === "" ? 0 : Number(quantityInput);
   const [favorite, setFavorite] = useState(isFavorite);
   const [adding, setAdding] = useState(false);
   const showToast = useToastStore((state) => state.showToast);
@@ -160,9 +161,10 @@ export const AddProductCard = ({
           <label className="text-dash-fg-muted text-xs shrink-0">Ilość:</label>
           <input
             type="number"
-            value={quantity}
+            value={quantityInput}
             min={1}
-            onChange={(e) => setQuantity(Number(e.target.value))}
+            onChange={(e) => setQuantityInput(e.target.value)}
+            onFocus={(e) => e.target.select()}
             className="w-20 bg-[var(--background)] border border-dash-border rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:border-dash-green-mid transition-colors"
           />
           <span className="text-dash-fg-muted text-xs">g</span>

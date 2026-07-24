@@ -21,6 +21,7 @@ type Ingredient = {
   productId: string;
   name: string;
   quantity: number;
+  quantityInput: string;
   imageUrl: string;
 };
 
@@ -58,6 +59,7 @@ function RecipeBuilderContent() {
               productId: ing.productId,
               name: ing.product.name,
               quantity: parseFloat(ing.quantity),
+              quantityInput: ing.quantity,
               imageUrl: ing.product.imageUrl,
             })),
           );
@@ -73,6 +75,7 @@ function RecipeBuilderContent() {
                 productId: ing.product.id,
                 name: ing.product.name,
                 quantity: parseFloat(ing.quantity),
+                quantityInput: ing.quantity,
                 imageUrl: ing.product.imageUrl,
               })),
             );
@@ -91,6 +94,7 @@ function RecipeBuilderContent() {
         productId: product.id,
         name: product.name,
         quantity: 100,
+        quantityInput: "100",
         imageUrl: product.imageUrl ?? "",
       },
     ]);
@@ -100,10 +104,16 @@ function RecipeBuilderContent() {
     setIngredients(ingredients.filter((i) => i.productId !== productId));
   };
 
-  const handleQuantityChange = (productId: string, quantity: number) => {
+  const handleQuantityChange = (productId: string, rawValue: string) => {
     setIngredients(
       ingredients.map((i) =>
-        i.productId === productId ? { ...i, quantity } : i,
+        i.productId === productId
+          ? {
+              ...i,
+              quantityInput: rawValue,
+              quantity: rawValue === "" ? 0 : Number(rawValue),
+            }
+          : i,
       ),
     );
   };
@@ -264,13 +274,14 @@ function RecipeBuilderContent() {
                   <div className="flex items-center gap-2 text-xs text-white/40">
                     <input
                       type="number"
-                      value={ingredient.quantity}
+                      value={ingredient.quantityInput}
                       onChange={(e) =>
                         handleQuantityChange(
                           ingredient.productId,
-                          parseFloat(e.target.value),
+                          e.target.value,
                         )
                       }
+                      onFocus={(e) => e.target.select()}
                       className="w-16 bg-white/5 border border-white/10 rounded px-2 py-0.5 text-white focus:outline-none focus:border-indigo-500"
                     />
                     <span>g</span>

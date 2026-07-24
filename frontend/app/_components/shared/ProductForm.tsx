@@ -291,6 +291,7 @@ export const ProductForm = ({
             className={inputClass}
             placeholder="0"
             step="any"
+            onFocus={(e) => e.target.select()}
             {...register("calories", { valueAsNumber: true })}
           />
           {errors.calories && (
@@ -309,6 +310,7 @@ export const ProductForm = ({
               className={inputClass}
               placeholder="0"
               step="any"
+              onFocus={(e) => e.target.select()}
               {...register("carbs", { valueAsNumber: true })}
             />
             {errors.carbs && (
@@ -326,6 +328,7 @@ export const ProductForm = ({
               className={inputClass}
               placeholder="0"
               step="any"
+              onFocus={(e) => e.target.select()}
               {...register("protein", { valueAsNumber: true })}
             />
             {errors.protein && (
@@ -343,6 +346,7 @@ export const ProductForm = ({
               className={inputClass}
               placeholder="0"
               step="any"
+              onFocus={(e) => e.target.select()}
               {...register("fat", { valueAsNumber: true })}
             />
             {errors.fat && (

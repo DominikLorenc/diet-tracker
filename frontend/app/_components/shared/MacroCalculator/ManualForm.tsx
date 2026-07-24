@@ -58,6 +58,17 @@ export const ManualForm = ({ onSuccess }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [textValues, setTextValues] = useState<
+    Record<keyof ManualInputs, string>
+  >({
+    kcal: String(MANUAL_DEFAULTS.kcal),
+    protein_g: String(MANUAL_DEFAULTS.protein_g),
+    protein_pct: String(MANUAL_DEFAULTS.protein_pct),
+    fat_g: String(MANUAL_DEFAULTS.fat_g),
+    fat_pct: String(MANUAL_DEFAULTS.fat_pct),
+    carbs_g: String(MANUAL_DEFAULTS.carbs_g),
+    carbs_pct: String(MANUAL_DEFAULTS.carbs_pct),
+  });
 
   const proteinPct = watch("protein_pct") ?? 0;
   const fatPct = watch("fat_pct") ?? 0;
@@ -65,11 +76,31 @@ export const ManualForm = ({ onSuccess }: Props) => {
   const total = proteinPct + fatPct + carbsPct;
   const isValid = total === 100;
 
+  // The edited field keeps exactly what the user typed (via handleFieldChange);
+  // only the *other*, derived fields get their text buffer synced to the recalculated number.
   const applyRecalculate = (field: keyof ManualInputs, val: number) => {
     const result = recalculate(field, val, getValues());
-    Object.entries(result).forEach(([f, v]) =>
-      setValue(f as keyof ManualInputs, v),
-    );
+    setTextValues((prev) => {
+      const next = { ...prev };
+      (Object.entries(result) as [keyof ManualInputs, number][]).forEach(
+        ([f, v]) => {
+          setValue(f, v);
+          if (f !== field) next[f] = String(v);
+        },
+      );
+      return next;
+    });
+  };
+
+  const handleFieldChange = (
+    field: keyof ManualInputs,
+    onChange: (val: number) => void,
+    raw: string,
+  ) => {
+    setTextValues((prev) => ({ ...prev, [field]: raw }));
+    const val = raw === "" ? 0 : Number(raw);
+    onChange(val);
+    applyRecalculate(field, val);
   };
 
   const handleSave = async (data: ManualInputs) => {
@@ -125,12 +156,11 @@ export const ManualForm = ({ onSuccess }: Props) => {
             <input
               type="number"
               className={inputKcal}
-              value={field.value}
-              onChange={(e) => {
-                const val = Number(e.target.value);
-                field.onChange(val);
-                applyRecalculate("kcal", val);
-              }}
+              value={textValues.kcal}
+              onChange={(e) =>
+                handleFieldChange("kcal", field.onChange, e.target.value)
+              }
+              onFocus={(e) => e.target.select()}
             />
           )}
         />
@@ -157,12 +187,11 @@ export const ManualForm = ({ onSuccess }: Props) => {
               <input
                 type="number"
                 className={inputGrams}
-                value={field.value}
-                onChange={(e) => {
-                  const val = Number(e.target.value);
-                  field.onChange(val);
-                  applyRecalculate(gField, val);
-                }}
+                value={textValues[gField]}
+                onChange={(e) =>
+                  handleFieldChange(gField, field.onChange, e.target.value)
+                }
+                onFocus={(e) => e.target.select()}
               />
             )}
           />
@@ -175,12 +204,11 @@ export const ManualForm = ({ onSuccess }: Props) => {
               <input
                 type="number"
                 className={inputPct}
-                value={field.value}
-                onChange={(e) => {
-                  const val = Number(e.target.value);
-                  field.onChange(val);
-                  applyRecalculate(pctField, val);
-                }}
+                value={textValues[pctField]}
+                onChange={(e) =>
+                  handleFieldChange(pctField, field.onChange, e.target.value)
+                }
+                onFocus={(e) => e.target.select()}
               />
             )}
           />

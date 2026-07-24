@@ -58,6 +58,7 @@ const NumberField = forwardRef<HTMLInputElement, FieldProps>(
           step="0.1"
           placeholder="0"
           className="flex-1 bg-transparent font-['IBM_Plex_Mono'] text-sm text-dash-fg outline-none placeholder:text-chart-tick"
+          onFocus={(e) => e.target.select()}
           {...props}
         />
         <span
