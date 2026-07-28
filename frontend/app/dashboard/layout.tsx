@@ -57,10 +57,6 @@ const NAV_ITEMS: NavItem[] = [
   },
 ];
 
-// Admin tooling stays on desktop: a seventh tab does not fit the mobile bar,
-// and managing the catalog is not a phone task.
-const MOBILE_NAV = NAV_ITEMS.filter((item) => !item.adminOnly);
-
 export default function DashboardLayout({
   children,
 }: {
@@ -73,7 +69,9 @@ export default function DashboardLayout({
   const clearUser = useUserStore((s) => s.clearUser);
   const isAdmin = useUserStore((s) => s.user?.role === "ADMIN");
 
-  const sidebarItems = NAV_ITEMS.filter((item) => !item.adminOnly || isAdmin);
+  const visibleNavItems = NAV_ITEMS.filter(
+    (item) => !item.adminOnly || isAdmin,
+  );
 
   const handleLogout = async () => {
     await apiClient.DELETE("/users/logout");
@@ -125,7 +123,7 @@ export default function DashboardLayout({
 
         {/* Nav items */}
         <nav className="flex flex-col gap-1.5 px-3 mt-2 flex-1">
-          {sidebarItems.map((item) => {
+          {visibleNavItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
@@ -189,7 +187,7 @@ export default function DashboardLayout({
 
       {/* ── Mobile bottom nav ───────────────────────────────────── */}
       <nav
-        className="sm:hidden fixed bottom-0 left-0 right-0 flex items-center"
+        className="sm:hidden fixed bottom-0 left-0 right-0 flex items-center overflow-x-auto"
         style={{
           background: "var(--color-dash-surface)",
           height: "58px",
@@ -197,13 +195,13 @@ export default function DashboardLayout({
           zIndex: 50,
         }}
       >
-        {MOBILE_NAV.map((item) => {
+        {visibleNavItems.map((item) => {
           const isActive = pathname === item.href;
           return (
             <Link
               key={item.href}
               href={item.href}
-              className="flex-1 flex flex-col items-center justify-center gap-[3px] py-2"
+              className="flex-1 shrink-0 min-w-[68px] flex flex-col items-center justify-center gap-[3px] py-2"
             >
               <span
                 className="text-sm leading-none"

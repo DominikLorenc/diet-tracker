@@ -168,16 +168,17 @@ export const AllProducts = () => {
 
           {/* Paginacja — tylko gdy jest więcej niż jedna strona */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between pt-2">
+            <div className="flex flex-col items-center gap-3 pt-2 sm:flex-row sm:justify-between">
               <Button
                 variant="outline"
                 disabled={page === 1}
                 onClick={() => setPage((prev) => prev - 1)}
+                className="w-full sm:w-auto"
               >
                 ← Poprzednia
               </Button>
 
-              <span className="text-sm text-dash-fg-muted">
+              <span className="text-sm text-dash-fg-muted order-first sm:order-none">
                 Strona {page} z {totalPages}
               </span>
 
@@ -185,6 +186,7 @@ export const AllProducts = () => {
                 variant="outline"
                 disabled={page >= totalPages}
                 onClick={() => setPage((prev) => prev + 1)}
+                className="w-full sm:w-auto"
               >
                 Następna →
               </Button>
