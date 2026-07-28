@@ -11,4 +11,5 @@ export const productSchema = z.object({
   category: z.enum(CATEGORY_ORDER, { message: "Wybierz kategorię" }),
   imageUrl: z.string().optional(),
   barcode: z.string().optional(),
+  gramsPerUnit: z.number().optional(),
 });

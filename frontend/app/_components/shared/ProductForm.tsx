@@ -32,6 +32,7 @@ type Product = {
   imageUrl: string;
   barcode?: string;
   category: ProductCategory;
+  gramsPerUnit?: number;
 };
 
 export const ProductForm = ({
@@ -56,6 +57,7 @@ export const ProductForm = ({
     // Left undefined on create so the admin has to pick a category explicitly
     // rather than silently accepting whichever option renders first.
     category: productToEdit?.category,
+    gramsPerUnit: productToEdit?.gramsPerUnit,
   };
 
   const {
@@ -296,6 +298,28 @@ export const ProductForm = ({
           />
           {errors.calories && (
             <p className="text-sm text-red-400">{errors.calories.message}</p>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="gramsPerUnit" className={labelClass}>
+            Waga sztuki <span className="text-gray-500">(g, opcjonalne)</span>
+          </label>
+          <input
+            type="number"
+            id="gramsPerUnit"
+            className={inputClass}
+            placeholder="np. 80 dla jajka"
+            step="any"
+            onFocus={(e) => e.target.select()}
+            {...register("gramsPerUnit", {
+              setValueAs: (v) => (v === "" ? undefined : Number(v)),
+            })}
+          />
+          {errors.gramsPerUnit && (
+            <p className="text-sm text-red-400">
+              {errors.gramsPerUnit.message}
+            </p>
           )}
         </div>
 

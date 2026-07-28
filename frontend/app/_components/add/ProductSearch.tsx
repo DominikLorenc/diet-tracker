@@ -27,6 +27,7 @@ type Product = {
   fat: number;
   imageUrl: string;
   createdAt: string;
+  gramsPerUnit?: number | null;
 };
 
 type ProductFavorite = {

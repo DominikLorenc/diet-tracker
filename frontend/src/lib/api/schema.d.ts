@@ -1238,6 +1238,7 @@ export interface paths {
                   | "DRY_GOODS"
                   | "SPICES"
                   | "OTHER";
+                gramsPerUnit: number | null;
               }[];
               total: number;
               page: number;
@@ -1313,6 +1314,7 @@ export interface paths {
                   | "DRY_GOODS"
                   | "SPICES"
                   | "OTHER";
+                gramsPerUnit: number | null;
               };
             };
           };
@@ -1394,6 +1396,7 @@ export interface paths {
                   | "DRY_GOODS"
                   | "SPICES"
                   | "OTHER";
+                gramsPerUnit: number | null;
               }[];
             };
           };
@@ -1564,6 +1567,7 @@ export interface paths {
                   | "DRY_GOODS"
                   | "SPICES"
                   | "OTHER";
+                gramsPerUnit: number | null;
               };
             };
           };
@@ -1635,6 +1639,7 @@ export interface paths {
                   | "DRY_GOODS"
                   | "SPICES"
                   | "OTHER";
+                gramsPerUnit: number | null;
               };
             };
           };
@@ -1696,6 +1701,7 @@ export interface paths {
               | "OTHER";
             imageUrl?: string;
             barcode?: string;
+            gramsPerUnit?: number;
           };
         };
       };
@@ -1728,6 +1734,7 @@ export interface paths {
                   | "DRY_GOODS"
                   | "SPICES"
                   | "OTHER";
+                gramsPerUnit: number | null;
               };
             };
           };
@@ -3709,6 +3716,7 @@ export interface components {
         | "OTHER";
       imageUrl?: string;
       barcode?: string;
+      gramsPerUnit?: number;
     };
     DiaryEntry: {
       /** Format: date-time */
@@ -3722,6 +3730,7 @@ export interface components {
       /** Format: uuid */
       userRecipeId?: string;
       quantity: number;
+      isEaten?: boolean;
     };
     Recipe: {
       name: string;

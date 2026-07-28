@@ -14,7 +14,10 @@ type Product = {
   fat: number;
   imageUrl: string;
   createdAt: string;
+  gramsPerUnit?: number | null;
 };
+
+type QuantityUnit = "g" | "piece";
 
 type Props = {
   product: Product;
@@ -32,11 +35,22 @@ export const AddProductCard = ({
   defaultExpanded = false,
 }: Props) => {
   const [expanded, setExpanded] = useState(defaultExpanded);
+  const [unit, setUnit] = useState<QuantityUnit>("g");
   const [quantityInput, setQuantityInput] = useState("100");
   const quantity = quantityInput === "" ? 0 : Number(quantityInput);
   const [favorite, setFavorite] = useState(isFavorite);
   const [adding, setAdding] = useState(false);
   const showToast = useToastStore((state) => state.showToast);
+  const hasPieceUnit = product.gramsPerUnit != null && product.gramsPerUnit > 0;
+
+  const selectUnit = (nextUnit: QuantityUnit) => {
+    if (nextUnit === unit) return;
+    setUnit(nextUnit);
+    setQuantityInput(nextUnit === "piece" ? "1" : "100");
+  };
+
+  const grams =
+    unit === "piece" ? quantity * (product.gramsPerUnit ?? 0) : quantity;
 
   const toggleFavorite = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -70,7 +84,7 @@ export const AddProductCard = ({
   const handleAdd = async () => {
     if (quantity <= 0) return;
     setAdding(true);
-    await onAddToDiary(product, quantity);
+    await onAddToDiary(product, grams);
     setAdding(false);
     setExpanded(false);
   };
@@ -155,7 +169,7 @@ export const AddProductCard = ({
       {/* Panel po rozwinięciu — pole ilości + przycisk */}
       {expanded && (
         <div
-          className="border-t border-dash-border bg-dash-surface-alt px-3 py-3 flex items-center gap-3"
+          className="border-t border-dash-border bg-dash-surface-alt px-3 py-3 flex items-center gap-3 flex-wrap"
           onClick={(e) => e.stopPropagation()}
         >
           <label className="text-dash-fg-muted text-xs shrink-0">Ilość:</label>
@@ -167,11 +181,39 @@ export const AddProductCard = ({
             onFocus={(e) => e.target.select()}
             className="w-20 bg-[var(--background)] border border-dash-border rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:border-dash-green-mid transition-colors"
           />
-          <span className="text-dash-fg-muted text-xs">g</span>
 
-          {/* Podgląd kalorii dla wybranej ilości */}
+          {hasPieceUnit ? (
+            <div className="flex rounded-lg border border-dash-border overflow-hidden shrink-0">
+              <button
+                type="button"
+                onClick={() => selectUnit("g")}
+                className={`px-2.5 py-1 text-xs font-semibold transition-colors ${
+                  unit === "g"
+                    ? "bg-dash-green-mid text-white"
+                    : "bg-transparent text-dash-fg-muted"
+                }`}
+              >
+                g
+              </button>
+              <button
+                type="button"
+                onClick={() => selectUnit("piece")}
+                className={`px-2.5 py-1 text-xs font-semibold transition-colors ${
+                  unit === "piece"
+                    ? "bg-dash-green-mid text-white"
+                    : "bg-transparent text-dash-fg-muted"
+                }`}
+              >
+                szt.
+              </button>
+            </div>
+          ) : (
+            <span className="text-dash-fg-muted text-xs">g</span>
+          )}
+
           <span className="text-macro-carbs text-xs font-mono font-bold">
-            = {((quantity / 100) * product.calories).toFixed(0)} kcal
+            {unit === "piece" && `(${grams}g) `}={" "}
+            {((grams / 100) * product.calories).toFixed(0)} kcal
           </span>
 
           <button
