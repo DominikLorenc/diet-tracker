@@ -143,6 +143,7 @@ model Product {
   imageUrl     String        @default("")
   barcode      String?       @unique
   createdAt    DateTime      @default(now())
+  gramsPerUnit Decimal?      
   category ProductCategory @default(OTHER)
   diaryEntriesItems DiaryEntryItem[]
   recipeIngredient RecipeIngredient[]

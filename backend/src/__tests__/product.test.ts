@@ -38,6 +38,7 @@ describe('POST /api/v1/products/', () => {
             imageUrl: '',
             barcode: null,
             category: 'OTHER',
+            gramsPerUnit: null,
         });
 
         const res = await request(app)
@@ -167,6 +168,7 @@ describe('GET /api/v1/products', () => {
                     imageUrl: '',
                     barcode: null,
                     category: 'OTHER',
+                    gramsPerUnit: null,
                 },
             ],
             total: 500,
@@ -194,6 +196,7 @@ describe('GET /api/v1/products', () => {
                     imageUrl: '',
                     barcode: null,
                     category: 'OTHER',
+                    gramsPerUnit: null,
                 },
             ],
             total: 500,
@@ -221,6 +224,7 @@ describe('GET /api/v1/products', () => {
                     imageUrl: '',
                     barcode: null,
                     category: 'OTHER',
+                    gramsPerUnit: null,
                 },
             ],
             total: 500,
@@ -249,6 +253,7 @@ describe('GET /api/v1/products', () => {
                     imageUrl: '',
                     barcode: null,
                     category: 'OTHER',
+                    gramsPerUnit: null,
                 },
             ],
             total: 500,
@@ -277,6 +282,7 @@ describe('GET /api/v1/products', () => {
                     imageUrl: '',
                     barcode: null,
                     category: 'OTHER',
+                    gramsPerUnit: null,
                 },
             ],
             total: 500,
@@ -322,6 +328,7 @@ describe(`GET /api/v1/products/${productId}`, () => {
             imageUrl: '',
             barcode: null,
             category: 'OTHER',
+            gramsPerUnit: null,
         });
         const res = await request(app)
             .get(`/api/v1/products/${productId}`)
@@ -360,6 +367,7 @@ describe(`GET /api/v1/products/search?q=apple`, () => {
                 imageUrl: '',
                 barcode: null,
                 category: 'OTHER',
+                gramsPerUnit: null,
             },
         ]);
         const res = await request(app)
@@ -395,6 +403,7 @@ describe('PATCH /api/v1/products/:id', () => {
             imageUrl: '',
             barcode: null,
             category: 'OTHER',
+            gramsPerUnit: null,
         });
         const res = await request(app)
             .patch(`/api/v1/products/${productId}`)
@@ -494,6 +503,7 @@ describe('DELETE /api/v1/products/:id', () => {
             imageUrl: '',
             barcode: null,
             category: 'OTHER',
+            gramsPerUnit: null,
         });
         const res = await request(app)
             .delete(`/api/v1/products/${productId}`)

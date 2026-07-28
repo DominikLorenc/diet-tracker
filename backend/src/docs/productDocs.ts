@@ -16,6 +16,7 @@ const productResponseSchema = z.object({
     barcode: z.string().nullable(),
     createdAt: z.string(),
     category: z.enum(ProductCategory),
+    gramsPerUnit: z.number().nullable(),
 });
 
 const barcodeProductResponseSchema = z.object({

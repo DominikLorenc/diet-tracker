@@ -19,6 +19,7 @@ export const productSchema = registry.register(
                 .regex(/^\d{8}$|^\d{13}$/, 'Barcode must be 8 or 13 digits')
                 .optional(),
         ),
+        gramsPerUnit: z.number().optional(),
     }),
 );
 
