@@ -21,12 +21,17 @@ interface BarcodeScannerModalProps {
   isOpen: boolean;
   onClose: () => void;
   onProductFound: (product: ScannedProduct) => void;
+  // Fired with the scanned code when no product matches it, so the caller can
+  // carry the code forward (e.g. pre-fill the "add product" form) instead of
+  // losing it once the scan dead-ends.
+  onNotFound?: (code: string) => void;
 }
 
 export const BarcodeScannerModal = ({
   isOpen,
   onClose,
   onProductFound,
+  onNotFound,
 }: BarcodeScannerModalProps) => {
   const [state, setState] = useState<ScanState>("scanning");
   const hasScanned = useRef(false);
@@ -43,6 +48,7 @@ export const BarcodeScannerModal = ({
         );
 
         if (!res.ok) {
+          onNotFound?.(code);
           setState("not_found");
           return;
         }
@@ -51,10 +57,11 @@ export const BarcodeScannerModal = ({
         onProductFound(data.product);
         onClose();
       } catch {
+        onNotFound?.(code);
         setState("not_found");
       }
     },
-    [onProductFound, onClose],
+    [onProductFound, onNotFound, onClose],
   );
 
   if (!isOpen) return null;

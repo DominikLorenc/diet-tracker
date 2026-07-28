@@ -54,21 +54,16 @@ function AddPageContent() {
   const [newlyCreatedProduct, setNewlyCreatedProduct] =
     useState<Product | null>(null);
 
-  // Zmiana zakładki — zachowujemy mealType i date w URL
   const setTab = (tab: Tab) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("tab", tab);
     router.replace(`?${params.toString()}`);
   };
-
-  // Po zapisaniu nowego produktu → przechodzimy do zakładki Produkty
-  // i przekazujemy nowy produkt żeby go od razu pokazać z otwartą kartą
   const handleNewProductSuccess = (product: Product) => {
     setNewlyCreatedProduct(product);
     setTab("products");
   };
 
-  // Formatujemy datę do czytelnego formatu
   const formattedDate = date
     ? new Date(date).toLocaleDateString("pl-PL", {
         weekday: "short",
@@ -153,7 +148,6 @@ function AddPageContent() {
     <div className="max-w-3xl mx-auto w-full py-8 px-4">
       {/* ── Header ── */}
       <div className="flex items-center justify-between mb-6 gap-3 flex-wrap">
-        {/* Powrót do dziennika */}
         <Link
           href="/dashboard"
           className="flex items-center gap-1.5 bg-dash-surface-card border border-dash-border hover:border-dash-svg-inactive transition-colors px-3 py-2 rounded-lg text-dash-fg-muted text-sm"
@@ -175,12 +169,10 @@ function AddPageContent() {
           Dziennik
         </Link>
 
-        {/* Tytuł strony */}
         <h1 className="text-dash-fg text-2xl font-bold flex-1">
           Dodaj do dziennika
         </h1>
 
-        {/* Odznaka posiłku + data */}
         {mealType && (
           <div className="flex items-center gap-1.5 bg-dash-badge-bg border border-[var(--color-green-mid-alpha)] px-3.5 py-2 rounded-full text-sm">
             <span>{MEAL_ICONS[mealType] ?? "🍽️"}</span>
@@ -212,8 +204,6 @@ function AddPageContent() {
         ))}
       </div>
 
-      {/* ── Zawartość zakładek ── */}
-
       {currentTab === "products" && (
         <ProductSearch
           onGoToNewProduct={isAdmin ? () => setTab("new") : undefined}
@@ -228,7 +218,7 @@ function AddPageContent() {
       {currentTab === "new" && isAdmin && (
         <div className="bg-dash-surface-darker rounded-2xl border border-dash-border p-6">
           <h2 className="text-dash-fg font-bold text-lg mb-6">Nowy produkt</h2>
-          {/* ProductForm — po zapisaniu wraca do zakładki Produkty i otwiera kartę nowego */}
+
           <ProductForm onSuccess={handleNewProductSuccess} />
         </div>
       )}
@@ -238,8 +228,6 @@ function AddPageContent() {
 
 export default function AddPage() {
   return (
-    // Suspense potrzebny bo useSearchParams() w Next.js App Router
-    // wymaga granicy Suspense po stronie klienta
     <Suspense>
       <AddPageContent />
     </Suspense>
