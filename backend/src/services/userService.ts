@@ -90,31 +90,23 @@ export const updateGoalsService = async (
     dailyProteinGoal: number,
     dailyCarbsGoal: number,
     dailyFatGoal: number,
-): Promise<User & { userGoals: UserGoal | null }> => {
-    const updated = await prisma.user.update({
+): Promise<UserGoal> => {
+    const updated = await prisma.userGoal.upsert({
         where: {
-            id: userId,
+            userId,
         },
-        data: {
-            userGoals: {
-                upsert: {
-                    update: {
-                        dailyCaloriesGoal,
-                        dailyProteinGoal,
-                        dailyCarbsGoal,
-                        dailyFatGoal,
-                    },
-                    create: {
-                        dailyCaloriesGoal,
-                        dailyProteinGoal,
-                        dailyCarbsGoal,
-                        dailyFatGoal,
-                    },
-                },
-            },
+        update: {
+            dailyCaloriesGoal,
+            dailyProteinGoal,
+            dailyCarbsGoal,
+            dailyFatGoal,
         },
-        include: {
-            userGoals: true,
+        create: {
+            userId,
+            dailyCaloriesGoal,
+            dailyProteinGoal,
+            dailyCarbsGoal,
+            dailyFatGoal,
         },
     });
 

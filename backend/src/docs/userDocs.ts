@@ -184,6 +184,9 @@ registry.registerPath({
                         message: z.string(),
                         updated: z.object({
                             id: z.string(),
+                            userId: z.string(),
+                            createdAt: z.string(),
+                            updatedAt: z.string(),
                             dailyCaloriesGoal: z.number().nullable(),
                             dailyProteinGoal: z.number().nullable(),
                             dailyCarbsGoal: z.number().nullable(),

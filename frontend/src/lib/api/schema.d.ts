@@ -3047,6 +3047,9 @@ export interface paths {
               message: string;
               updated: {
                 id: string;
+                userId: string;
+                createdAt: string;
+                updatedAt: string;
                 dailyCaloriesGoal: number | null;
                 dailyProteinGoal: number | null;
                 dailyCarbsGoal: number | null;
