@@ -1,6 +1,7 @@
 import { Prisma } from '../generated/prisma';
 import prisma from '../lib/prisma';
 import { AppError } from '../utils/AppError';
+import { toDecimalSafe } from '../utils/toDecimalSafe';
 
 type ProductInput = {
     productId: string;
@@ -40,10 +41,7 @@ export const createUserRecipe = async (
             name,
             userRecipeIngredients: {
                 createMany: {
-                    data: products.map(({ productId, quantity }) => ({
-                        productId,
-                        quantity,
-                    })),
+                    data: products.map((product) => toDecimalSafe(product, ['quantity'])),
                 },
             },
         },
@@ -112,10 +110,7 @@ export const updateUserRecipe = async (
                 userRecipeIngredients: {
                     deleteMany: {},
                     createMany: {
-                        data: products.map(({ productId, quantity }) => ({
-                            productId,
-                            quantity,
-                        })),
+                        data: products.map((product) => toDecimalSafe(product, ['quantity'])),
                     },
                 },
             },

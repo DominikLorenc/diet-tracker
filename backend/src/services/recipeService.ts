@@ -2,6 +2,7 @@ import { Recipe } from '../generated/prisma';
 import { Prisma } from '../generated/prisma';
 import prisma from '../lib/prisma';
 import { AppError } from '../utils/AppError';
+import { toDecimalSafe } from '../utils/toDecimalSafe';
 
 const recipeExists = async (name: string): Promise<boolean> => {
     const recipe = await prisma.recipe.findUnique({
@@ -34,10 +35,7 @@ export const createRecipeService = async (recipe: CreateRecipeInput): Promise<Re
         data: {
             name: recipe.name,
             products: {
-                create: recipe.products.map((product) => ({
-                    productId: product.productId,
-                    quantity: product.quantity,
-                })),
+                create: recipe.products.map((product) => toDecimalSafe(product, ['quantity'])),
             },
         },
     });
@@ -95,10 +93,7 @@ export const updateRecipeValues = async (id: string, recipe: CreateRecipeInput):
                 name: recipe.name,
                 products: {
                     deleteMany: {},
-                    create: recipe.products.map((product) => ({
-                        productId: product.productId,
-                        quantity: product.quantity,
-                    })),
+                    create: recipe.products.map((product) => toDecimalSafe(product, ['quantity'])),
                 },
             },
         });

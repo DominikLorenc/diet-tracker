@@ -1,6 +1,9 @@
 import { BodyMeasurement, Prisma } from '../generated/prisma';
 import prisma from '../lib/prisma';
 import { AppError } from '../utils/AppError';
+import { toDecimalSafe } from '../utils/toDecimalSafe';
+
+const DECIMAL_FIELDS = ['weight', 'waist', 'hips', 'arm'] as const;
 
 export const createNewMeasurement = async (
     userId: string,
@@ -11,14 +14,17 @@ export const createNewMeasurement = async (
     date?: Date,
 ): Promise<BodyMeasurement> => {
     const newMeasurement = await prisma.bodyMeasurement.create({
-        data: {
-            userId,
-            weight,
-            waist,
-            hips,
-            arm,
-            date: date ?? new Date(),
-        },
+        data: toDecimalSafe(
+            {
+                userId,
+                weight,
+                waist,
+                hips,
+                arm,
+                date: date ?? new Date(),
+            },
+            DECIMAL_FIELDS,
+        ),
     });
     return newMeasurement;
 };
@@ -82,7 +88,7 @@ export const updateMeasurement = async (
     try {
         return await prisma.bodyMeasurement.update({
             where: { id, userId },
-            data,
+            data: toDecimalSafe(data, DECIMAL_FIELDS),
         });
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

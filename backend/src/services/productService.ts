@@ -1,23 +1,9 @@
 import { Prisma, Product } from '../generated/prisma';
 import { AppError } from '../utils/AppError';
+import { toDecimalSafe } from '../utils/toDecimalSafe';
 import prisma from '../lib/prisma';
 
-// Prisma converts a JS `number` straight into its arbitrary-precision Decimal
-// type, which exposes the raw IEEE-754 binary value (e.g. 9.7 -> "9.699999999999999")
-// instead of JS's own shortest round-trip string. Stringifying here first,
-// with JS's own Number#toString, avoids that drift for every Decimal column.
 const DECIMAL_FIELDS = ['calories', 'carbs', 'protein', 'fat', 'gramsPerUnit'] as const;
-
-const toDecimalSafe = <T extends Record<string, unknown>>(data: T): T => {
-    const safe = { ...data };
-    for (const field of DECIMAL_FIELDS) {
-        const value = safe[field];
-        if (typeof value === 'number') {
-            (safe as Record<string, unknown>)[field] = value.toString();
-        }
-    }
-    return safe;
-};
 
 export const productExists = async (name: string): Promise<boolean> => {
     const product = await prisma.product.findUnique({
@@ -35,7 +21,7 @@ export const createProduct = async (product: Prisma.ProductCreateInput): Promise
     }
 
     const newProduct = await prisma.product.create({
-        data: toDecimalSafe(product),
+        data: toDecimalSafe(product, DECIMAL_FIELDS),
     });
     return newProduct;
 };
@@ -90,7 +76,7 @@ export const updateProductValues = async (id: string, product: Prisma.ProductUpd
         where: {
             id: id,
         },
-        data: toDecimalSafe(product),
+        data: toDecimalSafe(product, DECIMAL_FIELDS),
     });
 
     return updatedProduct;

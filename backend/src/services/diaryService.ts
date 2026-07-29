@@ -1,6 +1,7 @@
 import { Prisma, DiaryEntry, DiaryEntryItem, MealType } from '../generated/prisma';
 import prisma from '../lib/prisma';
 import { AppError } from '../utils/AppError';
+import { toDecimalSafe } from '../utils/toDecimalSafe';
 
 const findDiaryItemById = async (id: string): Promise<DiaryEntryItem | null> => {
     const diaryItem = await prisma.diaryEntryItem.findUnique({
@@ -33,7 +34,7 @@ const findDiaryByUserIdAndDate = async (userId: string, date: Date): Promise<Dia
 
 const createDiaryItem = async (item: Prisma.DiaryEntryItemUncheckedCreateInput): Promise<DiaryEntryItem> => {
     const newItem = await prisma.diaryEntryItem.create({
-        data: item,
+        data: toDecimalSafe(item, ['quantity']),
     });
 
     return newItem;
@@ -71,14 +72,17 @@ export const addDiaryService = async (entry: AddDiaryEntryInput): Promise<DiaryE
             userId: entry.userId,
             date: entry.date,
             items: {
-                create: {
-                    productId: entry.productId,
-                    recipeId: entry.recipeId,
-                    userRecipeId: entry.userRecipeId,
-                    quantity: entry.quantity,
-                    mealType: entry.mealType,
-                    isEaten: entry?.isEaten,
-                },
+                create: toDecimalSafe(
+                    {
+                        productId: entry.productId,
+                        recipeId: entry.recipeId,
+                        userRecipeId: entry.userRecipeId,
+                        quantity: entry.quantity,
+                        mealType: entry.mealType,
+                        isEaten: entry?.isEaten,
+                    },
+                    ['quantity'],
+                ),
             },
         },
     });
