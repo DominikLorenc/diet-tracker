@@ -458,6 +458,7 @@ export const ProductForm = ({
           onClose={() => setIsScannerOpen(false)}
           onProductFound={handleBarcodeFound}
           onNotFound={(code) => setValue("barcode", code)}
+          intent="add"
         />
       )}
     </>

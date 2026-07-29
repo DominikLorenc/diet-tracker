@@ -14,6 +14,7 @@ import {
     updateProductSchema,
     searchProductSchema,
     barcodeCodeSchema,
+    barcodeQuerySchema,
     productListQuerySchema,
 } from '../schemas/productSchema';
 import { Role } from '../generated/prisma';
@@ -135,9 +136,15 @@ export const getProductByBarcodeController = async (req: Request, res: Response,
         return;
     }
 
+    const queryResult = barcodeQuerySchema.safeParse(req.query);
+    if (!queryResult.success) {
+        res.status(400).json({ message: queryResult.error.issues });
+        return;
+    }
+
     try {
         const isAdmin = req.role === Role.ADMIN;
-        const product = await getProductByBarcode(result.data, isAdmin);
+        const product = await getProductByBarcode(result.data, isAdmin, queryResult.data.intent);
         res.status(200).json({ product });
     } catch (error) {
         next(error);

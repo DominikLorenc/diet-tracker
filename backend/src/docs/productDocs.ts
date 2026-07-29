@@ -1,5 +1,5 @@
 import { registry, errorSchema } from '../swagger';
-import { productSchema, productListQuerySchema } from '../schemas/productSchema';
+import { productSchema, productListQuerySchema, barcodeQuerySchema, barcodeCodeSchema } from '../schemas/productSchema';
 import { ProductCategory } from '../generated/prisma';
 import { z } from 'zod';
 
@@ -108,7 +108,8 @@ registry.registerPath({
         'Looks up a product by EAN-8 or EAN-13 barcode. If not in the database and the caller is an admin, falls back to Open Food Facts.',
     security: [{ cookieAuth: [] }],
     request: {
-        params: z.object({ code: z.string().regex(/^\d{8}$|^\d{13}$/) }),
+        params: z.object({ code: barcodeCodeSchema }),
+        query: barcodeQuerySchema,
     },
     responses: {
         200: {

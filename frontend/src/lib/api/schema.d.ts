@@ -1446,7 +1446,9 @@ export interface paths {
      */
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          intent?: "add";
+        };
         header?: never;
         path: {
           code: string;

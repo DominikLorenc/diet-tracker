@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef } from "react";
 import { BarcodeScanner } from "./BarcodeScanner";
+import { apiClient } from "@/app/lib/apiClient";
 
 type ScanState = "scanning" | "loading" | "not_found" | "camera_error";
 
@@ -25,6 +26,9 @@ interface BarcodeScannerModalProps {
   // carry the code forward (e.g. pre-fill the "add product" form) instead of
   // losing it once the scan dead-ends.
   onNotFound?: (code: string) => void;
+  // Signals why this scan is happening, so the backend knows whether it's
+  // allowed to fall back to Open Food Facts for an unknown barcode.
+  intent?: "add";
 }
 
 export const BarcodeScannerModal = ({
@@ -32,6 +36,7 @@ export const BarcodeScannerModal = ({
   onClose,
   onProductFound,
   onNotFound,
+  intent,
 }: BarcodeScannerModalProps) => {
   const [state, setState] = useState<ScanState>("scanning");
   const hasScanned = useRef(false);
@@ -41,27 +46,21 @@ export const BarcodeScannerModal = ({
       if (hasScanned.current) return;
       hasScanned.current = true;
       setState("loading");
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/products/barcode/${code}`,
-          { credentials: "include" },
-        );
 
-        if (!res.ok) {
-          onNotFound?.(code);
-          setState("not_found");
-          return;
-        }
+      const { data, error } = await apiClient.GET("/products/barcode/{code}", {
+        params: { path: { code }, query: { intent } },
+      });
 
-        const data = await res.json();
-        onProductFound(data.product);
-        onClose();
-      } catch {
+      if (error || !data) {
         onNotFound?.(code);
         setState("not_found");
+        return;
       }
+
+      onProductFound(data.product);
+      onClose();
     },
-    [onProductFound, onNotFound, onClose],
+    [onProductFound, onNotFound, onClose, intent],
   );
 
   if (!isOpen) return null;

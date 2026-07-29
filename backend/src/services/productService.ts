@@ -145,7 +145,11 @@ type OpenFoodFactsResponse = {
     };
 };
 
-export const getProductByBarcode = async (code: string, isAdmin: boolean): Promise<BarcodeProductResult> => {
+export const getProductByBarcode = async (
+    code: string,
+    isAdmin: boolean,
+    intent?: 'add',
+): Promise<BarcodeProductResult> => {
     const product = await prisma.product.findUnique({
         where: { barcode: code },
     });
@@ -164,7 +168,7 @@ export const getProductByBarcode = async (code: string, isAdmin: boolean): Promi
         };
     }
 
-    if (!isAdmin) {
+    if (!isAdmin || intent !== 'add') {
         throw new AppError('Product not found', 404);
     }
 
