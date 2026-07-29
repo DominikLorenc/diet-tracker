@@ -208,6 +208,7 @@ function AddPageContent() {
         <ProductSearch
           onGoToNewProduct={isAdmin ? () => setTab("new") : undefined}
           newlyCreatedProduct={newlyCreatedProduct}
+          setNewlyCreatedProduct={setNewlyCreatedProduct}
         />
       )}
 

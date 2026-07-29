@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -46,6 +52,7 @@ type Props = {
   /** Omitted when the viewer may not create products — hides every entry point to the form */
   onGoToNewProduct?: () => void;
   newlyCreatedProduct?: Product | null;
+  setNewlyCreatedProduct?: Dispatch<SetStateAction<Product | null>>;
 };
 
 // Camera capability never changes at runtime, so there is nothing to subscribe
@@ -55,6 +62,7 @@ const subscribeNoop = () => () => {};
 export const ProductSearch = ({
   onGoToNewProduct,
   newlyCreatedProduct,
+  setNewlyCreatedProduct,
 }: Props) => {
   const searchParams = useSearchParams();
   const showToast = useToastStore((state) => state.showToast);
@@ -163,6 +171,7 @@ export const ProductSearch = ({
     if (error) {
       showToast("error", "Błąd wyszukiwania", "Spróbuj ponownie");
     } else if (data) {
+      setNewlyCreatedProduct?.(null);
       setSearchResults(data.products as Product[]);
       setHasSearched(true);
     }
@@ -180,6 +189,7 @@ export const ProductSearch = ({
         imageUrl: scannedProduct.imageUrl,
         createdAt: new Date().toISOString(),
       };
+      setNewlyCreatedProduct?.(null);
       setSearchResults([product]);
       setHasSearched(true);
       setExpandedProductId(product.id);
