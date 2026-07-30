@@ -16,6 +16,7 @@ export type ScannedProduct = {
   barcode: string;
   imageUrl: string;
   source: "database" | "open_food_facts";
+  gramsPerUnit?: number | null;
 };
 
 interface BarcodeScannerModalProps {

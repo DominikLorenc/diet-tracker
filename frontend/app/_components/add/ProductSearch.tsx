@@ -188,6 +188,7 @@ export const ProductSearch = ({
         fat: scannedProduct.fat,
         imageUrl: scannedProduct.imageUrl,
         createdAt: new Date().toISOString(),
+        gramsPerUnit: scannedProduct.gramsPerUnit,
       };
       setNewlyCreatedProduct?.(null);
       setSearchResults([product]);

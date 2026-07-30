@@ -129,6 +129,7 @@ export type BarcodeProductResult = {
     barcode: string;
     imageUrl: string;
     source: 'database' | 'open_food_facts';
+    gramsPerUnit?: number;
 };
 
 type OpenFoodFactsResponse = {
@@ -165,6 +166,7 @@ export const getProductByBarcode = async (
             barcode: code,
             imageUrl: product.imageUrl,
             source: 'database',
+            gramsPerUnit: product.gramsPerUnit !== null ? Number(product.gramsPerUnit) : undefined,
         };
     }
 
