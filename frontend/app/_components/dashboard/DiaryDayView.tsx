@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useToastStore } from "@/store/useToastStore";
 import { apiClient } from "@/app/lib/apiClient";
 import { useUserStore } from "@/store/useUserStore";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export type MealType = "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
 
@@ -125,8 +126,6 @@ const OPEN_MEALS_STORAGE_KEY = "diary-open-meals";
 
 export const DiaryDayView = () => {
   const [date, setDate] = useState(new Date());
-  const [entries, setEntries] = useState<DiaryEntry[]>([]);
-  const [error, setError] = useState<string | null>(null);
   // Starts as "all open" so the first client render matches the server-rendered
   // HTML exactly (localStorage doesn't exist on the server). The saved value is
   // applied after mount, see the effect below.
@@ -134,8 +133,8 @@ export const DiaryDayView = () => {
     () => new Set(MEAL_TYPES),
   );
   const user = useUserStore((state) => state.user);
+  const queryClient = useQueryClient();
 
-  const allItems = entries[0]?.items ?? [];
   const showToast = useToastStore((state) => state.showToast);
 
   const today = new Date().toLocaleDateString("pl-PL", {
@@ -145,19 +144,26 @@ export const DiaryDayView = () => {
     day: "numeric",
   });
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const dateParam = date.toISOString().split("T")[0];
+
+  const {
+    data: entries = [],
+    isLoading,
+    error: queryError,
+  } = useQuery({
+    queryKey: ["diary", dateParam],
+    queryFn: async () => {
       const { data, error: fetchError } = await apiClient.GET("/diary", {
-        params: { query: { date: date.toISOString().split("T")[0] } },
+        params: { query: { date: dateParam } },
       });
       if (fetchError) {
-        setError("Błąd pobierania danych");
-      } else if (data) {
-        setEntries(data.diaryEntries);
+        throw new Error(fetchError.message);
       }
-    };
-    fetchData();
-  }, [date]);
+      return data.diaryEntries;
+    },
+  });
+
+  const allItems = entries[0]?.items ?? [];
 
   // Sync accordion state from localStorage — a client-only API, so this can
   // only happen after mount, not during the lazy useState initializer above
@@ -173,26 +179,30 @@ export const DiaryDayView = () => {
     }
   }, []);
 
-  const handleDeleteItem = async (id: string) => {
-    const { error: deleteError } = await apiClient.DELETE("/diary/{id}/item", {
-      params: { path: { id } },
-    });
-    if (deleteError) {
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error: deleteError } = await apiClient.DELETE(
+        "/diary/{id}/item",
+        {
+          params: { path: { id } },
+        },
+      );
+      if (deleteError) {
+        throw new Error(deleteError.message);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["diary"] });
+      showToast("success", "Wpis usunięty");
+    },
+    onError: () => {
       showToast(
         "error",
         "Nie udało się usunąć wpisu",
         "Spróbuj ponownie lub odśwież stronę",
       );
-    } else {
-      setEntries(
-        entries.map((entry) => ({
-          ...entry,
-          items: entry.items.filter((item) => item.id !== id),
-        })),
-      );
-      showToast("success", "Wpis usunięty");
-    }
-  };
+    },
+  });
 
   const toggleMeal = (mealType: MealType) => {
     setOpenMeals((prev) => {
@@ -210,36 +220,36 @@ export const DiaryDayView = () => {
     });
   };
 
-  const handleEaten = async (id: string, isEaten: boolean) => {
-    const { error: updateError } = await apiClient.PATCH("/diary/{id}/eaten", {
-      params: { path: { id } },
-      body: { isEaten },
-    });
-    if (updateError) {
+  const eatenMutation = useMutation({
+    mutationFn: async ({ id, isEaten }: { id: string; isEaten: boolean }) => {
+      const { error: updateError } = await apiClient.PATCH(
+        "/diary/{id}/eaten",
+        {
+          params: { path: { id } },
+          body: { isEaten },
+        },
+      );
+      if (updateError) {
+        throw new Error(updateError.message);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["diary"] });
+    },
+    onError: () => {
       showToast(
         "error",
         "Nie udało się zaktualizować statusu",
         "Spróbuj ponownie lub odśwież stronę",
       );
-    } else {
-      setEntries(
-        entries.map((entry) => ({
-          ...entry,
-          items: entry.items.map((item) => ({
-            ...item,
-            isEaten: item.id === id ? isEaten : item.isEaten,
-          })),
-        })),
-      );
-    }
-  };
+    },
+  });
 
   return (
     <div
       className="flex flex-col gap-4 p-5 sm:p-7 min-h-full"
       style={{ fontFamily: "var(--font-jakarta)" }}
     >
-      {/* ── Nagłówek ─────────────────────────────────────────────── */}
       <div className="flex flex-col gap-1">
         <p
           className="text-sm font-medium capitalize"
@@ -258,19 +268,16 @@ export const DiaryDayView = () => {
         </h1>
       </div>
 
-      {/* ── Podsumowanie kalorii + makro ─────────────────────────── */}
       <MacroSummary items={allItems.filter((item) => item.isEaten)} />
 
-      {/* ── Nawigacja dat ────────────────────────────────────────── */}
       <DateNavigator date={date} onDateChange={setDate} />
 
-      {error && (
+      {queryError && (
         <p className="text-sm px-1" style={{ color: "var(--color-macro-fat)" }}>
-          {error}
+          {queryError.message}
         </p>
       )}
 
-      {/* ── Posiłki ──────────────────────────────────────────────── */}
       <div className="flex flex-col gap-3 pb-4">
         {MEAL_TYPES.map((mealType) => {
           const items = allItems.filter((item) => item.mealType === mealType);
@@ -290,7 +297,6 @@ export const DiaryDayView = () => {
                 border: "1px solid var(--color-dash-border)",
               }}
             >
-              {/* Nagłówek posiłku — klikalny, przełącza rozwinięcie */}
               <div
                 role="button"
                 tabIndex={0}
@@ -352,7 +358,7 @@ export const DiaryDayView = () => {
                     </span>
                   )}
                   <Link
-                    href={`/dashboard/add?mealType=${mealType}&date=${date.toISOString().split("T")[0]}`}
+                    href={`/dashboard/add?mealType=${mealType}&date=${dateParam}`}
                     onClick={(e) => e.stopPropagation()}
                     className="text-xl font-bold leading-none w-7 h-7 flex items-center justify-center rounded-lg transition-opacity hover:opacity-70"
                     style={{ color: "var(--color-dash-green-mid)" }}
@@ -362,7 +368,6 @@ export const DiaryDayView = () => {
                 </div>
               </div>
 
-              {/* Zawartość posiłku — animowana przez grid-template-rows (0fr ↔ 1fr) */}
               <div
                 className="grid transition-[grid-template-rows] duration-300 ease-in-out"
                 style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
@@ -390,7 +395,12 @@ export const DiaryDayView = () => {
                         }}
                       >
                         <button
-                          onClick={() => handleEaten(item.id, !item.isEaten)}
+                          onClick={() =>
+                            eatenMutation.mutate({
+                              id: item.id,
+                              isEaten: !item.isEaten,
+                            })
+                          }
                           className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center transition-all duration-200"
                           style={{
                             background: item.isEaten
@@ -427,7 +437,6 @@ export const DiaryDayView = () => {
                           )}
                         </button>
 
-                        {/* Zdjęcie lub placeholder */}
                         {imageUrl ? (
                           <Image
                             src={imageUrl}
@@ -445,7 +454,6 @@ export const DiaryDayView = () => {
                           />
                         )}
 
-                        {/* Nazwa + makro */}
                         <div className="flex items-center flex-1 gap-2 min-w-0">
                           <span
                             className="text-sm font-medium truncate flex-1 transition-all duration-300"
@@ -477,7 +485,7 @@ export const DiaryDayView = () => {
                               {macros.calories.toFixed(0)} kcal
                             </span>
                             <button
-                              onClick={() => handleDeleteItem(item.id)}
+                              onClick={() => deleteMutation.mutate(item.id)}
                               className="text-xs opacity-40 hover:opacity-80 transition-opacity ml-1"
                               style={{ color: "var(--color-macro-fat)" }}
                             >

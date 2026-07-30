@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Newsreader, IBM_Plex_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { Providers } from "./providers";
 
 const newsreader = Newsreader({
   variable: "--font-newsreader",
@@ -36,7 +37,7 @@ export default function RootLayout({
       <body
         className={`${newsreader.variable} ${ibmPlexMono.variable} ${plusJakartaSans.variable} antialiased`}
       >
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
