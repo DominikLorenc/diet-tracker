@@ -34,11 +34,13 @@ export const createUserRecipe = async (
     userId: string,
     name: string,
     products: ProductInput[],
+    steps: string[],
 ): Promise<UserRecipeWithIngredients> => {
     const userRecipe = await prisma.userRecipe.create({
         data: {
             userId,
             name,
+            steps,
             userRecipeIngredients: {
                 createMany: {
                     data: products.map((product) => toDecimalSafe(product, ['quantity'])),
@@ -74,6 +76,7 @@ export const copyRecipe = async (userId: string, sourceRecipeId: string): Promis
         data: {
             userId,
             name: sourceRecipe.name,
+            steps: sourceRecipe.steps,
             sourceRecipeId: sourceRecipeId,
             userRecipeIngredients: {
                 createMany: {
@@ -98,6 +101,7 @@ export const updateUserRecipe = async (
     userRecipeId: string,
     name: string,
     products: ProductInput[],
+    steps: string[],
 ): Promise<UserRecipeWithIngredients> => {
     try {
         const userRecipe = await prisma.userRecipe.update({
@@ -107,6 +111,7 @@ export const updateUserRecipe = async (
             },
             data: {
                 name,
+                steps,
                 userRecipeIngredients: {
                     deleteMany: {},
                     createMany: {

@@ -28,6 +28,7 @@ export interface Recipe {
   name: string;
   createdAt: string;
   products: RecipeProduct[];
+  steps: string[];
 }
 
 export interface RecipesResponse {
@@ -148,6 +149,20 @@ export default function Recipes() {
                 </div>
               ))}
             </div>
+            {recipe.steps.length > 0 && (
+              <div className="flex flex-col gap-2 px-4 py-3 border-t border-white/10">
+                <span className="text-xs font-semibold uppercase tracking-widest text-white/40">
+                  Jak to zrobić?
+                </span>
+                <ol className="flex flex-col gap-1.5 list-decimal list-inside">
+                  {recipe.steps.map((step, index) => (
+                    <li key={index} className="text-sm text-white/70">
+                      {step}
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
             <div className="flex gap-6 px-4 py-3 mt-2 border-t border-white/10">
               <span className="text-sm font-semibold text-yellow-400">
                 {recipe.products

@@ -11,6 +11,7 @@ export const recipeSchema = registry.register(
                 quantity: z.number(),
             }),
         ),
+        steps: z.array(z.string().trim().min(1)).optional().default([]),
     }),
 );
 

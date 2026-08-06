@@ -20,9 +20,9 @@ export const createUserRecipeController = async (req: Request, res: Response, ne
             return res.status(400).json({ message: result.error.issues });
         }
 
-        const { name, products } = result.data;
+        const { name, products, steps } = result.data;
 
-        const userRecipe = await createUserRecipe(userId, name, products);
+        const userRecipe = await createUserRecipe(userId, name, products, steps);
 
         return res.status(201).json({ message: 'User recipe created', userRecipe });
     } catch (error) {
@@ -65,9 +65,9 @@ export const updateUserRecipeController = async (req: Request, res: Response, ne
             return res.status(400).json({ message: userRecipeId.error.issues });
         }
 
-        const { name, products } = result.data;
+        const { name, products, steps } = result.data;
 
-        const userRecipe = await updateUserRecipe(userId, userRecipeId.data, name, products);
+        const userRecipe = await updateUserRecipe(userId, userRecipeId.data, name, products, steps);
 
         return res.status(200).json({ message: 'User recipe updated', userRecipe });
     } catch (error) {

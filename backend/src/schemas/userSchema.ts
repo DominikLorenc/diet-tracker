@@ -61,6 +61,7 @@ export const createUserRecipeSchema = z.object({
             quantity: z.number().int().min(1),
         }),
     ),
+    steps: z.array(z.string().trim().min(1)).optional().default([]),
 });
 
 export const updateUserRecipeSchema = z.object({
@@ -71,6 +72,7 @@ export const updateUserRecipeSchema = z.object({
             quantity: z.number().int().min(1),
         }),
     ),
+    steps: z.array(z.string().trim().min(1)).optional().default([]),
 });
 
 export const copyRecipeSchema = z.object({

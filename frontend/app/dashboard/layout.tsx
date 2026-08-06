@@ -37,6 +37,12 @@ const NAV_ITEMS: NavItem[] = [
     href: "/dashboard/recipes",
   },
   {
+    emoji: "🧑‍🍳",
+    name: "Kreator przepisów",
+    shortName: "Kreator",
+    href: "/dashboard/recipe-builder",
+  },
+  {
     emoji: "🛒",
     name: "Lista zakupów",
     shortName: "Zakupy",

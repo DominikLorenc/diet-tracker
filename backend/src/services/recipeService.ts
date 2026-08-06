@@ -19,6 +19,7 @@ type CreateRecipeInput = {
         productId: string;
         quantity: number;
     }[];
+    steps: string[];
 };
 
 type RecipeWithProducts = Prisma.RecipeGetPayload<{
@@ -34,6 +35,7 @@ export const createRecipeService = async (recipe: CreateRecipeInput): Promise<Re
     const newRecipe = await prisma.recipe.create({
         data: {
             name: recipe.name,
+            steps: recipe.steps,
             products: {
                 create: recipe.products.map((product) => toDecimalSafe(product, ['quantity'])),
             },
@@ -91,6 +93,7 @@ export const updateRecipeValues = async (id: string, recipe: CreateRecipeInput):
             },
             data: {
                 name: recipe.name,
+                steps: recipe.steps,
                 products: {
                     deleteMany: {},
                     create: recipe.products.map((product) => toDecimalSafe(product, ['quantity'])),

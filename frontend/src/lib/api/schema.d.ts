@@ -32,6 +32,7 @@ export interface paths {
                 id: string;
                 name: string;
                 createdAt: string;
+                steps: string[];
                 products: {
                   id: string;
                   quantity: string;
@@ -93,6 +94,7 @@ export interface paths {
                 id: string;
                 name: string;
                 createdAt: string;
+                steps: string[];
                 products: {
                   id: string;
                   quantity: string;
@@ -174,6 +176,7 @@ export interface paths {
                 id: string;
                 name: string;
                 createdAt: string;
+                steps: string[];
                 products: {
                   id: string;
                   quantity: string;
@@ -245,6 +248,7 @@ export interface paths {
                 id: string;
                 name: string;
                 createdAt: string;
+                steps: string[];
                 products: {
                   id: string;
                   quantity: string;
@@ -311,6 +315,8 @@ export interface paths {
               productId: string;
               quantity: number;
             }[];
+            /** @default [] */
+            steps?: string[];
           };
         };
       };
@@ -326,6 +332,7 @@ export interface paths {
                 id: string;
                 name: string;
                 createdAt: string;
+                steps: string[];
                 products: {
                   id: string;
                   quantity: string;
@@ -3287,6 +3294,7 @@ export interface paths {
                 name: string;
                 sourceRecipeId: string | null;
                 createdAt: string;
+                steps: string[];
                 userRecipeIngredients: {
                   id: string;
                   productId: string;
@@ -3340,6 +3348,8 @@ export interface paths {
               productId: string;
               quantity: number;
             }[];
+            /** @default [] */
+            steps?: string[];
           };
         };
       };
@@ -3358,6 +3368,7 @@ export interface paths {
                 name: string;
                 sourceRecipeId: string | null;
                 createdAt: string;
+                steps: string[];
                 userRecipeIngredients: {
                   id: string;
                   productId: string;
@@ -3446,6 +3457,7 @@ export interface paths {
                 name: string;
                 sourceRecipeId: string | null;
                 createdAt: string;
+                steps: string[];
                 userRecipeIngredients: {
                   id: string;
                   productId: string;
@@ -3513,6 +3525,8 @@ export interface paths {
               productId: string;
               quantity: number;
             }[];
+            /** @default [] */
+            steps?: string[];
           };
         };
       };
@@ -3531,6 +3545,7 @@ export interface paths {
                 name: string;
                 sourceRecipeId: string | null;
                 createdAt: string;
+                steps: string[];
                 userRecipeIngredients: {
                   id: string;
                   productId: string;
@@ -3630,6 +3645,7 @@ export interface paths {
                 name: string;
                 sourceRecipeId: string | null;
                 createdAt: string;
+                steps: string[];
                 userRecipeIngredients: {
                   id: string;
                   productId: string;
@@ -3744,6 +3760,8 @@ export interface components {
         productId: string;
         quantity: number;
       }[];
+      /** @default [] */
+      steps: string[];
     };
     Measurements: {
       /** Format: date-time */

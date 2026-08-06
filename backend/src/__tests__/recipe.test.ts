@@ -39,6 +39,7 @@ describe('POST /api/v1/recipes', () => {
             id: '1',
             name: recipeName,
             createdAt: new Date(),
+            steps: [],
         });
         const res = await request(app)
             .post('/api/v1/recipes')
@@ -73,6 +74,7 @@ describe('GET /api/v1/recipes', () => {
                 id: '1',
                 name: recipeName,
                 createdAt: new Date(),
+                steps: [],
                 products: [
                     {
                         id: 'uuid',
@@ -118,6 +120,7 @@ describe('GET /api/v1/recipes/:id', () => {
             id: recipeId,
             name: recipeName,
             createdAt: new Date(),
+            steps: [],
             products: [
                 {
                     id: productId,
@@ -178,6 +181,7 @@ describe('PATCH /api/v1/recipes/:id', () => {
             id: '1',
             name: recipeName,
             createdAt: new Date(),
+            steps: [],
         });
         const res = await request(app)
             .patch(`/api/v1/recipes/${recipeId}`)
@@ -231,6 +235,7 @@ describe('DELETE /api/v1/recipes/:id', () => {
             id: '1',
             name: recipeName,
             createdAt: new Date(),
+            steps: [],
         });
         const res = await request(app)
             .delete(`/api/v1/recipes/${recipeId}`)

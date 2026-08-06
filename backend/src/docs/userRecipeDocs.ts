@@ -31,6 +31,7 @@ const userRecipeResponseSchema = z.object({
     name: z.string(),
     sourceRecipeId: z.string().nullable(),
     createdAt: z.string(),
+    steps: z.array(z.string()),
     userRecipeIngredients: z.array(userRecipeIngredientSchema),
 });
 

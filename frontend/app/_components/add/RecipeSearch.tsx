@@ -27,6 +27,7 @@ type Recipe = {
   name: string;
   createdAt: string;
   products: RecipeIngredient[];
+  steps: string[];
 };
 
 type RecipeFavorite = {

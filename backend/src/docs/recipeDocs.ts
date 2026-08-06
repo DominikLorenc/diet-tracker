@@ -19,6 +19,7 @@ const recipeResponseSchema = z.object({
     id: z.string(),
     name: z.string(),
     createdAt: z.string(),
+    steps: z.array(z.string()),
     products: z.array(
         z.object({
             id: z.string(),

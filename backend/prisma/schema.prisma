@@ -118,6 +118,7 @@ model User {
     name String
     userRecipeIngredients UserRecipeIngredient[]
     diaryEntriesItems DiaryEntryItem[]
+    steps String[] @default([])
     @@unique([userId, name])
   }
 
@@ -178,6 +179,7 @@ enum MealType {
     diaryEntriesItems DiaryEntryItem[]
     recipeFavorites RecipeFavorite[]
     userRecipes UserRecipe[]
+    steps String[] @default([])
   }
 
   model RecipeIngredient {

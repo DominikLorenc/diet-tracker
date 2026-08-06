@@ -22,6 +22,7 @@ export type UserRecipe = {
   createdAt: string;
   sourceRecipeId: string | null;
   userRecipeIngredients: UserRecipeIngredient[];
+  steps: string[];
 };
 
 type Props = {
@@ -156,6 +157,25 @@ export const UserRecipeCard = ({
                 </div>
               ))}
             </div>
+          )}
+
+          {/* Kroki przygotowania */}
+          {recipe.steps.length > 0 && (
+            <>
+              <div className="h-px bg-dash-border" />
+              <div className="flex flex-col gap-1.5">
+                <span className="text-dash-fg-muted text-xs font-semibold uppercase tracking-wider">
+                  Jak to zrobić?
+                </span>
+                <ol className="flex flex-col gap-1.5 list-decimal list-inside">
+                  {recipe.steps.map((step, index) => (
+                    <li key={index} className="text-xs text-dash-fg-muted">
+                      {step}
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            </>
           )}
 
           <div className="h-px bg-dash-border" />
