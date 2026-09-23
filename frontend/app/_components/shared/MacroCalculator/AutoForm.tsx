@@ -1,5 +1,6 @@
 "use client";
 
+import { Check } from "lucide-react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
@@ -13,8 +14,11 @@ import { apiClient } from "@/app/lib/apiClient";
 import { Button } from "@/app/_components/ui/Button";
 import { UserGoals } from "@/app/_types/user";
 
+const fieldBoxClass =
+  "flex items-center gap-2 h-11 px-3 bg-card border-2 border-ink focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent";
+
 const inputClass =
-  "bg-dash-surface-alt border border-dash-border rounded-xl px-3 py-2.5 text-sm text-dash-fg focus:outline-none w-full font-sans [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
+  "flex-1 min-w-0 bg-transparent font-mono text-[15px] text-ink placeholder:text-ink-muted outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
 
 const numberFields = [
   { name: "weight" as const, label: "Waga", unit: "kg", placeholder: "np. 80" },
@@ -80,35 +84,35 @@ export const AutoForm = ({ onSuccess }: Props) => {
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {numberFields.map((field) => (
-          <div key={field.name} className="flex flex-col gap-1">
-            <label className="text-xs text-dash-fg-muted font-sans">
+          <label key={field.name} className="flex flex-col gap-1">
+            <span className="text-[13px] font-extrabold uppercase">
               {field.label}
-            </label>
-            <div className="flex items-center gap-1">
+            </span>
+            <span className={fieldBoxClass}>
               <input
                 type="number"
+                inputMode="decimal"
                 min={0}
                 placeholder={field.placeholder}
+                aria-invalid={Boolean(errors[field.name])}
                 className={inputClass}
                 onFocus={(e) => e.target.select()}
                 {...register(field.name, { valueAsNumber: true })}
               />
-              <span className="text-xs text-dash-fg-muted shrink-0 font-sans">
-                {field.unit}
-              </span>
-            </div>
+              <span className="font-mono text-sm shrink-0">{field.unit}</span>
+            </span>
             {errors[field.name] && (
-              <p className="text-xs text-red-500 font-sans">
+              <span role="alert" className="font-mono text-xs text-accent">
                 {errors[field.name]?.message}
-              </p>
+              </span>
             )}
-          </div>
+          </label>
         ))}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="flex flex-col gap-1">
-          <label className="text-xs text-dash-fg-muted font-sans">Płeć</label>
+          <label className="text-[13px] font-extrabold uppercase">Płeć</label>
           <Controller
             name="gender"
             control={control}
@@ -125,7 +129,7 @@ export const AutoForm = ({ onSuccess }: Props) => {
           />
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-xs text-dash-fg-muted font-sans">Cel</label>
+          <label className="text-[13px] font-extrabold uppercase">Cel</label>
           <Controller
             name="goal"
             control={control}
@@ -145,7 +149,7 @@ export const AutoForm = ({ onSuccess }: Props) => {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-xs text-dash-fg-muted font-sans">
+        <label className="text-[13px] font-extrabold uppercase">
           Aktywność fizyczna
         </label>
         <Controller
@@ -166,7 +170,11 @@ export const AutoForm = ({ onSuccess }: Props) => {
         />
       </div>
 
-      {error && <p className="text-sm text-red-500 font-sans">{error}</p>}
+      {error && (
+        <p role="alert" className="font-mono text-sm text-accent">
+          {error}
+        </p>
+      )}
 
       {!result && (
         <Button type="submit" variant="primary" className="w-full">
@@ -175,47 +183,46 @@ export const AutoForm = ({ onSuccess }: Props) => {
       )}
 
       {result && (
-        <div className="flex flex-col gap-3 bg-dash-surface-alt border border-dash-green-mid/25 rounded-xl p-4">
-          <p className="text-xs font-bold uppercase tracking-widest text-macro-calories font-mono">
-            ✦ Twoje zapotrzebowanie
+        <div className="flex flex-col gap-3 border-2 border-ink px-3 pt-1.5 pb-3">
+          <p className="font-display text-[26px] leading-none">
+            Twoje zapotrzebowanie
           </p>
-          <div className="bg-dash-surface border border-dash-border rounded-xl px-5 py-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-dash-fg font-mono">
-              {result.calories}
+          <div className="rule-thick" />
+          <div className="flex justify-between items-end">
+            <span className="font-display text-[26px] leading-none [font-stretch:75%]">
+              Kalorie
             </span>
-            <span className="text-sm text-dash-fg-muted font-sans">
-              kcal / dzień
+            <span className="font-mono text-4xl font-semibold leading-none tracking-[-0.04em]">
+              {result.calories}
+              <span className="text-sm"> kcal / dzień</span>
             </span>
           </div>
-          <div className="grid grid-cols-3 gap-2">
-            <div className="bg-dash-surface border border-dash-border rounded-xl p-3 flex flex-col gap-0.5">
-              <span className="text-xs font-bold uppercase tracking-widest text-macro-protein font-mono">
-                Białko
-              </span>
-              <span className="text-xl font-bold text-dash-fg font-mono">
-                {result.protein}g
-              </span>
-            </div>
-            <div className="bg-dash-surface border border-dash-border rounded-xl p-3 flex flex-col gap-0.5">
-              <span className="text-xs font-bold uppercase tracking-widest text-macro-carbs font-mono">
-                Węgle
-              </span>
-              <span className="text-xl font-bold text-dash-fg font-mono">
-                {result.carbs}g
-              </span>
-            </div>
-            <div className="bg-dash-surface border border-dash-border rounded-xl p-3 flex flex-col gap-0.5">
-              <span className="text-xs font-bold uppercase tracking-widest text-macro-fat font-mono">
-                Tłuszcze
-              </span>
-              <span className="text-xl font-bold text-dash-fg font-mono">
-                {result.fat}g
-              </span>
-            </div>
+          <div className="grid grid-cols-3 border-y border-ink">
+            {(
+              [
+                ["Białko", result.protein],
+                ["Węgle", result.carbs],
+                ["Tłuszcze", result.fat],
+              ] as const
+            ).map(([label, grams], idx) => (
+              <div
+                key={label}
+                className={`py-1.5 flex flex-col ${idx > 0 ? "border-l border-ink pl-2" : ""}`}
+              >
+                <span className="text-xs font-extrabold">{label}</span>
+                <span className="font-mono text-lg font-semibold">
+                  {grams} g
+                </span>
+              </div>
+            ))}
           </div>
           {success ? (
-            <p className="text-sm text-center font-medium text-macro-calories font-sans">
-              ✓ Cel zaktualizowany!
+            <p
+              role="status"
+              className="flex items-center justify-center gap-2 min-h-11 border-2 border-ink text-sm font-extrabold uppercase"
+            >
+              <Check size={16} strokeWidth={3} strokeLinecap="square" />
+              Cel zaktualizowany
             </p>
           ) : (
             <Button
@@ -225,7 +232,7 @@ export const AutoForm = ({ onSuccess }: Props) => {
               onClick={handleSave}
               className="w-full"
             >
-              ✓ Zaktualizuj swój cel
+              Ustaw jako mój cel
             </Button>
           )}
         </div>

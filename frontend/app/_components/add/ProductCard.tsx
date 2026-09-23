@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { formatAmount } from "@/utils/format";
 import Image from "next/image";
 import { apiClient } from "@/app/lib/apiClient";
 import { useToastStore } from "@/store/useToastStore";
+import { useUserStore } from "@/store/useUserStore";
+import { ChevronDown, Minus, Plus, Star } from "lucide-react";
 
 type Product = {
   id: string;
@@ -41,6 +44,13 @@ export const AddProductCard = ({
   const [favorite, setFavorite] = useState(isFavorite);
   const [adding, setAdding] = useState(false);
   const showToast = useToastStore((state) => state.showToast);
+  const userGoals = useUserStore((state) => state.user?.userGoals);
+  const goals = {
+    calories: userGoals?.dailyCaloriesGoal ?? 0,
+    protein: userGoals?.dailyProteinGoal ?? 0,
+    carbs: userGoals?.dailyCarbsGoal ?? 0,
+    fat: userGoals?.dailyFatGoal ?? 0,
+  };
   const hasPieceUnit = product.gramsPerUnit != null && product.gramsPerUnit > 0;
 
   const selectUnit = (nextUnit: QuantityUnit) => {
@@ -89,142 +99,230 @@ export const AddProductCard = ({
     setExpanded(false);
   };
 
+  const factor = grams / 100;
+  const portion = {
+    calories: factor * product.calories,
+    protein: factor * product.protein,
+    carbs: factor * product.carbs,
+    fat: factor * product.fat,
+  };
+  const step = unit === "piece" ? 1 : 10;
+  const changeQuantityBy = (delta: number) =>
+    setQuantityInput(String(Math.max(0, quantity + delta)));
+
   return (
     <div
-      className={`rounded-xl border overflow-hidden cursor-pointer mb-2 transition-colors ${
-        favorite
-          ? "bg-dash-surface-card border-[var(--color-green-mid-alpha-sm)]"
-          : "bg-dash-card-unselected border-dash-border"
+      className={`border-b border-ink ${expanded ? "bg-card" : ""} ${
+        favorite ? "shadow-[inset_4px_0_0_var(--color-ink)]" : ""
       }`}
-      onClick={() => setExpanded((v) => !v)}
     >
-      {/* Wiersz nagłówka karty */}
-      <div className="flex items-center gap-3 px-3 py-3">
-        {/* Miniaturka produktu */}
-        {product.imageUrl ? (
-          <Image
-            src={product.imageUrl}
-            alt={product.name}
-            width={36}
-            height={36}
-            className="rounded-lg shrink-0 object-cover"
-          />
-        ) : (
-          <div className="w-9 h-9 rounded-lg bg-dash-icon-bg shrink-0" />
-        )}
-
-        {/* Nazwa + makra */}
-        <div className="flex-1 min-w-0 flex flex-col gap-0.5">
-          <p className="text-dash-fg font-semibold text-sm truncate">
-            {product.name}
-          </p>
-          <p className="text-dash-fg-muted text-xs">
-            {product.calories} kcal · B: {product.protein}g · T: {product.fat}g
-            · W: {product.carbs}g
-          </p>
-        </div>
-
-        {/* Przycisk ulubionych */}
+      {/* Header row */}
+      <div className="flex items-center gap-1">
         <button
-          onClick={toggleFavorite}
-          className="shrink-0 transition-colors"
-          aria-label={favorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          aria-expanded={expanded}
+          className={`flex-1 min-w-0 flex items-center gap-3 min-h-14 py-2 text-left cursor-pointer ${
+            favorite ? "pl-3" : ""
+          }`}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width={15}
-            height={15}
-            fill={favorite ? "var(--color-dash-green-mid)" : "none"}
-            stroke={
-              favorite
-                ? "var(--color-dash-green-mid)"
-                : "var(--color-dash-svg-inactive)"
-            }
-            strokeWidth={2}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-          </svg>
+          {product.imageUrl ? (
+            <Image
+              src={product.imageUrl}
+              alt=""
+              width={36}
+              height={36}
+              className="w-9 h-9 shrink-0 object-cover border border-ink"
+            />
+          ) : (
+            <span
+              aria-hidden="true"
+              className="w-9 h-9 shrink-0 border border-ink bg-paper"
+            />
+          )}
+          <span className="flex-1 min-w-0 flex flex-col">
+            <span className="text-[15px] font-bold truncate">
+              {product.name}
+            </span>
+            <span className="font-mono text-[11px]">
+              B {formatAmount(product.protein)} · W{" "}
+              {formatAmount(product.carbs)} · T {formatAmount(product.fat)}
+            </span>
+          </span>
+          <span className="font-mono text-base font-semibold">
+            {formatAmount(product.calories, 0)}
+          </span>
+          <ChevronDown
+            size={16}
+            strokeWidth={2.5}
+            strokeLinecap="square"
+            className={`shrink-0 transition-transform ${expanded ? "rotate-180" : ""}`}
+          />
         </button>
 
-        {/* Chevron góra/dół */}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          width={15}
-          height={15}
-          fill="none"
-          stroke="var(--color-dash-svg-inactive)"
-          strokeWidth={2}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className={`shrink-0 transition-transform ${expanded ? "rotate-180" : ""}`}
+        <button
+          type="button"
+          onClick={toggleFavorite}
+          className="w-11 h-11 shrink-0 flex items-center justify-center cursor-pointer"
+          aria-pressed={favorite}
+          aria-label={favorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
         >
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
+          <Star
+            size={16}
+            strokeWidth={2}
+            fill={favorite ? "currentColor" : "none"}
+            className={favorite ? "text-ink" : "text-ink-muted"}
+          />
+        </button>
       </div>
 
-      {/* Panel po rozwinięciu — pole ilości + przycisk */}
+      {/* Expanded: the portion as a nutrition label */}
       {expanded && (
-        <div
-          className="border-t border-dash-border bg-dash-surface-alt px-3 py-3 flex items-center gap-3 flex-wrap"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <label className="text-dash-fg-muted text-xs shrink-0">Ilość:</label>
-          <input
-            type="number"
-            value={quantityInput}
-            min={1}
-            onChange={(e) => setQuantityInput(e.target.value)}
-            onFocus={(e) => e.target.select()}
-            className="w-20 bg-[var(--background)] border border-dash-border rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:border-dash-green-mid transition-colors"
-          />
+        <div className="px-3 pb-3 flex flex-col gap-3">
+          <div className="border-2 border-ink bg-card px-2.5 pt-1 pb-2">
+            <div className="flex justify-between text-sm pb-1">
+              <span className="font-extrabold">Porcja</span>
+              <span className="font-mono font-semibold">
+                {unit === "piece"
+                  ? `${quantity} szt. (${grams.toFixed(0)} g)`
+                  : `${grams} g`}
+              </span>
+            </div>
+            <div className="rule-thick" />
+            <div className="flex justify-between items-end py-1">
+              <span className="font-display text-[26px] leading-none [font-stretch:75%]">
+                Kalorie
+              </span>
+              <span className="font-mono text-4xl font-semibold leading-none tracking-[-0.04em]">
+                {portion.calories.toFixed(0)}
+              </span>
+            </div>
+            <div className="rule-medium" />
+            <PortionRow
+              label="Białko"
+              grams={portion.protein}
+              goal={goals.protein}
+            />
+            <PortionRow
+              label="Węglowodany"
+              grams={portion.carbs}
+              goal={goals.carbs}
+            />
+            <PortionRow
+              label="Tłuszcze"
+              grams={portion.fat}
+              goal={goals.fat}
+              isLast
+            />
+            <div className="rule-medium" />
+            {goals.calories > 0 && (
+              <p className="pt-1 text-[11px]">
+                Ta porcja to{" "}
+                {Math.round((portion.calories / goals.calories) * 100)}%
+                dziennego celu ({goals.calories} kcal).
+              </p>
+            )}
+          </div>
 
-          {hasPieceUnit ? (
-            <div className="flex rounded-lg border border-dash-border overflow-hidden shrink-0">
+          <div className="flex items-stretch">
+            <button
+              type="button"
+              onClick={() => changeQuantityBy(-step)}
+              aria-label={`Mniej o ${step} ${unit === "piece" ? "szt." : "g"}`}
+              className="w-12 h-12 border-2 border-ink flex items-center justify-center cursor-pointer hover:bg-ink hover:text-paper transition-colors"
+            >
+              <Minus size={18} strokeWidth={3} strokeLinecap="square" />
+            </button>
+            <label className="flex-1 flex items-center justify-center gap-1.5 border-y-2 border-ink bg-card">
+              <span className="sr-only">Ilość</span>
+              <input
+                type="number"
+                inputMode="decimal"
+                value={quantityInput}
+                min={1}
+                onChange={(e) => setQuantityInput(e.target.value)}
+                onFocus={(e) => e.target.select()}
+                className="w-20 bg-transparent text-right font-mono text-xl font-semibold outline-none"
+              />
+              <span className="font-mono">
+                {unit === "piece" ? "szt." : "g"}
+              </span>
+            </label>
+            <button
+              type="button"
+              onClick={() => changeQuantityBy(step)}
+              aria-label={`Więcej o ${step} ${unit === "piece" ? "szt." : "g"}`}
+              className="w-12 h-12 border-2 border-ink flex items-center justify-center cursor-pointer hover:bg-ink hover:text-paper transition-colors"
+            >
+              <Plus size={18} strokeWidth={3} strokeLinecap="square" />
+            </button>
+          </div>
+
+          {hasPieceUnit && (
+            <div
+              role="group"
+              aria-label="Jednostka"
+              className="grid grid-cols-2 border-2 border-ink"
+            >
               <button
                 type="button"
                 onClick={() => selectUnit("g")}
-                className={`px-2.5 py-1 text-xs font-semibold transition-colors ${
-                  unit === "g"
-                    ? "bg-dash-green-mid text-white"
-                    : "bg-transparent text-dash-fg-muted"
+                aria-pressed={unit === "g"}
+                className={`min-h-10 text-sm font-bold uppercase cursor-pointer ${
+                  unit === "g" ? "bg-ink text-paper" : ""
                 }`}
               >
-                g
+                Gramy
               </button>
               <button
                 type="button"
                 onClick={() => selectUnit("piece")}
-                className={`px-2.5 py-1 text-xs font-semibold transition-colors ${
-                  unit === "piece"
-                    ? "bg-dash-green-mid text-white"
-                    : "bg-transparent text-dash-fg-muted"
+                aria-pressed={unit === "piece"}
+                className={`min-h-10 text-sm font-bold uppercase border-l border-ink cursor-pointer ${
+                  unit === "piece" ? "bg-ink text-paper" : ""
                 }`}
               >
-                szt.
+                Sztuki
               </button>
             </div>
-          ) : (
-            <span className="text-dash-fg-muted text-xs">g</span>
           )}
 
-          <span className="text-macro-carbs text-xs font-mono font-bold">
-            {unit === "piece" && `(${grams}g) `}={" "}
-            {((grams / 100) * product.calories).toFixed(0)} kcal
-          </span>
-
           <button
+            type="button"
             onClick={handleAdd}
-            disabled={adding}
-            className="ml-auto bg-green-600 hover:bg-green-700 disabled:opacity-60 text-white text-sm font-semibold px-4 py-1.5 rounded-lg transition-colors"
+            disabled={adding || quantity <= 0}
+            className="flex items-center justify-between min-h-14 px-4 bg-accent text-white font-extrabold uppercase tracking-wide hover:bg-accent-hover transition-colors disabled:opacity-60 cursor-pointer"
           >
-            {adding ? "Dodaję..." : "Dodaj"}
+            <span>{adding ? "Dodaję…" : "Dodaj do dziennika"}</span>
+            <span className="font-mono font-semibold">
+              {portion.calories.toFixed(0)} kcal
+            </span>
           </button>
         </div>
       )}
     </div>
   );
 };
+
+type PortionRowProps = {
+  label: string;
+  grams: number;
+  goal: number;
+  isLast?: boolean;
+};
+
+function PortionRow({ label, grams, goal, isLast = false }: PortionRowProps) {
+  return (
+    <div
+      className={`grid grid-cols-[minmax(0,1fr)_72px_56px] py-1 text-sm ${
+        isLast ? "" : "border-b border-ink"
+      }`}
+    >
+      <span className="font-extrabold">{label}</span>
+      <span className="font-mono text-right">{formatAmount(grams)} g</span>
+      <span className="font-mono text-right font-semibold">
+        {goal > 0 ? `${Math.round((grams / goal) * 100)}%` : "—"}
+      </span>
+    </div>
+  );
+}

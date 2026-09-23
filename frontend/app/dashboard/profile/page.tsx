@@ -4,40 +4,14 @@ import { AvatarCard } from "@/app/_components/profile/AvatarCard";
 import { MacroGoals } from "@/app/_components/profile/MacroGoals";
 import { MacroCalculator } from "@/app/_components/shared/MacroCalculator";
 import { useUserStore } from "@/store/useUserStore";
-
-const stats = [
-  {
-    value: "1400",
-    label: "kcal today",
-    colorClass: "text-macro-calories",
-    bg: "bg-dash-surface-alt",
-  },
-  {
-    value: "7",
-    label: "day streak",
-    colorClass: "text-macro-carbs",
-    bg: "bg-dash-surface",
-  },
-  {
-    value: "142",
-    label: "meals logged",
-    colorClass: "text-macro-protein",
-    bg: "bg-dash-surface-alt",
-  },
-  {
-    value: "3.2",
-    label: "kg lost",
-    colorClass: "text-dash-green",
-    bg: "bg-dash-surface",
-  },
-];
+import { PageHeader, pageClass } from "@/app/_components/ui/PageHeader";
 
 export default function Profile() {
   const user = useUserStore((s) => s.user);
   const setUserGoals = useUserStore((s) => s.setUserGoals);
 
   if (!user) {
-    return <div className="text-dash-fg-muted font-sans p-6">Ładowanie...</div>;
+    return <p className="font-mono text-sm p-6">Ładowanie…</p>;
   }
 
   const { username, email, imageUrl } = user;
@@ -50,57 +24,26 @@ export default function Profile() {
     };
 
   return (
-    <div className="px-4 py-6 max-w-6xl mx-auto flex flex-col gap-6 font-sans">
-      {/* Header */}
-      <div>
-        <h1 className="text-xl font-bold text-dash-fg">Profil</h1>
-        <p className="text-sm text-dash-fg-muted">Zarządzaj kontem i celami</p>
-      </div>
+    <div className={pageClass()}>
+      <PageHeader title="Profil" eyebrow="Konto i cele" />
 
       <div className="flex flex-col lg:flex-row gap-6 items-start">
-        {/* Lewa kolumna — avatar + stats */}
-        <div className="flex flex-col gap-4 w-full lg:w-72 shrink-0">
-          <div className="bg-dash-surface border border-dash-border rounded-2xl">
-            <AvatarCard
-              name={username}
-              email={email}
-              imageUrl={imageUrl ?? undefined}
-            />
-          </div>
-
-          <div>
-            <h2 className="text-sm font-semibold text-dash-fg-secondary mb-3 font-sans">
-              Quick Stats
-            </h2>
-            <div className="grid grid-cols-2 gap-3">
-              {stats.map((stat) => (
-                <div
-                  key={stat.label}
-                  className={`${stat.bg} border border-dash-border rounded-2xl p-4`}
-                >
-                  <p
-                    className={`text-2xl font-bold font-mono ${stat.colorClass}`}
-                  >
-                    {stat.value}
-                  </p>
-                  <p className="text-xs text-dash-fg-muted mt-0.5 font-sans">
-                    {stat.label}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="w-full lg:w-72 shrink-0 border-2 border-ink bg-card">
+          <AvatarCard
+            name={username}
+            email={email}
+            imageUrl={imageUrl ?? undefined}
+          />
         </div>
 
-        {/* Prawa kolumna — kalkulator + cele */}
-        <div className="flex flex-col gap-4 flex-1 w-full">
-          <MacroCalculator onSuccess={setUserGoals} />
+        <div className="flex flex-col gap-6 flex-1 w-full">
           <MacroGoals
             dailyCaloriesGoal={dailyCaloriesGoal}
             dailyProteinGoal={dailyProteinGoal}
             dailyCarbsGoal={dailyCarbsGoal}
             dailyFatGoal={dailyFatGoal}
           />
+          <MacroCalculator onSuccess={setUserGoals} />
         </div>
       </div>
     </div>

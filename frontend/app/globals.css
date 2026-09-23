@@ -1,130 +1,102 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0f1a10;
-  --foreground: #f3f7ff;
+  /* Nutrition-label palette: paper, ink and a single accent */
+  --background: #f6f4ee;
+  --foreground: #111111;
 }
 
 html {
   background: var(--background);
+  color: var(--foreground);
 }
 
 @theme inline {
-  --font-sans: var(--font-jakarta);
+  --font-sans: var(--font-archivo);
   --font-mono: var(--font-ibm-plex-mono);
-  --font-newsreader: var(--font-newsreader);
+
+  /* Sharp corners everywhere — the label look has no rounding.
+     rounded-full is not affected (avatars, dots). */
+  --radius-xs: 0;
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+  --radius-2xl: 0;
+  --radius-3xl: 0;
+  --radius-4xl: 0;
 
   --animate-fade-in-up: fadeInUp 0.6s ease-out both;
   --animate-fade-in-right: fadeInRight 0.7s ease-out both;
   --animate-float: float 4s ease-in-out infinite;
   --animate-scale-in: scaleIn 0.5s ease-out both;
 
-  /* Brand (landing page) */
-  --color-brand-primary: #ff6b6b;
-  --color-brand-secondary: #6366f1;
-  --color-surface-muted: #f6f7f8;
-  --color-text-primary: #1a1a1a;
-  --color-text-secondary: #6b7280;
-  --color-text-muted: #9ca3af;
-
-  /* Dashboard */
-  --color-dash-surface: #162218;
-  --color-dash-surface-alt: #1a2b1f;
-  --color-dash-border: #1e3322;
-  --color-dash-fg: #f3f7ff;
-  --color-dash-fg-secondary: #94a3b8;
-  --color-dash-fg-muted: #8fa0b8;
-  --color-dash-green: #4ade80;
-  --color-dash-green-mid: #22c55e;
-
-  /* Macros — kolory zgodne z designem */
-  --color-macro-protein: #7db5ff;
-  --color-macro-carbs: #f4c65d;
-  --color-macro-fat: #f18fa3;
-  --color-macro-calories: #4ade80;
-  --color-macro-track: #162e1c;
-
-  /* Dashboard — rozszerzony zestaw */
-  --color-dash-surface-card: #1a2420;
-  --color-dash-surface-darker: #111c14;
-  --color-dash-logo-bg: #111827;
-  --color-dash-badge-bg: #1a2e1a;
-  --color-dash-fg-bright: #d6dfec;
-  --color-dash-fg-dim: #9fb0c7;
-  --color-dash-fg-subtle: #8d9db4;
-  --color-dash-placeholder: #334155;
-  --color-dash-check-border: #2e4a35;
-  --color-dash-check-mark: #0f1f13;
-  --color-dash-eaten-line: #3d5a45;
-  --color-dash-input-placeholder: #3d5240;
-  --color-dash-nav-arrow: #cdd6e4;
-  --color-dash-nav-text: #eef2fa;
-  --color-dash-nav-inactive: #afc0d8;
-  --color-dash-svg-inactive: #4a5a4a;
-
-  /* Landing */
-  --color-landing-dark: #0d1a0e;
-
-  /* Chart */
-  --color-chart-tick: #4b5563;
-
-  /* Forms */
-  --color-form-error: #fca5a5;
-  --color-form-error-bg: rgba(239, 68, 68, 0.1);
-  --color-form-error-border: rgba(239, 68, 68, 0.25);
-
-  /* Utility */
+  /* Core tokens */
+  --color-paper: #f6f4ee;
+  --color-card: #ffffff;
+  --color-ink: #111111;
+  --color-ink-soft: #4a463f;
+  --color-ink-muted: #6b675e;
+  --color-ink-tint: #1111110f;
+  --color-rule-soft: #d8d4c8;
+  --color-accent: #c8321f;
+  --color-accent-hover: #a82614;
+  --color-accent-tint: #fbe9e5;
   --color-white: #ffffff;
-  --color-green-mid-alpha: #22c55e30;
-  --color-green-mid-alpha-sm: #22c55e20;
-  --color-green-mid-alpha-md: #22c55e40;
-  --color-green-mid-border: rgba(34, 197, 94, 0.25);
-  --color-dash-card-unselected: #131e15;
-  --color-dash-icon-bg: #1a2820;
 
-  /* Shadows & gradients */
-  --shadow-dash-card: 0 1px 20px rgba(34, 197, 94, 0.09);
-  --shadow-check-eaten: 0 0 8px #22c55e55;
-  --shadow-green-logo: 0 4px 20px rgba(34, 197, 94, 0.3);
-  --shadow-green-nav: 0 2px 10px rgba(34, 197, 94, 0.25);
-  --shadow-green-cta: 0 2px 10px rgba(34, 197, 94, 0.35);
-  --shadow-green-cta-lg: 0 4px 20px rgba(34, 197, 94, 0.35);
-  --shadow-green-step: 0 8px 24px rgba(34, 197, 94, 0.3);
-  --shadow-mockup:
-    0 24px 60px rgba(0, 0, 0, 0.4), 0 0 60px rgba(34, 197, 94, 0.06);
-  --gradient-calories: linear-gradient(90deg, #15803d 0%, #4ade80 100%);
-  --gradient-green-logo: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
-  --gradient-green-button: linear-gradient(180deg, #16a34a 0%, #15803d 100%);
-  --gradient-cta: linear-gradient(135deg, #162218 0%, #0f1a10 100%);
+  /* Macros — dark, print-like hues that still tell series apart in charts */
+  --color-macro-protein: #111111;
+  --color-macro-carbs: #8a6414;
+  --color-macro-fat: #2848a8;
+  --color-macro-calories: var(--color-ink);
+  --color-macro-track: var(--color-rule-soft);
+
+  /* Hard offset shadow — the only shadow in the system */
+  --shadow-hard: 6px 6px 0 var(--color-ink);
 
   /* Toast */
   --color-toast-bg: #ffffff;
-  --color-toast-text: #1a1a1a;
-  --color-toast-success-border: #d1fae5;
-  --color-toast-success-bg: #f0fff4;
-  --color-toast-error: #ef4444;
-  --color-toast-error-border: #fecaca;
-  --color-toast-error-bg: #fef2f2;
-  --color-toast-info: #6b7bff;
-  --color-toast-info-border: #c7d2fe;
-  --color-toast-info-bg: #eef2ff;
-  --shadow-toast-success: 0 4px 20px #22c55e22, 0 1px 3px #0000001a;
-  --shadow-toast-error: 0 4px 20px #ef444422, 0 1px 3px #0000001a;
-  --shadow-toast-info: 0 4px 20px #6b7bff22, 0 1px 3px #0000001a;
+  --color-toast-text: var(--color-ink);
+  --color-toast-success-border: var(--color-ink);
+  --color-toast-success-bg: #ffffff;
+  --color-toast-error: var(--color-accent);
+  --color-toast-error-border: var(--color-accent);
+  --color-toast-error-bg: #ffffff;
+  --color-toast-info: var(--color-ink);
+  --color-toast-info-border: var(--color-ink);
+  --color-toast-info-bg: #ffffff;
+  --shadow-toast-success: 4px 4px 0 #111111;
+  --shadow-toast-error: 4px 4px 0 #c8321f;
+  --shadow-toast-info: 4px 4px 0 #111111;
 }
 
-@layer utilities {
-  .bg-gradient-green {
-    background: linear-gradient(180deg, #16a34a 0%, #15803d 100%);
-  }
-  .shadow-green-glow {
-    box-shadow: 0 2px 10px rgba(34, 197, 94, 0.25);
-  }
-  .ring-avatar-green {
-    box-shadow:
-      0 0 0 3px #1e3322,
-      0 4px 16px rgba(34, 197, 94, 0.3);
-  }
+/* Heavy rules from a nutrition-facts label.
+   @utility (not @layer) so Tailwind sorts them and arbitrary values can override. */
+@utility rule-thick {
+  height: 10px;
+  background: var(--color-ink);
+}
+@utility rule-medium {
+  height: 5px;
+  background: var(--color-ink);
+}
+/* Narrow, heavy display type */
+@utility font-display {
+  font-family: var(--font-archivo);
+  font-weight: 900;
+  font-stretch: 70%;
+  line-height: 0.95;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-archivo), system-ui, sans-serif;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 @keyframes fadeInUp {
@@ -173,7 +145,7 @@ html {
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0px 1000px #162218 inset !important;
-  -webkit-text-fill-color: #f3f7ff !important;
-  caret-color: #f3f7ff;
+  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #111111 !important;
+  caret-color: #111111;
 }

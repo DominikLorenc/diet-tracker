@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Plus, Search, Star } from "lucide-react";
 import Link from "next/link";
 import { apiClient } from "@/app/lib/apiClient";
 import { useToastStore } from "@/store/useToastStore";
@@ -174,7 +175,7 @@ export const RecipeSearch = ({ mealType, date }: Props) => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="w-6 h-6 border-2 border-dash-green-mid border-t-transparent rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-ink border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -197,72 +198,51 @@ export const RecipeSearch = ({ mealType, date }: Props) => {
   });
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-7">
       {/* ── WYSZUKIWARKA ── */}
-      <div className="relative">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          width={15}
-          height={15}
-          fill="none"
-          stroke="var(--color-dash-svg-inactive)"
-          strokeWidth={2}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-        >
-          <circle cx="11" cy="11" r="8" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
+      <label className="flex items-center gap-2 h-[52px] px-3 border-2 border-ink bg-card focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent">
+        <Search
+          size={18}
+          strokeWidth={2.5}
+          strokeLinecap="square"
+          aria-hidden="true"
+        />
+        <span className="sr-only">Szukaj przepisów</span>
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Szukaj przepisów..."
-          className="w-full bg-dash-surface-darker border border-dash-border rounded-xl pl-9 pr-4 py-2.5 text-sm text-dash-fg placeholder:text-dash-svg-inactive focus:outline-none focus:border-dash-green-mid transition-colors"
+          placeholder="Szukaj przepisów…"
+          className="flex-1 min-w-0 bg-transparent text-base font-semibold text-ink placeholder:text-ink-muted placeholder:font-normal outline-none"
         />
-      </div>
+      </label>
       {/* ── MOJE PRZEPISY ── */}
-      <section className="bg-dash-surface-darker rounded-xl border border-dash-border p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-dash-green font-mono text-xs font-bold tracking-widest uppercase">
+      <section aria-labelledby="my-recipes-heading">
+        <div className="flex items-baseline justify-between border-b-[5px] border-ink pb-0.5">
+          <h2
+            id="my-recipes-heading"
+            className="font-display text-[26px] uppercase"
+          >
             Moje przepisy
           </h2>
           <Link
             href={`/dashboard/recipe-builder?mealType=${mealType}&date=${date}`}
-            className="flex items-center gap-1 text-xs text-dash-green hover:text-white transition-colors font-semibold"
+            className="flex items-center gap-1 min-h-9 text-xs font-extrabold uppercase text-accent hover:text-accent-hover"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              width={12}
-              height={12}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2.5}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
+            <Plus size={14} strokeWidth={3} strokeLinecap="square" />
             Nowy przepis
           </Link>
         </div>
 
         {userRecipes.length === 0 ? (
-          <p className="text-dash-fg-muted text-sm text-center py-4">
-            Nie masz jeszcze swoich przepisów.
-            <br />
-            <span className="text-dash-svg-inactive">
-              Stwórz nowy lub skopiuj globalny.
-            </span>
+          <p className="mt-3 py-5 px-4 border-2 border-dashed border-ink text-sm">
+            <strong className="font-extrabold uppercase">
+              Nie masz jeszcze swoich przepisów.
+            </strong>{" "}
+            Stwórz nowy albo skopiuj któryś z globalnych.
           </p>
         ) : filteredUserRecipes.length === 0 ? (
-          <p className="text-dash-svg-inactive text-sm text-center py-4">
-            Brak wyników.
-          </p>
+          <p className="py-4 font-mono text-sm">Brak wyników.</p>
         ) : (
           filteredUserRecipes.map((recipe) => (
             <UserRecipeCard
@@ -279,41 +259,31 @@ export const RecipeSearch = ({ mealType, date }: Props) => {
       {/* ── PRZEPISY GLOBALNE ── */}
       {(query.trim().length > 0 || onlyFavorites) &&
         globalRecipes.length > 0 && (
-          <section className="bg-dash-surface-darker rounded-xl border border-dash-border p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-dash-green font-mono text-xs font-bold tracking-widest uppercase">
+          <section aria-labelledby="global-recipes-heading">
+            <div className="flex items-baseline justify-between border-b-[5px] border-ink pb-0.5">
+              <h2
+                id="global-recipes-heading"
+                className="font-display text-[26px] uppercase"
+              >
                 Przepisy globalne
               </h2>
               <button
                 onClick={() => setOnlyFavorites((v) => !v)}
-                className={`flex items-center gap-1.5 text-xs font-semibold transition-colors ${
-                  onlyFavorites
-                    ? "text-dash-green-mid"
-                    : "text-dash-svg-inactive hover:text-dash-fg-muted"
+                aria-pressed={onlyFavorites}
+                className={`flex items-center gap-1.5 min-h-9 text-xs font-extrabold uppercase cursor-pointer ${
+                  onlyFavorites ? "text-ink" : "text-ink-muted hover:text-ink"
                 }`}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  width={13}
-                  height={13}
-                  fill={onlyFavorites ? "var(--color-dash-green-mid)" : "none"}
-                  stroke={
-                    onlyFavorites
-                      ? "var(--color-dash-green-mid)"
-                      : "var(--color-dash-svg-inactive)"
-                  }
+                <Star
+                  size={14}
                   strokeWidth={2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                </svg>
-                Ulubione
+                  fill={onlyFavorites ? "currentColor" : "none"}
+                />
+                Tylko ulubione
               </button>
             </div>
             {filteredGlobalRecipes.length === 0 ? (
-              <p className="text-dash-svg-inactive text-sm text-center py-4">
+              <p className="py-4 font-mono text-sm">
                 {onlyFavorites ? "Brak ulubionych przepisów." : "Brak wyników."}
               </p>
             ) : (

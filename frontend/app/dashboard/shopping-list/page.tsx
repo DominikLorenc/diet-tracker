@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Card } from "@/app/_components/ui/Card";
+import { Download } from "lucide-react";
+import { PageHeader, pageClass } from "@/app/_components/ui/PageHeader";
 import { Button } from "@/app/_components/ui/Button";
 import { apiClient } from "@/app/lib/apiClient";
 import jsPDF from "jspdf";
@@ -190,15 +191,15 @@ export default function ShoppingListPage() {
     const rows = sections
       .map(
         (section) => `
-        <h3 style="margin:20px 0 4px;font-size:11px;font-weight:bold;color:#6b7280;text-transform:uppercase;letter-spacing:0.08em;">
+        <h3 style="margin:20px 0 4px;font-size:11px;font-weight:bold;color:#6b675e;text-transform:uppercase;letter-spacing:0.08em;">
           ${CATEGORY_LABELS[section.category]}
         </h3>
         ${section.items
           .map(
             (item) => `
-        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e5e7eb;font-size:14px;">
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #111111;font-size:14px;">
           <span>${item.name}</span>
-          <span style="color:#6b7280;margin-left:16px;">${item.grams} g</span>
+          <span style="color:#6b675e;margin-left:16px;">${item.grams} g</span>
         </div>`,
           )
           .join("")}`,
@@ -210,7 +211,7 @@ export default function ShoppingListPage() {
       "font-family:Arial,sans-serif;padding:32px;color:#111;width:700px;position:fixed;top:-9999px;left:-9999px;background:white;";
     el.innerHTML = `
       <h2 style="margin:0 0 4px;font-size:22px;">Lista zakupów</h2>
-      <p style="margin:0 0 24px;color:#6b7280;font-size:13px;">${from} — ${to}</p>
+      <p style="margin:0 0 24px;color:#6b675e;font-size:13px;">${from} — ${to}</p>
       ${rows}
     `;
     document.body.appendChild(el);
@@ -229,153 +230,145 @@ export default function ShoppingListPage() {
     doc.save(`lista-zakupow-${from}-${to}.pdf`);
   }
 
+  const dateInputClass =
+    "h-12 px-3 border-2 border-ink bg-card font-mono text-[15px] text-ink focus:outline-2 focus:outline-offset-2 focus:outline-accent";
+
   return (
-    <main className="min-h-screen bg-[var(--background)] p-6 md:p-10">
-      <div className="max-w-2xl mx-auto flex flex-col gap-6">
-        {/* Header */}
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-green shadow-green-glow flex items-center justify-center text-lg">
-            🛒
-          </div>
-          <div>
-            <h1 className="text-dash-fg font-sans font-bold text-xl leading-tight">
-              Lista zakupów
-            </h1>
-            <p className="text-dash-fg-muted text-sm font-sans">
-              Generuj z planu posiłków
-            </p>
-          </div>
+    <div className={pageClass("narrow")}>
+      <PageHeader title="Lista zakupów" eyebrow="Z planu posiłków" />
+
+      {/* Krok 1 — wybór dat */}
+      <section
+        aria-label="Zakres dat"
+        className="border-2 border-ink bg-card px-3 pt-1.5 pb-3 flex flex-col gap-3"
+      >
+        <h2 className="font-display text-[30px] leading-none">Zakres dat</h2>
+        <div className="rule-thick" />
+        <div className="grid grid-cols-2 gap-3">
+          <label className="flex flex-col gap-1">
+            <span className="text-[13px] font-extrabold uppercase">Od</span>
+            <input
+              type="date"
+              value={from}
+              onChange={(e) => setFrom(e.target.value)}
+              className={dateInputClass}
+            />
+          </label>
+          <label className="flex flex-col gap-1">
+            <span className="text-[13px] font-extrabold uppercase">Do</span>
+            <input
+              type="date"
+              value={to}
+              onChange={(e) => setTo(e.target.value)}
+              aria-invalid={isDateRangeInvalid}
+              className={dateInputClass}
+            />
+          </label>
         </div>
-
-        {/* Krok 1 — wybór dat */}
-        <Card>
-          <p className="text-dash-fg-secondary text-xs font-sans font-semibold uppercase tracking-widest">
-            Zakres dat
+        {isDateRangeInvalid && (
+          <p role="alert" className="font-mono text-xs text-accent">
+            Data „Od” musi być wcześniejsza niż data „Do”.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <label className="flex flex-col gap-1.5 flex-1">
-              <span className="text-dash-fg-muted text-xs font-sans">Od</span>
-              <input
-                type="date"
-                value={from}
-                onChange={(e) => setFrom(e.target.value)}
-                className="bg-[var(--background)] border border-dash-border rounded-xl px-4 py-2.5 text-dash-fg text-sm font-sans focus:outline-none focus:border-dash-green transition-colors"
-              />
-            </label>
-            <label className="flex flex-col gap-1.5 flex-1">
-              <span className="text-dash-fg-muted text-xs font-sans">Do</span>
-              <input
-                type="date"
-                value={to}
-                onChange={(e) => setTo(e.target.value)}
-                className="bg-[var(--background)] border border-dash-border rounded-xl px-4 py-2.5 text-dash-fg text-sm font-sans focus:outline-none focus:border-dash-green transition-colors"
-              />
-            </label>
-          </div>
-          <Button
-            onClick={handleGenerate}
-            isLoading={isLoading}
-            className="w-full mt-1"
-            disabled={isDateRangeInvalid}
-          >
-            Generuj listę
-          </Button>
-          {progress && (
-            <p className="text-dash-fg-muted text-xs font-sans text-center">
-              Pobieranie {progress.current} z {progress.total} dni...
-            </p>
-          )}
-          {isDateRangeInvalid && (
-            <p className="text-red-400 text-sm">
-              Data &apos;Od&apos; musi być wcześniejsza niż data &apos;Do&apos;
-            </p>
-          )}
-        </Card>
+        )}
+        <Button
+          onClick={handleGenerate}
+          isLoading={isLoading}
+          className="w-full"
+          disabled={isDateRangeInvalid}
+        >
+          Generuj listę
+        </Button>
+        {progress && (
+          <p role="status" className="font-mono text-xs">
+            Pobieranie {progress.current} z {progress.total} dni…
+          </p>
+        )}
+      </section>
 
-        {/* Krok 2 — lista zakupów */}
-        {items !== null && (
-          <Card className="gap-0">
-            {/* Nagłówek listy */}
-            <div className="flex items-center justify-between pb-4 border-b border-dash-border">
-              <p className="text-dash-fg font-sans font-semibold text-sm">
-                {visibleItems.length} pozycji
-              </p>
-              <div className="flex items-center gap-3">
-                {removed.size > 0 && (
-                  <button
-                    onClick={handleReset}
-                    className="text-dash-fg-muted text-xs font-sans hover:text-dash-green transition-colors cursor-pointer"
-                  >
-                    ↺ Resetuj ({removed.size})
-                  </button>
-                )}
-                {visibleItems.length > 0 && (
-                  <button
-                    onClick={handleExportPDF}
-                    className="text-xs font-sans text-dash-fg-muted border border-dash-border rounded-lg px-3 py-1 hover:border-dash-green hover:text-dash-green transition-colors cursor-pointer"
-                  >
-                    ↓ PDF
-                  </button>
-                )}
-              </div>
+      {/* Krok 2 — lista zakupów */}
+      {items !== null && (
+        <section aria-labelledby="shopping-list-heading">
+          <div className="flex items-center justify-between gap-3 border-b-[5px] border-ink pb-1">
+            <h2
+              id="shopping-list-heading"
+              className="font-display text-[26px] uppercase"
+            >
+              Do kupienia
+              <span className="font-mono text-sm font-semibold normal-case ml-2">
+                {visibleItems.length}
+              </span>
+            </h2>
+            <div className="flex items-center gap-2">
+              {removed.size > 0 && (
+                <button
+                  onClick={handleReset}
+                  className="min-h-9 px-2 text-xs font-extrabold uppercase underline underline-offset-4 hover:text-accent cursor-pointer"
+                >
+                  Przywróć ({removed.size})
+                </button>
+              )}
+              {visibleItems.length > 0 && (
+                <button
+                  onClick={handleExportPDF}
+                  className="flex items-center gap-1.5 min-h-9 px-3 border-2 border-ink text-xs font-extrabold uppercase hover:bg-ink hover:text-paper transition-colors cursor-pointer"
+                >
+                  <Download size={14} strokeWidth={2.5} />
+                  PDF
+                </button>
+              )}
             </div>
-
-            {/* Pozycje */}
-            {visibleItems.length === 0 ? (
-              <p className="py-8 text-center text-dash-fg-muted text-sm font-sans">
-                Wszystko masz już w domu 🎉
-              </p>
-            ) : (
-              sections.map((section) => (
-                <section key={section.category} className="pt-4">
-                  <h2 className="text-dash-fg-secondary text-xs font-sans font-semibold uppercase tracking-widest pb-2">
-                    {CATEGORY_LABELS[section.category]}
-                    <span className="text-dash-fg-muted ml-2 normal-case tracking-normal font-normal">
-                      {section.items.length}
-                    </span>
-                  </h2>
-                  <ul className="flex flex-col divide-y divide-dash-border">
-                    {section.items.map((item) => (
-                      <li
-                        key={item.name}
-                        className="flex items-center justify-between py-3 gap-4"
-                      >
-                        <div className="flex items-center gap-3 min-w-0">
-                          <span className="w-1.5 h-1.5 rounded-full bg-dash-green shrink-0" />
-                          <span className="text-dash-fg font-sans text-sm truncate">
-                            {item.name}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-3 shrink-0">
-                          <span className="text-dash-fg-muted font-sans text-sm tabular-nums">
-                            {item.grams} g
-                          </span>
-                          <button
-                            onClick={() => handleRemove(item.name)}
-                            className="text-xs font-sans text-dash-fg-muted border border-dash-border rounded-lg px-3 py-1 hover:border-dash-green hover:text-dash-green transition-colors cursor-pointer"
-                          >
-                            Mam już
-                          </button>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              ))
-            )}
-          </Card>
-        )}
-
-        {/* Empty state — przed wygenerowaniem */}
-        {items === null && !isLoading && (
-          <div className="flex flex-col items-center gap-3 py-12 text-center">
-            <span className="text-4xl">📋</span>
-            <p className="text-dash-fg-muted font-sans text-sm">
-              Wybierz zakres dat i wygeneruj listę zakupów
-            </p>
           </div>
-        )}
-      </div>
-    </main>
+
+          {visibleItems.length === 0 ? (
+            <p className="mt-3 py-6 px-4 border-2 border-dashed border-ink text-sm font-extrabold uppercase">
+              Wszystko masz już w domu.
+            </p>
+          ) : (
+            sections.map((section) => (
+              <div key={section.category} className="pt-4">
+                <h3 className="flex items-baseline justify-between text-xs font-extrabold uppercase border-b-2 border-ink pb-1">
+                  {CATEGORY_LABELS[section.category]}
+                  <span className="font-mono font-medium">
+                    {section.items.length}
+                  </span>
+                </h3>
+                <ul>
+                  {section.items.map((item) => (
+                    <li
+                      key={item.name}
+                      className="flex items-center justify-between gap-3 min-h-12 border-b border-ink"
+                    >
+                      <span className="text-[15px] font-bold truncate">
+                        {item.name}
+                      </span>
+                      <span className="flex items-center gap-2 shrink-0">
+                        <span className="font-mono text-sm tabular-nums">
+                          {item.grams} g
+                        </span>
+                        <button
+                          onClick={() => handleRemove(item.name)}
+                          aria-label={`Mam już: ${item.name}`}
+                          className="min-h-9 px-2.5 border-2 border-ink text-xs font-extrabold uppercase hover:bg-ink hover:text-paper transition-colors cursor-pointer"
+                        >
+                          Mam już
+                        </button>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          )}
+        </section>
+      )}
+
+      {/* Empty state — przed wygenerowaniem */}
+      {items === null && !isLoading && (
+        <p className="py-6 px-4 border-2 border-dashed border-ink text-sm">
+          <strong className="font-extrabold uppercase">Pusto.</strong> Wybierz
+          zakres dat i wygeneruj listę z posiłków zapisanych w dzienniku.
+        </p>
+      )}
+    </div>
   );
 }

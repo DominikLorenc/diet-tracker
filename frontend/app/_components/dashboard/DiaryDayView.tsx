@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { formatAmount, pluralPl } from "@/utils/format";
 import { DateNavigator } from "./DateNavigator";
 import { MacroSummary } from "./MacroSummary";
 import Link from "next/link";
-import Image from "next/image";
 import { useToastStore } from "@/store/useToastStore";
 import { apiClient } from "@/app/lib/apiClient";
-import { useUserStore } from "@/store/useUserStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Check, ChevronDown, Plus, X } from "lucide-react";
 
 export type MealType = "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
 
@@ -115,12 +115,29 @@ export type DiaryEntriesResponse = DiaryEntry[];
 
 const MEAL_TYPES: MealType[] = ["BREAKFAST", "LUNCH", "DINNER", "SNACK"];
 
-const MEAL_CONFIG: Record<MealType, { label: string; emoji: string }> = {
-  BREAKFAST: { label: "ŚNIADANIE", emoji: "🌅" },
-  LUNCH: { label: "OBIAD", emoji: "☀️" },
-  DINNER: { label: "KOLACJA", emoji: "🌙" },
-  SNACK: { label: "PRZEKĄSKA", emoji: "🍎" },
+const MEAL_CONFIG: Record<
+  MealType,
+  { label: string; addTo: string; addEmpty: string }
+> = {
+  BREAKFAST: {
+    label: "Śniadanie",
+    addTo: "Dodaj do śniadania",
+    addEmpty: "Dodaj śniadanie",
+  },
+  LUNCH: { label: "Obiad", addTo: "Dodaj do obiadu", addEmpty: "Dodaj obiad" },
+  DINNER: {
+    label: "Kolacja",
+    addTo: "Dodaj do kolacji",
+    addEmpty: "Dodaj kolację",
+  },
+  SNACK: {
+    label: "Przekąska",
+    addTo: "Dodaj do przekąski",
+    addEmpty: "Dodaj przekąskę",
+  },
 };
+
+const ITEM_FORMS = { one: "pozycja", few: "pozycje", many: "pozycji" };
 
 const OPEN_MEALS_STORAGE_KEY = "diary-open-meals";
 
@@ -132,17 +149,9 @@ export const DiaryDayView = () => {
   const [openMeals, setOpenMeals] = useState<Set<MealType>>(
     () => new Set(MEAL_TYPES),
   );
-  const user = useUserStore((state) => state.user);
   const queryClient = useQueryClient();
 
   const showToast = useToastStore((state) => state.showToast);
-
-  const today = new Date().toLocaleDateString("pl-PL", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
 
   const dateParam = date.toISOString().split("T")[0];
 
@@ -246,262 +255,195 @@ export const DiaryDayView = () => {
   });
 
   return (
-    <div
-      className="flex flex-col gap-4 p-5 sm:p-7 min-h-full"
-      style={{ fontFamily: "var(--font-jakarta)" }}
-    >
-      <div className="flex flex-col gap-1">
-        <p
-          className="text-sm font-medium capitalize"
-          style={{ color: "var(--color-dash-fg-muted)" }}
-        >
-          {today}
-        </p>
-        <h1
-          className="text-[42px] sm:text-[56px] font-bold leading-tight"
-          style={{
-            color: "var(--color-dash-fg)",
-            fontFamily: "var(--font-newsreader)",
-          }}
-        >
-          Cześć, {user?.username ?? "…"}
-        </h1>
-      </div>
-
-      <MacroSummary items={allItems.filter((item) => item.isEaten)} />
-
-      <DateNavigator date={date} onDateChange={setDate} />
+    <div className="flex flex-col gap-5 px-4 pt-5 pb-8 sm:px-8 sm:pt-6 max-w-[1280px]">
+      <DateNavigator title="Dziennik" date={date} onDateChange={setDate} />
 
       {queryError && (
-        <p className="text-sm px-1" style={{ color: "var(--color-macro-fat)" }}>
+        <p role="alert" className="font-mono text-sm text-accent">
           {queryError.message}
         </p>
       )}
 
-      <div className="flex flex-col gap-3 pb-4">
-        {MEAL_TYPES.map((mealType) => {
-          const items = allItems.filter((item) => item.mealType === mealType);
-          const mealKcal = items.reduce(
-            (sum, item) => sum + getItemMacros(item).calories,
-            0,
-          );
-          const config = MEAL_CONFIG[mealType];
-          const isOpen = openMeals.has(mealType);
+      <div className="grid gap-6 lg:gap-8 lg:grid-cols-[minmax(0,1fr)_380px] items-start">
+        <div className="lg:order-2 lg:sticky lg:top-6">
+          <MacroSummary items={allItems.filter((item) => item.isEaten)} />
+        </div>
 
-          return (
-            <div
-              key={mealType}
-              className="rounded-xl overflow-hidden"
-              style={{
-                background: "var(--color-dash-surface)",
-                border: "1px solid var(--color-dash-border)",
-              }}
-            >
-              <div
-                role="button"
-                tabIndex={0}
-                onClick={() => toggleMeal(mealType)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    toggleMeal(mealType);
-                  }
-                }}
-                className="flex items-center justify-between px-4 h-[46px] cursor-pointer select-none"
-                style={{
-                  borderBottom:
-                    isOpen && items.length > 0
-                      ? "1px solid var(--color-dash-border)"
-                      : "none",
-                }}
-              >
-                <div className="flex items-center gap-2">
-                  <svg
-                    width="10"
-                    height="10"
-                    viewBox="0 0 10 10"
-                    fill="none"
-                    className="shrink-0 transition-transform duration-300"
-                    style={{
-                      transform: isOpen ? "rotate(90deg)" : "rotate(0deg)",
-                    }}
-                  >
-                    <path
-                      d="M2 1L8 5L2 9"
-                      stroke="var(--color-dash-fg-muted)"
-                      strokeWidth="1.6"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  <span
-                    className="text-sm font-bold tracking-wider"
-                    style={{
-                      color: "var(--color-dash-fg-bright)",
-                      fontFamily: "var(--font-ibm-plex-mono)",
-                      letterSpacing: "0.08em",
-                    }}
+        <div
+          className={`grid gap-7 xl:grid-cols-2 xl:gap-x-6 content-start transition-opacity ${
+            isLoading ? "opacity-50" : ""
+          }`}
+        >
+          {MEAL_TYPES.map((mealType) => {
+            const items = allItems.filter((item) => item.mealType === mealType);
+            const mealKcal = items.reduce(
+              (sum, item) => sum + getItemMacros(item).calories,
+              0,
+            );
+            const eatenCount = items.filter((item) => item.isEaten).length;
+            const config = MEAL_CONFIG[mealType];
+            const isOpen = openMeals.has(mealType);
+            const addHref = `/dashboard/add?mealType=${mealType}&date=${dateParam}`;
+            const headingId = `meal-${mealType}`;
+            const listId = `meal-list-${mealType}`;
+
+            return (
+              <section key={mealType} aria-labelledby={headingId}>
+                <div className="flex items-center gap-2 border-b-[5px] border-ink pb-0.5">
+                  <h3
+                    id={headingId}
+                    className="font-display text-[26px] uppercase flex-1"
                   >
                     {config.label}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  {items.length > 0 && (
-                    <span
-                      className="text-sm font-bold"
-                      style={{
-                        color: "var(--color-macro-carbs)",
-                        fontFamily: "var(--font-ibm-plex-mono)",
-                      }}
-                    >
-                      {mealKcal.toFixed(0)} kcal
-                    </span>
-                  )}
-                  <Link
-                    href={`/dashboard/add?mealType=${mealType}&date=${dateParam}`}
-                    onClick={(e) => e.stopPropagation()}
-                    className="text-xl font-bold leading-none w-7 h-7 flex items-center justify-center rounded-lg transition-opacity hover:opacity-70"
-                    style={{ color: "var(--color-dash-green-mid)" }}
+                  </h3>
+                  <span
+                    className={`font-mono text-base font-semibold ${
+                      items.length === 0 ? "text-ink-muted" : ""
+                    }`}
                   >
-                    +
-                  </Link>
-                </div>
-              </div>
-
-              <div
-                className="grid transition-[grid-template-rows] duration-300 ease-in-out"
-                style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
-              >
-                <div className="overflow-hidden min-h-0">
-                  {items.map((item, idx) => {
-                    const macros = getItemMacros(item);
-                    const name =
-                      item.recipe?.name ??
-                      item.userRecipe?.name ??
-                      item.product?.name;
-                    const imageUrl = item.product?.imageUrl;
-
-                    return (
-                      <div
-                        key={item.id}
-                        className="flex items-center gap-3.5 px-4 h-[58px] transition-opacity duration-300"
+                    {items.length > 0 ? mealKcal.toFixed(0) : "—"} kcal
+                  </span>
+                  {items.length > 0 && (
+                    <button
+                      onClick={() => toggleMeal(mealType)}
+                      aria-expanded={isOpen}
+                      aria-controls={listId}
+                      aria-label={`${isOpen ? "Zwiń" : "Rozwiń"}: ${config.label}`}
+                      className="w-11 h-9 flex items-center justify-end cursor-pointer"
+                    >
+                      <ChevronDown
+                        size={18}
+                        strokeWidth={2.5}
+                        strokeLinecap="square"
+                        className="transition-transform duration-300"
                         style={{
-                          background: "var(--color-dash-surface-alt)",
-                          borderTop:
-                            idx > 0
-                              ? "1px solid var(--color-dash-border)"
-                              : undefined,
-                          opacity: item.isEaten ? 0.5 : 1,
+                          transform: isOpen ? "rotate(180deg)" : "none",
                         }}
-                      >
-                        <button
-                          onClick={() =>
-                            eatenMutation.mutate({
-                              id: item.id,
-                              isEaten: !item.isEaten,
-                            })
-                          }
-                          className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center transition-all duration-200"
-                          style={{
-                            background: item.isEaten
-                              ? "var(--color-dash-green-mid)"
-                              : "transparent",
-                            border: item.isEaten
-                              ? "none"
-                              : "1.5px solid var(--color-dash-check-border)",
-                            boxShadow: item.isEaten
-                              ? "var(--shadow-check-eaten)"
-                              : "none",
-                          }}
-                          title={
-                            item.isEaten
-                              ? "Oznacz jako niezjedzone"
-                              : "Oznacz jako zjedzone"
-                          }
-                        >
-                          {item.isEaten && (
-                            <svg
-                              width="10"
-                              height="8"
-                              viewBox="0 0 10 8"
-                              fill="none"
-                            >
-                              <path
-                                d="M1 4L3.5 6.5L9 1"
-                                stroke="var(--color-dash-check-mark)"
-                                strokeWidth="1.8"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                          )}
-                        </button>
-
-                        {imageUrl ? (
-                          <Image
-                            src={imageUrl}
-                            alt={name ?? "produkt"}
-                            width={36}
-                            height={36}
-                            className="w-9 h-9 rounded-lg object-cover shrink-0"
-                          />
-                        ) : (
-                          <div
-                            className="w-9 h-9 rounded-lg shrink-0"
-                            style={{
-                              background: "var(--color-dash-placeholder)",
-                            }}
-                          />
-                        )}
-
-                        <div className="flex items-center flex-1 gap-2 min-w-0">
-                          <span
-                            className="text-sm font-medium truncate flex-1 transition-all duration-300"
-                            style={{
-                              color: "var(--color-dash-fg-bright)",
-                              textDecoration: item.isEaten
-                                ? "line-through var(--color-dash-eaten-line)"
-                                : "none",
-                            }}
-                          >
-                            {name}
-                          </span>
-                          <div className="flex items-center gap-2 shrink-0">
-                            {!item.recipe && !item.userRecipe && (
-                              <span
-                                className="text-xs"
-                                style={{ color: "var(--color-dash-fg-dim)" }}
-                              >
-                                {item.quantity}g
-                              </span>
-                            )}
-                            <span
-                              className="text-sm font-bold"
-                              style={{
-                                color: "var(--color-macro-carbs)",
-                                fontFamily: "var(--font-ibm-plex-mono)",
-                              }}
-                            >
-                              {macros.calories.toFixed(0)} kcal
-                            </span>
-                            <button
-                              onClick={() => deleteMutation.mutate(item.id)}
-                              className="text-xs opacity-40 hover:opacity-80 transition-opacity ml-1"
-                              style={{ color: "var(--color-macro-fat)" }}
-                            >
-                              ✕
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                      />
+                    </button>
+                  )}
                 </div>
-              </div>
-            </div>
-          );
-        })}
+
+                {items.length === 0 ? (
+                  <Link
+                    href={addHref}
+                    className="flex items-center justify-between min-h-14 mt-2 px-3.5 border-2 border-dashed border-ink text-sm font-extrabold uppercase tracking-wide hover:bg-card transition-colors"
+                  >
+                    <span>Pusto. {config.addEmpty}</span>
+                    <Plus size={18} strokeWidth={3} strokeLinecap="square" />
+                  </Link>
+                ) : (
+                  <>
+                    {!isOpen && (
+                      <p className="font-mono text-xs py-1.5 border-b border-ink">
+                        {pluralPl(items.length, ITEM_FORMS)} ·{" "}
+                        {eatenCount === items.length
+                          ? "wszystkie zjedzone"
+                          : `zjedzone ${eatenCount} z ${items.length}`}
+                      </p>
+                    )}
+                    <div
+                      id={listId}
+                      className="grid transition-[grid-template-rows] duration-300 ease-in-out"
+                      style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
+                    >
+                      <div className="overflow-hidden min-h-0">
+                        <ul>
+                          {items.map((item) => (
+                            <DiaryItemRow
+                              key={item.id}
+                              item={item}
+                              onToggleEaten={() =>
+                                eatenMutation.mutate({
+                                  id: item.id,
+                                  isEaten: !item.isEaten,
+                                })
+                              }
+                              onDelete={() => deleteMutation.mutate(item.id)}
+                            />
+                          ))}
+                        </ul>
+                        <Link
+                          href={addHref}
+                          className="inline-flex items-center gap-1.5 min-h-11 text-sm font-extrabold uppercase tracking-wide text-accent hover:text-accent-hover"
+                        >
+                          <Plus
+                            size={16}
+                            strokeWidth={3}
+                            strokeLinecap="square"
+                          />
+                          {config.addTo}
+                        </Link>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </section>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
 };
+
+type DiaryItemRowProps = {
+  item: DiaryItem;
+  onToggleEaten: () => void;
+  onDelete: () => void;
+};
+
+function DiaryItemRow({ item, onToggleEaten, onDelete }: DiaryItemRowProps) {
+  const macros = getItemMacros(item);
+  const name = item.recipe?.name ?? item.userRecipe?.name ?? item.product?.name;
+  const isRecipe = Boolean(item.recipe || item.userRecipe);
+  const details = [
+    isRecipe ? "przepis" : `${formatAmount(item.quantity)} g`,
+    `B ${macros.protein.toFixed(0)}`,
+    `W ${macros.carbs.toFixed(0)}`,
+    `T ${macros.fat.toFixed(0)}`,
+  ].join(" · ");
+
+  return (
+    <li
+      className={`group flex items-center gap-2.5 min-h-[52px] border-b border-ink ${
+        item.isEaten ? "" : "text-ink-muted"
+      }`}
+    >
+      <button
+        onClick={onToggleEaten}
+        aria-pressed={item.isEaten}
+        aria-label={
+          item.isEaten
+            ? `Oznacz jako niezjedzone: ${name}`
+            : `Oznacz jako zjedzone: ${name}`
+        }
+        className="w-11 h-11 -ml-2.5 shrink-0 flex items-center justify-center cursor-pointer"
+      >
+        <span
+          className={`w-6 h-6 border-2 border-ink flex items-center justify-center transition-colors ${
+            item.isEaten ? "bg-ink text-paper" : "bg-card"
+          }`}
+        >
+          {item.isEaten && (
+            <Check size={14} strokeWidth={4} strokeLinecap="square" />
+          )}
+        </span>
+      </button>
+      <div className="flex flex-col flex-1 min-w-0">
+        <span className="text-[15px] font-bold truncate">{name}</span>
+        <span className="font-mono text-[11px]">{details}</span>
+      </div>
+      <span className="font-mono text-[15px] font-semibold">
+        {macros.calories.toFixed(0)}
+      </span>
+      <button
+        onClick={onDelete}
+        aria-label={`Usuń: ${name}`}
+        className="w-11 h-11 -mr-2 shrink-0 flex items-center justify-center text-ink-muted hover:text-accent transition-colors cursor-pointer"
+      >
+        <X size={16} strokeWidth={2.5} strokeLinecap="square" />
+      </button>
+    </li>
+  );
+}

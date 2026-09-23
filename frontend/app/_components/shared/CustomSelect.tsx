@@ -42,42 +42,47 @@ export function CustomSelect<T extends string | number>({
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className={`w-full flex items-center justify-between px-3.5 py-2.5 text-sm rounded-xl transition-opacity hover:opacity-80 font-sans border ${
-          open ? "border-dash-green-mid/40" : "border-dash-border"
-        } bg-dash-surface-alt`}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        className="w-full flex items-center justify-between h-11 px-3 text-[15px] border-2 border-ink bg-card cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
-        <span className={selected ? "text-dash-fg" : "text-dash-fg-muted"}>
+        <span className={selected ? "text-ink" : "text-ink-muted"}>
           {selected ? selected.label : placeholder}
         </span>
         {open ? (
-          <ChevronUp className="w-4 h-4 text-dash-green shrink-0" />
+          <ChevronUp className="w-4 h-4 shrink-0" />
         ) : (
-          <ChevronDown className="w-4 h-4 text-dash-fg-muted shrink-0" />
+          <ChevronDown className="w-4 h-4 shrink-0" />
         )}
       </button>
 
       {/* Lista opcji */}
       {open && (
-        <ul className="absolute z-50 mt-1 w-full bg-dash-surface-alt border border-dash-border rounded-xl overflow-hidden shadow-lg">
+        <ul
+          role="listbox"
+          className="absolute z-50 -mt-0.5 w-full bg-card border-2 border-ink shadow-[var(--shadow-hard)]"
+        >
           {options.map((option) => {
             const isSelected = option.value === value;
             return (
-              <li
-                key={option.value}
-                onClick={() => {
-                  onChange(option.value);
-                  setOpen(false);
-                }}
-                className={`flex items-center gap-2 px-3.5 py-2.5 text-sm cursor-pointer transition-opacity font-sans ${
-                  isSelected
-                    ? "bg-macro-track text-macro-calories font-medium"
-                    : "text-dash-fg hover:opacity-70"
-                }`}
-              >
-                <Check
-                  className={`w-3.5 h-3.5 shrink-0 text-macro-calories ${isSelected ? "opacity-100" : "opacity-0"}`}
-                />
-                {option.label}
+              <li key={option.value} role="option" aria-selected={isSelected}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onChange(option.value);
+                    setOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-2 min-h-11 px-3 text-[15px] text-left cursor-pointer border-b border-ink last:border-b-0 ${
+                    isSelected
+                      ? "bg-ink text-paper font-bold"
+                      : "hover:bg-paper"
+                  }`}
+                >
+                  <Check
+                    className={`w-3.5 h-3.5 shrink-0 ${isSelected ? "opacity-100" : "opacity-0"}`}
+                  />
+                  {option.label}
+                </button>
               </li>
             );
           })}

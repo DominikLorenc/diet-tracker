@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
+import { GripVertical, Plus, Trash2 } from "lucide-react";
+import { PageHeader, pageClass } from "@/app/_components/ui/PageHeader";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -61,37 +63,41 @@ const SortableStepRow = ({
   };
 
   return (
-    <div
+    <li
       ref={setNodeRef}
       style={style}
-      className="flex items-start gap-2 px-4 py-3"
+      className="flex items-start gap-1 py-2 border-b border-ink bg-paper"
     >
       <button
         type="button"
         {...attributes}
         {...listeners}
         aria-label="Przeciągnij, aby zmienić kolejność"
-        className="mt-2 shrink-0 cursor-grab active:cursor-grabbing text-white/20 hover:text-white/50 transition-colors touch-none"
+        className="w-9 h-11 shrink-0 flex items-center justify-center cursor-grab active:cursor-grabbing touch-none"
       >
-        ⠿
+        <GripVertical size={18} strokeWidth={2} />
       </button>
-      <span className="mt-2 shrink-0 w-5 text-sm font-semibold text-white/30">
-        {index + 1}.
+      <span className="w-7 pt-3 shrink-0 font-mono text-xs font-semibold">
+        {String(index + 1).padStart(2, "0")}
       </span>
-      <textarea
-        rows={2}
-        placeholder="Opisz ten krok..."
-        className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-indigo-500 resize-none"
-        {...register(`steps.${index}.value`)}
-      />
+      <label className="flex-1 min-w-0">
+        <span className="sr-only">Krok {index + 1}</span>
+        <textarea
+          rows={2}
+          placeholder="Opisz ten krok…"
+          className="w-full bg-card border-2 border-ink px-3 py-2 text-sm text-ink placeholder:text-ink-muted focus:outline-2 focus:outline-offset-2 focus:outline-accent resize-none"
+          {...register(`steps.${index}.value`)}
+        />
+      </label>
       <button
         type="button"
         onClick={onRemove}
-        className="mt-2 shrink-0 text-white/20 hover:text-red-400 transition-colors text-sm"
+        aria-label={`Usuń krok ${index + 1}`}
+        className="w-11 h-11 shrink-0 flex items-center justify-center text-ink-muted hover:text-accent transition-colors cursor-pointer"
       >
-        🗑️
+        <Trash2 size={16} strokeWidth={2.5} />
       </button>
-    </div>
+    </li>
   );
 };
 
@@ -269,113 +275,122 @@ function RecipeBuilderContent() {
     // Zwykły <div>, nie <form> — Search poniżej renderuje własny <form> do
     // wyszukiwania, a HTML nie pozwala zagnieżdżać formularzy. handleSubmit
     // odpalamy ręcznie z przycisku zapisu.
-    <div className="flex flex-col gap-4 p-6 w-full">
-      <h2 className="text-2xl font-bold text-white">{pageTitle}</h2>
+    <div className={pageClass("narrow")}>
+      <PageHeader title={pageTitle} eyebrow="Kreator przepisów" />
 
       {/* Nazwa przepisu */}
-      <div className="rounded-xl border border-white/10 bg-white/5 overflow-hidden">
-        <div className="px-4 py-3 border-b border-white/10">
-          <h3 className="text-sm font-semibold uppercase tracking-widest text-white/50">
-            Nazwa przepisu
-          </h3>
-        </div>
-        <div className="px-4 py-3">
-          <input
-            type="text"
-            placeholder="np. Owsianka z owocami..."
-            className="w-full bg-transparent text-white placeholder-white/20 focus:outline-none"
-            {...register("name")}
-          />
-          {errors.name && (
-            <span className="text-red-400 text-sm">{errors.name.message}</span>
-          )}
-        </div>
-      </div>
+      <label className="flex flex-col gap-1">
+        <span className="text-[13px] font-extrabold uppercase">
+          Nazwa przepisu
+        </span>
+        <input
+          type="text"
+          placeholder="np. Owsianka z owocami"
+          aria-invalid={Boolean(errors.name)}
+          className="h-[52px] px-3 border-2 border-ink bg-card text-lg font-bold text-ink placeholder:text-ink-muted placeholder:font-normal focus:outline-2 focus:outline-offset-2 focus:outline-accent"
+          {...register("name")}
+        />
+        {errors.name && (
+          <span role="alert" className="font-mono text-xs text-accent">
+            {errors.name.message}
+          </span>
+        )}
+      </label>
 
       {/* Wyszukiwarka składników */}
-      <div className="rounded-xl border border-white/10 bg-white/5 overflow-hidden">
-        <div className="px-4 py-3 border-b border-white/10">
-          <h3 className="text-sm font-semibold uppercase tracking-widest text-white/50">
-            Dodaj składniki
-          </h3>
-        </div>
-        <div className="px-4 py-3">
-          <Search onProductSelect={handleAddIngredient} />
-        </div>
-      </div>
+      <section aria-labelledby="add-ingredients-heading">
+        <h2
+          id="add-ingredients-heading"
+          className="font-display text-[26px] uppercase border-b-[5px] border-ink pb-0.5 mb-3"
+        >
+          Dodaj składniki
+        </h2>
+        <Search onProductSelect={handleAddIngredient} />
+      </section>
 
-      {/* Lista składników */}
-      <div className="rounded-xl border border-white/10 bg-white/5 overflow-hidden">
-        <div className="px-4 py-3 border-b border-white/10">
-          <h3 className="text-sm font-semibold uppercase tracking-widest text-white/50">
-            Składniki ({productFields.length})
-          </h3>
-        </div>
-        <div className="flex flex-col divide-y divide-white/5">
-          {productFields.length === 0 ? (
-            <p className="px-4 py-3 text-sm text-white/20">
-              Brak składników — wyszukaj i dodaj produkty powyżej.
-            </p>
-          ) : (
-            productFields.map((field, index) => (
-              <div key={field.id} className="flex items-center gap-4 px-4 py-3">
-                {field.imageUrl ? (
+      {/* Lista składników — jako etykieta */}
+      <section
+        aria-labelledby="ingredients-heading"
+        className="border-2 border-ink bg-card px-3 pt-1.5 pb-3"
+      >
+        <h2
+          id="ingredients-heading"
+          className="font-display text-[30px] leading-none"
+        >
+          Składniki
+          <span className="font-mono text-base font-semibold ml-2">
+            {productFields.length}
+          </span>
+        </h2>
+        <div className="rule-thick mt-2" />
+        {productFields.length === 0 ? (
+          <p className="py-3 text-sm">
+            Brak składników — wyszukaj i dodaj produkty powyżej.
+          </p>
+        ) : (
+          <ul>
+            {productFields.map((field, index) => (
+              <li
+                key={field.id}
+                className="flex items-center gap-3 min-h-14 border-b border-ink last:border-b-0"
+              >
+                {field.imageUrl && (
                   <Image
                     src={field.imageUrl}
-                    alt={field.name}
-                    width={32}
-                    height={32}
-                    className="rounded-lg shrink-0 w-10 h-10"
+                    alt=""
+                    width={36}
+                    height={36}
+                    className="w-9 h-9 shrink-0 object-cover border border-ink"
                   />
-                ) : (
-                  <div className="w-10 h-10 rounded-lg bg-white/5 shrink-0" />
                 )}
-                <div className="flex flex-col flex-1 gap-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-white">
-                      {field.name}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => removeProduct(index)}
-                      className="text-white/20 hover:text-red-400 transition-colors text-sm"
-                    >
-                      🗑️
-                    </button>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-white/40">
-                    <input
-                      type="number"
-                      onFocus={(e) => e.target.select()}
-                      className="w-16 bg-white/5 border border-white/10 rounded px-2 py-0.5 text-white focus:outline-none focus:border-indigo-500"
-                      {...register(`products.${index}.quantity`, {
-                        valueAsNumber: true,
-                      })}
-                    />
-                    <span>g</span>
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
+                <span className="flex-1 min-w-0 text-[15px] font-bold truncate">
+                  {field.name}
+                </span>
+                <label className="flex items-center gap-1.5 h-10 px-2 border-2 border-ink focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent">
+                  <span className="sr-only">Ilość: {field.name}</span>
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    onFocus={(e) => e.target.select()}
+                    className="w-14 bg-transparent text-right font-mono text-[15px] outline-none"
+                    {...register(`products.${index}.quantity`, {
+                      valueAsNumber: true,
+                    })}
+                  />
+                  <span className="font-mono text-sm">g</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={() => removeProduct(index)}
+                  aria-label={`Usuń składnik: ${field.name}`}
+                  className="w-11 h-11 shrink-0 flex items-center justify-center text-ink-muted hover:text-accent transition-colors cursor-pointer"
+                >
+                  <Trash2 size={16} strokeWidth={2.5} />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
         {errors.products?.root && (
-          <p className="px-4 pb-3 text-red-400 text-sm">
+          <p role="alert" className="pt-2 font-mono text-xs text-accent">
             {errors.products.root.message}
           </p>
         )}
-      </div>
+      </section>
 
       {/* Kroki przygotowania */}
-      <div className="rounded-xl border border-white/10 bg-white/5 overflow-hidden">
-        <div className="px-4 py-3 border-b border-white/10">
-          <h3 className="text-sm font-semibold uppercase tracking-widest text-white/50">
-            Jak to zrobić?{" "}
-            <span className="normal-case text-white/30">(opcjonalne)</span>
-          </h3>
-        </div>
+      <section aria-labelledby="steps-heading">
+        <h2
+          id="steps-heading"
+          className="flex items-baseline justify-between font-display text-[26px] uppercase border-b-[5px] border-ink pb-0.5"
+        >
+          Jak to zrobić
+          <span className="font-mono text-[11px] font-medium normal-case">
+            opcjonalne
+          </span>
+        </h2>
         {stepFields.length === 0 ? (
-          <p className="px-4 py-3 text-sm text-white/20">
+          <p className="py-3 text-sm border-b border-ink">
             Brak kroków — dodaj instrukcję przygotowania krok po kroku.
           </p>
         ) : (
@@ -388,7 +403,7 @@ function RecipeBuilderContent() {
               items={stepFields.map((s) => s.id)}
               strategy={verticalListSortingStrategy}
             >
-              <div className="flex flex-col divide-y divide-white/5">
+              <ol>
                 {stepFields.map((field, index) => (
                   <SortableStepRow
                     key={field.id}
@@ -398,34 +413,38 @@ function RecipeBuilderContent() {
                     onRemove={() => removeStep(index)}
                   />
                 ))}
-              </div>
+              </ol>
             </SortableContext>
           </DndContext>
         )}
-        <div className="px-4 py-3 border-t border-white/10">
-          <button
-            type="button"
-            onClick={() => appendStep({ value: "" })}
-            className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors font-medium"
-          >
-            + Dodaj krok
-          </button>
-        </div>
-      </div>
+        <button
+          type="button"
+          onClick={() => appendStep({ value: "" })}
+          className="inline-flex items-center gap-1.5 min-h-11 text-sm font-extrabold uppercase text-accent hover:text-accent-hover cursor-pointer"
+        >
+          <Plus size={16} strokeWidth={3} strokeLinecap="square" />
+          Dodaj krok
+        </button>
+      </section>
 
+      <div className="rule-medium" />
       <button
         type="button"
         onClick={handleSubmit(onSubmit)}
         disabled={isSubmitting}
-        className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 transition-colors px-5 py-2 rounded-lg text-white font-medium w-fit"
+        className="min-h-14 px-6 bg-ink text-paper text-base font-extrabold uppercase tracking-wide hover:bg-accent transition-colors disabled:opacity-60 cursor-pointer"
       >
         {isSubmitting
-          ? "Zapisuję..."
+          ? "Zapisuję…"
           : editId
             ? "Zapisz zmiany"
             : "Zapisz przepis"}
       </button>
-      {error && <span className="text-red-400 text-sm">{error}</span>}
+      {error && (
+        <p role="alert" className="font-mono text-sm text-accent">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

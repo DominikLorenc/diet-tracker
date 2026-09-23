@@ -53,8 +53,15 @@
 ## Frontend
 
 - [ ] **F1** — Route protection — brak `middleware.ts` w `frontend/` (każdy może wejść na `/dashboard` bez logowania)
-- [ ] **F2** — Statystyki profilu są hardcoded (1400 kcal, 7 streak, itd.) — zastąpić danymi z API (`dashboard/profile/page.tsx`)
+- [ ] **F2** — Statystyki profilu (kcal dziś, streak, liczba posiłków, zmiana wagi) — hardcoded wersja usunięta w redesignie (branch `feat/nutrition-label-design`); przywrócić, gdy będą liczone z danych z API (`dashboard/profile/page.tsx`)
 ## Testy
 
 - [ ] **T1** — Testy e2e Playwright — brak jakichkolwiek plików
 - [ ] **T2** — Testy integracyjne dla nowych endpointów (UserRecipe, measurements)
+- [ ] **T3** — Pierwszy test jednostkowy w Vitest: `pluralPl` z `frontend/utils/format.ts` (napisz SAM — ćwiczenie)
+  - **Co:** funkcja dobiera polską odmianę: „1 pozycja”, „3 pozycje”, „5 pozycji”
+  - **Krok 1 (bez kodu):** wypisz listę liczb, które sprawdzisz, i jaki wynik oczekujesz dla każdej
+  - **Krok 2:** zainstaluj/skonfiguruj Vitest we `frontend/` (jeśli jeszcze nie ma) i napisz `utils/format.test.ts`
+  - **Hint — przypadki brzegowe:** 12–14 (kończą się na 2–4, a jednak „pozycji”), 22–24 (znów „pozycje”), 21, 0, 1
+  - **Bonus:** test dla `formatAmount` — np. `8.199999999` → `"8,2"`, string `"9.7"` → `"9,7"`, `NaN` → `"—"`
+  - **Czego się nauczysz:** `describe` / `it` / `expect`, myślenie o przypadkach brzegowych, `it.each` do wielu przypadków naraz

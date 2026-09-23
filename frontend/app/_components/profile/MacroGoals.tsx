@@ -1,6 +1,3 @@
-import { Card } from "@/app/_components/ui/Card";
-import { SectionHeader } from "@/app/_components/ui/SectionHeader";
-
 type MacroGoalsProps = {
   dailyCaloriesGoal: number | null;
   dailyProteinGoal: number | null;
@@ -65,50 +62,42 @@ export function MacroGoals({
   ];
 
   return (
-    <Card>
-      <SectionHeader title="Cele kaloryczne i makro" />
-
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-dash-fg-muted font-sans">
-          Dzienny cel kalorii
+    <section
+      aria-label="Cele dzienne"
+      className="border-2 border-ink bg-card px-3 pt-1.5 pb-3"
+    >
+      <h2 className="font-display text-[34px] leading-none">Cele dzienne</h2>
+      <div className="rule-thick mt-2" />
+      <div className="flex justify-between items-end py-1.5">
+        <span className="font-display text-[30px] leading-none [font-stretch:75%]">
+          Kalorie
         </span>
-        <span className="text-sm font-semibold text-macro-calories font-mono">
-          {dailyCaloriesGoal} kcal
+        <span className="font-mono text-[44px] font-semibold leading-none tracking-[-0.04em]">
+          {dailyCaloriesGoal ?? "—"}
+          <span className="text-base"> kcal</span>
         </span>
       </div>
-
-      <h3 className="text-sm font-medium text-dash-fg-secondary font-sans">
-        Rozkład makroskładników
-      </h3>
-
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        {macros.map((macro) => (
-          <div
-            key={macro.key}
-            className="flex flex-col gap-2 bg-dash-surface-alt border border-dash-border rounded-xl p-3"
-          >
-            <div className="flex justify-between text-sm">
-              <span
-                className={`font-bold font-mono text-xs uppercase tracking-widest ${macro.colorClass}`}
-              >
-                {macro.label}
-              </span>
-              <span className="text-dash-fg-muted font-mono text-xs">
-                {macro.percent}%
-              </span>
-            </div>
-            <div className="h-[7px] bg-macro-track rounded-full">
-              <div
-                className={`h-full rounded-full ${macro.barClass}`}
-                style={{ width: `${macro.percent}%` }}
-              />
-            </div>
-            <span className="text-sm font-semibold text-dash-fg font-mono">
-              {macro.grams}g
-            </span>
-          </div>
-        ))}
+      <div className="rule-medium" />
+      <div className="grid grid-cols-[minmax(0,1fr)_72px_72px] text-xs font-bold py-0.5 border-b border-ink">
+        <span />
+        <span className="text-right">gramy</span>
+        <span className="text-right">% kcal</span>
       </div>
-    </Card>
+      {macros.map((macro, idx) => (
+        <div
+          key={macro.key}
+          className={`grid grid-cols-[minmax(0,1fr)_72px_72px] items-baseline py-1.5 text-[15px] ${
+            idx < macros.length - 1 ? "border-b border-ink" : ""
+          }`}
+        >
+          <span className="font-extrabold">{macro.label}</span>
+          <span className="font-mono text-right">{macro.grams} g</span>
+          <span className="font-mono text-right font-semibold">
+            {macro.percent}%
+          </span>
+        </div>
+      ))}
+      <div className="rule-thick" />
+    </section>
   );
 }
