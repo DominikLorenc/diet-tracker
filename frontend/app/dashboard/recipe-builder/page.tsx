@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
+import { ProductThumb } from "@/app/_components/ui/ProductThumb";
 import { GripVertical, Plus, Trash2 } from "lucide-react";
 import { PageHeader, pageClass } from "@/app/_components/ui/PageHeader";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -26,7 +27,6 @@ import { CSS } from "@dnd-kit/utilities";
 import { apiClient } from "@/app/lib/apiClient";
 import { recipeFormSchema } from "@/schemas/recipeSchema";
 import { Search } from "@/app/_components/search/Search";
-import Image from "next/image";
 import { useUserStore } from "@/store/useUserStore";
 
 type Product = {
@@ -334,15 +334,7 @@ function RecipeBuilderContent() {
                 key={field.id}
                 className="flex items-center gap-3 min-h-14 border-b border-ink last:border-b-0"
               >
-                {field.imageUrl && (
-                  <Image
-                    src={field.imageUrl}
-                    alt=""
-                    width={36}
-                    height={36}
-                    className="w-9 h-9 shrink-0 object-cover border border-ink"
-                  />
-                )}
+                <ProductThumb src={field.imageUrl} />
                 <span className="flex-1 min-w-0 text-[15px] font-bold truncate">
                   {field.name}
                 </span>

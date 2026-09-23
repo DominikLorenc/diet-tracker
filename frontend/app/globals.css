@@ -88,15 +88,19 @@ html {
   line-height: 0.95;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-archivo), system-ui, sans-serif;
-}
+/* In @layer base so Tailwind utilities (outline-none, focus-within:…) can
+   override it — unlayered rules always beat layered ones. */
+@layer base {
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-archivo), system-ui, sans-serif;
+  }
 
-:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
 }
 
 @keyframes fadeInUp {

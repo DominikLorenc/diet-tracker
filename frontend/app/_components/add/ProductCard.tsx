@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { formatAmount } from "@/utils/format";
-import Image from "next/image";
+import { ProductThumb } from "@/app/_components/ui/ProductThumb";
 import { apiClient } from "@/app/lib/apiClient";
 import { useToastStore } from "@/store/useToastStore";
 import { useUserStore } from "@/store/useUserStore";
@@ -126,20 +126,7 @@ export const AddProductCard = ({
             favorite ? "pl-3" : ""
           }`}
         >
-          {product.imageUrl ? (
-            <Image
-              src={product.imageUrl}
-              alt=""
-              width={36}
-              height={36}
-              className="w-9 h-9 shrink-0 object-cover border border-ink"
-            />
-          ) : (
-            <span
-              aria-hidden="true"
-              className="w-9 h-9 shrink-0 border border-ink bg-paper"
-            />
-          )}
+          <ProductThumb src={product.imageUrl} />
           <span className="flex-1 min-w-0 flex flex-col">
             <span className="text-[15px] font-bold truncate">
               {product.name}

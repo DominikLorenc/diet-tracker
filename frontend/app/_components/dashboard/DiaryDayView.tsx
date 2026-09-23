@@ -270,7 +270,7 @@ export const DiaryDayView = () => {
         </div>
 
         <div
-          className={`grid gap-7 xl:grid-cols-2 xl:gap-x-6 content-start transition-opacity ${
+          className={`grid gap-7 2xl:grid-cols-2 2xl:gap-x-6 content-start transition-opacity ${
             isLoading ? "opacity-50" : ""
           }`}
         >

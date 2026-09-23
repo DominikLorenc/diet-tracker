@@ -1,7 +1,7 @@
 import { Fragment, useState } from "react";
 import { formatAmount } from "@/utils/format";
 import { Pencil, Plus, Trash2 } from "lucide-react";
-import Image from "next/image";
+import { ProductThumb } from "@/app/_components/ui/ProductThumb";
 
 type Product = {
   name: string;
@@ -42,20 +42,7 @@ export const ProductCard = ({
   return (
     <div className="border-b border-ink">
       <div className="flex items-center gap-3 min-h-14 py-2">
-        {product.imageUrl ? (
-          <Image
-            src={product.imageUrl}
-            alt=""
-            width={36}
-            height={36}
-            className="w-9 h-9 shrink-0 object-cover border border-ink"
-          />
-        ) : (
-          <span
-            aria-hidden="true"
-            className="w-9 h-9 shrink-0 border border-ink bg-paper"
-          />
-        )}
+        <ProductThumb src={product.imageUrl} />
 
         <div className="flex-1 min-w-0 flex flex-col">
           <p className="text-[15px] font-bold truncate">{product.name}</p>
