@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { PageHeader, pageClass } from "@/app/_components/ui/PageHeader";
 import { MeasurementChart } from "@/app/_components/progress/MeasurementChart";
 import { MeasurementHistoryTable } from "@/app/_components/progress/MeasurementHistoryTable";
 import { MeasurementModal } from "@/app/_components/progress/MeasurementModal";
@@ -153,34 +154,28 @@ export default function ProgressPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col gap-6 bg-[var(--background)] p-8">
-      {/* Header */}
-      <div className="flex items-end justify-between">
-        <div className="flex flex-col gap-1">
-          <span className="font-['Funnel_Sans'] text-base font-medium text-dash-fg-muted">
-            {headerDate}
-          </span>
-          <h1 className="font-['Newsreader'] text-5xl font-bold text-dash-fg">
-            Postępy
-          </h1>
-        </div>
-        <button
-          onClick={openAdd}
-          className="hidden rounded-xl bg-gradient-to-b from-green-600 to-green-700 px-5 py-2.5 font-['Funnel_Sans'] text-sm font-semibold text-white md:block"
-          style={{ boxShadow: "0 2px 10px rgba(34,197,94,0.25)" }}
-        >
-          + Dodaj pomiar
-        </button>
-      </div>
+    <div className={pageClass()}>
+      <PageHeader
+        title="Postępy"
+        eyebrow={headerDate}
+        action={
+          <button
+            onClick={openAdd}
+            className="flex items-center gap-1.5 min-h-11 px-4 bg-ink text-paper text-sm font-extrabold uppercase hover:bg-accent transition-colors cursor-pointer"
+          >
+            <span aria-hidden="true">+</span> Pomiar
+          </button>
+        }
+      />
 
       {/* Filter row */}
-      <div className="flex flex-wrap items-center gap-4 rounded-xl border border-dash-border bg-dash-surface px-4 py-2.5">
+      <div className="flex flex-wrap items-center gap-4">
         {/* improve this logic */}
         {false && (
           <>
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
-                <span className="font-['IBM_Plex_Mono'] text-[10px] font-bold tracking-[2px] text-dash-green">
+                <span className="font-mono text-[10px] font-bold tracking-[2px] text-accent">
                   OD
                 </span>
                 <input
@@ -191,11 +186,11 @@ export default function ProgressPage() {
                     setActivePreset("all");
                   }}
                   max={yesterdayStr}
-                  className="rounded-lg border border-dash-border bg-dash-surface-darker px-2.5 py-1.5 font-['Funnel_Sans'] text-xs text-dash-fg-bright outline-none [color-scheme:dark]"
+                  className="rounded-lg border border-ink bg-paper px-2.5 py-1.5 font-sans text-xs text-ink outline-none"
                 />
               </div>
               <div className="flex items-center gap-2">
-                <span className="font-['IBM_Plex_Mono'] text-[10px] font-bold tracking-[2px] text-dash-green">
+                <span className="font-mono text-[10px] font-bold tracking-[2px] text-accent">
                   DO
                 </span>
                 <input
@@ -206,24 +201,27 @@ export default function ProgressPage() {
                     setActivePreset("all");
                   }}
                   max={todayStr}
-                  className="rounded-lg border border-dash-border bg-dash-surface-darker px-2.5 py-1.5 font-['Funnel_Sans'] text-xs text-dash-fg-bright outline-none [color-scheme:dark]"
+                  className="rounded-lg border border-ink bg-paper px-2.5 py-1.5 font-sans text-xs text-ink outline-none"
                 />
               </div>
             </div>
 
-            <div className="h-4 w-px bg-dash-border" />
+            <div className="h-4 w-px bg-ink" />
           </>
         )}
-        <div className="flex gap-1.5">
-          {PRESETS.map((p) => (
+        <div
+          role="group"
+          aria-label="Zakres"
+          className="flex border-2 border-ink"
+        >
+          {PRESETS.map((p, idx) => (
             <button
               key={p.id}
               onClick={() => handlePreset(p)}
-              className={`rounded-lg px-3 py-1.5 font-['Funnel_Sans'] text-xs font-medium transition-all ${
-                activePreset === p.id
-                  ? "bg-gradient-to-b from-green-600 to-green-700 text-white"
-                  : "border border-dash-border bg-dash-surface-darker text-dash-fg-secondary hover:text-dash-fg"
-              }`}
+              aria-pressed={activePreset === p.id}
+              className={`min-h-10 px-4 font-mono text-xs font-semibold uppercase cursor-pointer transition-colors ${
+                idx > 0 ? "border-l border-ink" : ""
+              } ${activePreset === p.id ? "bg-ink text-paper" : "hover:bg-card"}`}
             >
               {p.label}
             </button>
@@ -232,13 +230,9 @@ export default function ProgressPage() {
       </div>
 
       {/* Loading / error states */}
-      {loading && (
-        <p className="text-center font-['Funnel_Sans'] text-sm text-dash-fg-secondary">
-          Ładowanie...
-        </p>
-      )}
+      {loading && <p className="font-mono text-sm">Ładowanie...</p>}
       {error && (
-        <p className="text-center font-['Funnel_Sans'] text-sm text-red-400">
+        <p role="alert" className="font-mono text-sm text-accent">
           {error}
         </p>
       )}
@@ -246,57 +240,52 @@ export default function ProgressPage() {
       {/* Charts — 2×2 grid */}
       {!loading && (
         <>
-          <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <MeasurementChart
               label="WAGA"
               unit="kg"
-              color="var(--color-dash-green)"
+              color="var(--color-ink)"
               data={chartData("weight")}
             />
             <MeasurementChart
               label="TALIA"
               unit="cm"
-              color="var(--color-macro-carbs)"
+              color="var(--color-ink)"
               data={chartData("waist")}
             />
             <MeasurementChart
               label="BIODRA"
               unit="cm"
-              color="var(--color-macro-fat)"
+              color="var(--color-ink)"
               data={chartData("hips")}
             />
             <MeasurementChart
               label="RAMIĘ"
               unit="cm"
-              color="var(--color-macro-protein)"
+              color="var(--color-ink)"
               data={chartData("arm")}
             />
           </div>
 
           {/* History table */}
-          <div className="rounded-2xl border border-dash-border bg-dash-surface overflow-hidden">
-            <div className="px-4 py-3.5">
-              <span className="font-['IBM_Plex_Mono'] text-[11px] font-bold tracking-[2px] text-dash-green">
-                HISTORIA POMIARÓW
-              </span>
+          <section aria-labelledby="history-heading">
+            <div className="flex items-baseline justify-between border-b-[5px] border-ink pb-0.5">
+              <h2
+                id="history-heading"
+                className="font-display text-[26px] uppercase"
+              >
+                Historia pomiarów
+              </h2>
+              <span className="font-mono text-xs">cm / kg</span>
             </div>
             <MeasurementHistoryTable
               measurements={filtered}
               onEdit={openEdit}
               onDelete={handleDelete}
             />
-          </div>
+          </section>
         </>
       )}
-
-      {/* Mobile add button */}
-      <button
-        onClick={openAdd}
-        className="fixed bottom-20 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-b from-green-600 to-green-700 text-xl text-white shadow-lg md:hidden"
-        aria-label="Dodaj pomiar"
-      >
-        +
-      </button>
 
       <MeasurementModal
         open={modalOpen}

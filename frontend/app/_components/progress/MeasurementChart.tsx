@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  CartesianGrid,
   ResponsiveContainer,
   LineChart,
   Line,
@@ -31,75 +32,115 @@ export const MeasurementChart = ({ label, unit, color, data }: Props) => {
     value: d.value,
   }));
 
+  const title = label.charAt(0) + label.slice(1).toLowerCase();
+  const lastIndex = chartData.length - 1;
+
   return (
-    <div
-      className="flex flex-col gap-3 rounded-2xl border border-dash-border bg-dash-surface-card p-4"
-      style={{ boxShadow: "0 1px 20px rgba(34,197,94,0.09)" }}
+    <section
+      aria-label={title}
+      className="flex flex-col border-2 border-ink bg-card px-3 pt-1.5 pb-3"
     >
-      <span
-        className="font-['IBM_Plex_Mono'] text-[11px] font-bold tracking-[2px]"
-        style={{ color }}
-      >
-        {label}
-      </span>
-
-      <div className="flex items-end justify-between">
-        <span className="font-['IBM_Plex_Mono'] text-2xl font-bold text-dash-fg">
-          {latest !== undefined ? `${latest} ${unit}` : "—"}
+      <div className="flex items-end justify-between gap-3">
+        <h3 className="font-display text-[30px] leading-none [font-stretch:75%]">
+          {title}
+        </h3>
+        <span className="font-mono text-[32px] font-semibold leading-none tracking-[-0.04em]">
+          {latest !== undefined ? latest.toLocaleString("pl-PL") : "—"}
+          <span className="text-base"> {unit}</span>
         </span>
-
-        {delta !== null && (
-          <span className="font-['IBM_Plex_Mono'] text-xs text-dash-fg-secondary">
-            {delta > 0 ? "↑" : delta < 0 ? "↓" : "→"}{" "}
-            {Math.abs(delta).toFixed(1)} {unit}
-          </span>
-        )}
+      </div>
+      <div className="rule-thick mt-2" />
+      <div className="flex justify-between py-1 border-b border-ink text-xs">
+        <span className="font-bold">Zmiana w okresie</span>
+        <span className="font-mono font-semibold">
+          {delta !== null
+            ? `${delta > 0 ? "+" : delta < 0 ? "−" : "±"}${Math.abs(delta).toLocaleString("pl-PL", { maximumFractionDigits: 1 })} ${unit}`
+            : "—"}
+        </span>
       </div>
 
-      <div className="h-24">
+      <div className="h-36 mt-3">
         {chartData.length >= 2 ? (
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData}>
+            <LineChart
+              data={chartData}
+              margin={{ top: 6, right: 6, bottom: 0, left: 0 }}
+            >
+              <CartesianGrid
+                vertical={false}
+                stroke="var(--color-ink)"
+                strokeDasharray="2 4"
+              />
               <XAxis
                 dataKey="date"
-                tick={{ fill: "var(--color-chart-tick)", fontSize: 10 }}
-                axisLine={false}
+                tick={{
+                  fill: "var(--color-ink)",
+                  fontSize: 10,
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                }}
+                axisLine={{ stroke: "var(--color-ink)", strokeWidth: 2 }}
                 tickLine={false}
               />
               <YAxis
                 domain={["auto", "auto"]}
-                tick={{ fill: "var(--color-chart-tick)", fontSize: 10 }}
+                orientation="right"
+                tick={{
+                  fill: "var(--color-ink)",
+                  fontSize: 10,
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                }}
                 axisLine={false}
                 tickLine={false}
-                width={32}
+                width={36}
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "var(--color-dash-surface-darker)",
-                  border: "1px solid var(--color-dash-border)",
-                  borderRadius: 8,
-                  color: "var(--color-dash-fg)",
+                  backgroundColor: "var(--color-card)",
+                  border: "2px solid var(--color-ink)",
+                  borderRadius: 0,
+                  color: "var(--color-ink)",
                   fontSize: 12,
+                  fontFamily: "var(--font-ibm-plex-mono)",
                 }}
-                itemStyle={{ color }}
-                formatter={(value) => [`${value} ${unit}`, label]}
+                itemStyle={{ color: "var(--color-ink)" }}
+                cursor={{ stroke: "var(--color-ink)", strokeWidth: 1 }}
+                formatter={(value) => [`${value} ${unit}`, title]}
               />
               <Line
-                type="monotone"
+                type="linear"
                 dataKey="value"
                 stroke={color}
-                strokeWidth={2}
-                dot={false}
-                activeDot={{ r: 4, fill: color }}
+                strokeWidth={2.5}
+                isAnimationActive={false}
+                dot={(props) => {
+                  const { cx = 0, cy = 0, index } = props;
+                  const isLast = index === lastIndex;
+                  const size = isLast ? 10 : 7;
+                  return (
+                    <rect
+                      key={`dot-${index}`}
+                      x={cx - size / 2}
+                      y={cy - size / 2}
+                      width={size}
+                      height={size}
+                      fill={
+                        isLast ? "var(--color-accent)" : "var(--color-card)"
+                      }
+                      stroke={isLast ? "none" : "var(--color-ink)"}
+                      strokeWidth={2}
+                    />
+                  );
+                }}
+                activeDot={{ r: 0 }}
               />
             </LineChart>
           </ResponsiveContainer>
         ) : (
-          <div className="flex h-full items-center justify-center text-xs text-chart-tick">
+          <div className="flex h-full items-center justify-center border-2 border-dashed border-ink font-mono text-xs uppercase">
             Za mało danych
           </div>
         )}
       </div>
-    </div>
+    </section>
   );
 };

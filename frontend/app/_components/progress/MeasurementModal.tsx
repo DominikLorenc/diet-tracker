@@ -1,6 +1,8 @@
 "use client";
 
-import { forwardRef, useEffect } from "react";
+import { forwardRef, useEffect, useId } from "react";
+import { X } from "lucide-react";
+import { Modal } from "@/app/_components/shared/Modal";
 import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -41,35 +43,37 @@ type Props = {
 type FieldProps = {
   label: string;
   unit: string;
-  unitColor: string;
   error?: string;
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
+const fieldBoxClass =
+  "flex items-center gap-2 h-12 px-3 border-2 border-ink bg-card focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent";
+
+// Label wraps the input, so clicking the label focuses the field
 const NumberField = forwardRef<HTMLInputElement, FieldProps>(
-  ({ label, unit, unitColor, error, ...props }, ref) => (
-    <div className="flex flex-col gap-1.5">
-      <label className="font-['Funnel_Sans'] text-xs font-medium text-dash-fg-muted">
-        {label}
-      </label>
-      <div className="flex items-center gap-2 rounded-xl border border-dash-border bg-[var(--background)] px-3.5 py-2.5">
+  ({ label, unit, error, ...props }, ref) => (
+    <label className="flex flex-col gap-1">
+      <span className="text-[13px] font-extrabold uppercase">{label}</span>
+      <span className={fieldBoxClass}>
         <input
           ref={ref}
           type="number"
+          inputMode="decimal"
           step="0.1"
           placeholder="0"
-          className="flex-1 bg-transparent font-['IBM_Plex_Mono'] text-sm text-dash-fg outline-none placeholder:text-chart-tick"
+          aria-invalid={Boolean(error)}
+          className="flex-1 min-w-0 bg-transparent font-mono text-[15px] text-ink outline-none placeholder:text-ink-muted"
           onFocus={(e) => e.target.select()}
           {...props}
         />
-        <span
-          className="font-['IBM_Plex_Mono'] text-xs font-semibold"
-          style={{ color: unitColor }}
-        >
-          {unit}
+        <span className="font-mono text-sm">{unit}</span>
+      </span>
+      {error && (
+        <span role="alert" className="font-mono text-xs text-accent">
+          {error}
         </span>
-      </div>
-      {error && <span className="text-xs text-red-400">{error}</span>}
-    </div>
+      )}
+    </label>
   ),
 );
 NumberField.displayName = "NumberField";
@@ -89,6 +93,7 @@ export const MeasurementModal = ({
     resolver: zodResolver(schema) as unknown as Resolver<MeasurementFormData>,
     defaultValues: { date: today() },
   });
+  const titleId = useId();
 
   useEffect(() => {
     if (!open) return;
@@ -105,115 +110,93 @@ export const MeasurementModal = ({
     }
   }, [initialData, open, reset]);
 
-  if (!open) return null;
-
   const onSubmit = async (data: MeasurementFormData) => {
     await onSave(data);
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-      <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
+    <Modal open={open} onClose={onClose} labelledBy={titleId}>
+      <div className="flex items-start justify-between gap-3">
+        <h2 id={titleId} className="font-display text-[34px] leading-none">
+          {initialData ? "Edytuj pomiar" : "Nowy pomiar"}
+        </h2>
+        <button
+          type="button"
+          onClick={onClose}
+          className="w-11 h-11 shrink-0 flex items-center justify-center border-2 border-ink hover:bg-ink hover:text-paper transition-colors cursor-pointer"
+          aria-label="Zamknij"
+        >
+          <X size={18} strokeWidth={2.5} strokeLinecap="square" />
+        </button>
+      </div>
+      <div className="rule-thick mt-3 mb-4" />
 
-      <div
-        className="relative z-50 w-full max-w-[520px] rounded-2xl border border-dash-border bg-dash-surface-darker"
-        style={{ boxShadow: "0 24px 48px rgba(0,0,0,0.6)" }}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5">
-          <span className="font-['Newsreader'] text-2xl font-bold text-dash-fg">
-            {initialData ? "Edytuj pomiar" : "Dodaj pomiar"}
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <label className="flex flex-col gap-1">
+          <span className="text-[13px] font-extrabold uppercase">Data</span>
+          <span className={fieldBoxClass}>
+            <input
+              {...register("date")}
+              type="date"
+              max={today()}
+              aria-invalid={Boolean(errors.date)}
+              className="flex-1 min-w-0 bg-transparent font-mono text-[15px] text-ink outline-none"
+            />
           </span>
-          <button
-            onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-dash-border bg-dash-surface-card text-dash-fg-secondary transition-colors hover:text-dash-fg"
-            aria-label="Zamknij"
-          >
-            ✕
-          </button>
+          {errors.date && (
+            <span role="alert" className="font-mono text-xs text-accent">
+              {errors.date.message}
+            </span>
+          )}
+        </label>
+
+        <div className="grid grid-cols-2 gap-4">
+          <NumberField
+            {...register("weight")}
+            label="Waga"
+            unit="kg"
+            error={errors.weight?.message}
+          />
+          <NumberField
+            {...register("waist")}
+            label="Talia"
+            unit="cm"
+            error={errors.waist?.message}
+          />
+          <NumberField
+            {...register("hips")}
+            label="Biodra"
+            unit="cm"
+            error={errors.hips?.message}
+          />
+          <NumberField
+            {...register("arm")}
+            label="Ramię"
+            unit="cm"
+            error={errors.arm?.message}
+          />
         </div>
 
-        <div className="h-px bg-dash-border" />
+        <div className="rule-medium mt-1" />
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col gap-4 px-6 py-5">
-            {/* Data */}
-            <div className="flex flex-col gap-1.5">
-              <label className="font-['Funnel_Sans'] text-xs font-medium text-dash-fg-muted">
-                Data
-              </label>
-              <div className="flex items-center gap-2 rounded-xl border border-dash-border bg-[var(--background)] px-3.5 py-2.5">
-                <span className="text-dash-green">📅</span>
-                <input
-                  {...register("date")}
-                  type="date"
-                  className="flex-1 bg-transparent font-['Funnel_Sans'] text-sm text-dash-fg-bright outline-none [color-scheme:dark]"
-                  max={today()}
-                />
-              </div>
-              {errors.date && (
-                <span className="text-xs text-red-400">
-                  {errors.date.message}
-                </span>
-              )}
-            </div>
-
-            <NumberField
-              {...register("weight")}
-              label="Waga (kg)"
-              unit="kg"
-              unitColor="var(--color-dash-green)"
-              error={errors.weight?.message}
-            />
-            <NumberField
-              {...register("waist")}
-              label="Talia (cm)"
-              unit="cm"
-              unitColor="var(--color-macro-carbs)"
-              error={errors.waist?.message}
-            />
-            <NumberField
-              {...register("hips")}
-              label="Biodra (cm)"
-              unit="cm"
-              unitColor="var(--color-macro-fat)"
-              error={errors.hips?.message}
-            />
-            <NumberField
-              {...register("arm")}
-              label="Ramię (cm)"
-              unit="cm"
-              unitColor="var(--color-macro-protein)"
-              error={errors.arm?.message}
-            />
-          </div>
-
-          <div className="h-px bg-dash-border" />
-
-          {/* Footer */}
-          <div className="flex items-center justify-end gap-2.5 px-6 py-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-xl border border-dash-border bg-dash-surface-card px-5 py-2.5 font-['Funnel_Sans'] text-sm text-dash-fg-secondary transition-colors hover:text-dash-fg"
-            >
-              Anuluj
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="rounded-xl bg-gradient-to-b from-green-600 to-green-700 px-5 py-2.5 font-['Funnel_Sans'] text-sm font-semibold text-white disabled:opacity-50"
-              style={{ boxShadow: "0 2px 10px rgba(34,197,94,0.25)" }}
-            >
-              {isSubmitting ? "Zapisywanie..." : "Zapisz pomiar"}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 min-h-12 border-2 border-ink text-sm font-extrabold uppercase hover:bg-card transition-colors cursor-pointer"
+          >
+            Anuluj
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="flex-[2] min-h-12 bg-ink text-paper text-sm font-extrabold uppercase hover:bg-accent transition-colors disabled:opacity-50 cursor-pointer"
+          >
+            {isSubmitting ? "Zapisywanie…" : "Zapisz pomiar"}
+          </button>
+        </div>
+      </form>
+    </Modal>
   );
 };

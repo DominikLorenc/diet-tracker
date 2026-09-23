@@ -1,25 +1,19 @@
 import type { Metadata } from "next";
-import { Newsreader, IBM_Plex_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import { IBM_Plex_Mono, Archivo } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 
-const newsreader = Newsreader({
-  variable: "--font-newsreader",
-  subsets: ["latin"],
-  style: ["normal", "italic"],
-  weight: ["400", "600", "700"],
-});
-
 const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
   weight: ["400", "500", "600", "700"],
 });
 
-const plusJakartaSans = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+// Variable font with a width axis — used condensed (font-stretch) for display type
+const archivo = Archivo({
+  variable: "--font-archivo",
+  subsets: ["latin", "latin-ext"],
+  axes: ["wdth"],
 });
 
 export const metadata: Metadata = {
@@ -35,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="pl">
       <body
-        className={`${newsreader.variable} ${ibmPlexMono.variable} ${plusJakartaSans.variable} antialiased`}
+        className={`${ibmPlexMono.variable} ${archivo.variable} antialiased`}
       >
         <Providers>{children}</Providers>
       </body>

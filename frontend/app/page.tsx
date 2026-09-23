@@ -2,594 +2,248 @@ import Link from "next/link";
 import AnimateOnScroll from "./_components/shared/AnimateOnScroll";
 import Navbar from "./_components/shared/Navbar";
 
+const FEATURES = [
+  {
+    title: "Dziennik żywieniowy",
+    desc: "Loguj posiłki w sekundy. Baza produktów z gotowymi makrami i skaner kodów kreskowych.",
+  },
+  {
+    title: "Śledzenie makroskładników",
+    desc: "Białko, węglowodany i tłuszcze liczone na bieżąco względem Twojego dziennego celu.",
+  },
+  {
+    title: "Kreator przepisów",
+    desc: "Twórz własne przepisy i automatycznie obliczaj ich wartości odżywcze.",
+  },
+];
+
+const STEPS = [
+  {
+    title: "Załóż konto",
+    desc: "Rejestracja zajmuje chwilę. Ustaw cel — schudnięcie, przybranie lub utrzymanie wagi.",
+  },
+  {
+    title: "Loguj posiłki",
+    desc: "Wyszukaj produkt lub zeskanuj kod kreskowy. Dodaj porcję i gotowe — makra przeliczają się same.",
+  },
+  {
+    title: "Obserwuj postępy",
+    desc: "Sprawdzaj bilans kalorii, zapisuj pomiary i dostosowuj dietę na podstawie danych.",
+  },
+];
+
+// Illustrative values for the hero label — clearly marked as an example
+const SAMPLE_MACROS = [
+  { label: "Białko", value: "112 / 150 g", percent: "75%" },
+  { label: "Węglowodany", value: "158 / 250 g", percent: "63%" },
+  { label: "Tłuszcze", value: "41 / 70 g", percent: "59%" },
+];
+
+const SECTION_X = "px-4 md:px-10 lg:px-20";
+
 export default function Home() {
   return (
-    <main
-      className="min-h-screen overflow-x-hidden"
-      style={{
-        background: "var(--background)",
-        fontFamily: "var(--font-jakarta)",
-      }}
-    >
+    <main className="min-h-screen overflow-x-hidden bg-paper text-ink font-sans">
       <Navbar />
 
       {/* Hero */}
-      <section className="flex flex-col lg:flex-row items-center justify-between min-h-[640px] px-4 md:px-20 py-16 gap-12">
-        <div className="flex flex-col gap-8 max-w-[580px]">
-          <div
-            className="flex items-center gap-2 w-fit px-3.5 py-1.5 rounded-full animate-fade-in-up"
-            style={{
-              background: "var(--color-dash-surface)",
-              border: "1px solid var(--color-dash-border)",
-              animationDelay: "100ms",
-            }}
-          >
-            <div
-              className="w-2 h-2 shrink-0 rounded-full"
-              style={{ background: "var(--color-dash-green-mid)" }}
-            />
-            <span
-              className="text-[13px] font-semibold"
-              style={{ color: "var(--color-dash-green)" }}
-            >
-              Darmowy tracker kalorii i makroskładników
-            </span>
-          </div>
-
-          <div
-            className="flex flex-col gap-1 animate-fade-in-up"
-            style={{ animationDelay: "200ms" }}
-          >
-            <h1
-              className="text-[60px] font-bold leading-[1.1]"
-              style={{
-                color: "var(--color-dash-fg)",
-                fontFamily: "var(--font-newsreader)",
-              }}
-            >
-              Jedz mądrze,
-            </h1>
-            <h1
-              className="text-[60px] font-bold leading-[1.1]"
-              style={{
-                background: "var(--gradient-green-logo)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                fontFamily: "var(--font-newsreader)",
-              }}
-            >
-              osiągaj cele.
-            </h1>
-          </div>
-
-          <p
-            className="text-lg leading-relaxed max-w-[520px] animate-fade-in-up"
-            style={{
-              color: "var(--color-dash-fg-muted)",
-              animationDelay: "300ms",
-            }}
-          >
-            Śledź kalorie, białko, węglowodany i tłuszcze.
-            <br />
-            Buduj zdrowe nawyki z inteligentnym dziennikiem żywieniowym.
+      <section
+        className={`grid gap-12 lg:grid-cols-[minmax(0,1fr)_420px] items-center py-14 lg:py-20 ${SECTION_X}`}
+      >
+        <div className="flex flex-col gap-8">
+          <p className="font-mono text-xs uppercase tracking-wide">
+            Darmowy tracker kalorii i makroskładników
           </p>
-
-          <div
-            className="flex items-center gap-4 animate-fade-in-up"
-            style={{ animationDelay: "400ms" }}
-          >
+          <h1 className="font-display text-[76px] sm:text-[112px] lg:text-[140px] uppercase leading-[0.82] [font-stretch:62%]">
+            Jedz
+            <br />
+            mądrze,
+            <br />
+            <span className="text-accent">osiągaj cele.</span>
+          </h1>
+          <p className="max-w-[520px] text-lg">
+            Śledź kalorie, białko, węglowodany i tłuszcze. Buduj zdrowe nawyki z
+            dziennikiem, który czyta się jak etykieta z opakowania.
+          </p>
+          <div className="flex flex-wrap">
             <Link
               href="/register"
-              className="px-8 py-4 text-base font-bold text-white rounded-xl hover:scale-105 transition-all"
-              style={{
-                background: "var(--gradient-green-button)",
-                boxShadow: "var(--shadow-green-cta)",
-              }}
+              className="flex items-center gap-3 min-h-14 px-6 bg-accent text-white text-base font-extrabold uppercase tracking-wide hover:bg-accent-hover transition-colors"
             >
-              Zacznij za darmo →
+              Zacznij za darmo <span aria-hidden="true">→</span>
             </Link>
-            <button
-              className="px-8 py-4 text-base font-semibold rounded-xl hover:scale-105 transition-all"
-              style={{
-                color: "var(--color-dash-fg-secondary)",
-                background: "var(--color-dash-surface-darker)",
-                border: "1px solid var(--color-dash-border)",
-              }}
+            <Link
+              href="/login"
+              className="flex items-center min-h-14 px-6 border-2 border-ink text-base font-extrabold uppercase tracking-wide hover:bg-card transition-colors"
             >
-              Zobacz demo
-            </button>
-          </div>
-
-          <div
-            className="flex items-center gap-2 animate-fade-in-up"
-            style={{ animationDelay: "500ms" }}
-          >
-            <span className="text-base">⭐⭐⭐⭐⭐</span>
-            <span
-              className="text-sm"
-              style={{ color: "var(--color-dash-fg-muted)" }}
-            >
-              Dołącz do 12 000+ użytkowników
-            </span>
+              Mam konto
+            </Link>
           </div>
         </div>
 
-        {/* App mockup */}
-        <div
-          className="hidden lg:block w-[520px] animate-fade-in-right"
-          style={{ animationDelay: "300ms" }}
-        >
-          <div className="animate-float">
-            <div
-              className="rounded-2xl overflow-hidden"
-              style={{
-                background: "var(--color-dash-surface-darker)",
-                border: "1px solid var(--color-dash-border)",
-                boxShadow: "var(--shadow-mockup)",
-              }}
-            >
-              {/* Header */}
-              <div
-                className="flex items-center justify-between px-5 h-14"
-                style={{ borderBottom: "1px solid var(--color-dash-border)" }}
-              >
-                <span
-                  className="text-[15px] font-bold"
-                  style={{ color: "var(--color-dash-fg)" }}
-                >
-                  Dziennik — Wtorek, 25 marca
-                </span>
-                <span
-                  className="text-[13px]"
-                  style={{
-                    color: "var(--color-dash-fg-muted)",
-                    fontFamily: "var(--font-ibm-plex-mono)",
-                  }}
-                >
-                  2025 / 2200 kcal
-                </span>
-              </div>
-
-              {/* Calorie summary */}
-              <div
-                className="flex flex-col gap-2.5 px-5 py-4"
-                style={{ borderBottom: "1px solid var(--color-dash-border)" }}
-              >
-                <span
-                  className="text-[11px] font-bold tracking-[0.15em]"
-                  style={{
-                    color: "var(--color-dash-green)",
-                    fontFamily: "var(--font-ibm-plex-mono)",
-                  }}
-                >
-                  KALORIE
-                </span>
-                <div className="flex justify-between items-end">
-                  <span
-                    className="text-[30px] font-bold leading-none"
-                    style={{
-                      color: "var(--color-dash-fg)",
-                      fontFamily: "var(--font-ibm-plex-mono)",
-                    }}
-                  >
-                    2025 / 2200
-                  </span>
-                  <span
-                    className="text-[12px] font-semibold text-right"
-                    style={{ color: "var(--color-dash-fg-secondary)" }}
-                  >
-                    pozostało
-                    <br />
-                    175 kcal
-                  </span>
-                </div>
-                <div
-                  className="h-2 rounded-full"
-                  style={{ background: "var(--color-macro-track)" }}
-                >
-                  <div
-                    className="h-2 rounded-full"
-                    style={{
-                      width: "92%",
-                      background: "var(--gradient-calories)",
-                    }}
-                  />
-                </div>
-
-                {/* Macros */}
-                <div className="flex gap-3 mt-0.5">
-                  {[
-                    {
-                      label: "Białko",
-                      value: "95g",
-                      pct: "79%",
-                      color: "var(--color-macro-protein)",
-                    },
-                    {
-                      label: "Węgle",
-                      value: "180g",
-                      pct: "78%",
-                      color: "var(--color-macro-carbs)",
-                    },
-                    {
-                      label: "Tłuszcze",
-                      value: "55g",
-                      pct: "78%",
-                      color: "var(--color-macro-fat)",
-                    },
-                  ].map((m) => (
-                    <div key={m.label} className="flex-1 flex flex-col gap-1">
-                      <div className="flex justify-between">
-                        <span
-                          className="text-[11px] font-semibold"
-                          style={{ color: m.color }}
-                        >
-                          {m.label}
-                        </span>
-                        <span
-                          className="text-[11px]"
-                          style={{ color: "var(--color-dash-fg-muted)" }}
-                        >
-                          {m.value}
-                        </span>
-                      </div>
-                      <div
-                        className="h-1.5 rounded-full"
-                        style={{ background: "var(--color-macro-track)" }}
-                      >
-                        <div
-                          className="h-1.5 rounded-full"
-                          style={{ width: m.pct, background: m.color }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Meal entries */}
-              <div className="flex flex-col px-5 py-4 gap-1">
-                <div className="flex items-center justify-between h-9">
-                  <span
-                    className="text-[13px] font-bold"
-                    style={{ color: "var(--color-dash-fg)" }}
-                  >
-                    Śniadanie
-                  </span>
-                  <span
-                    className="text-[13px]"
-                    style={{
-                      color: "var(--color-dash-fg-muted)",
-                      fontFamily: "var(--font-ibm-plex-mono)",
-                    }}
-                  >
-                    487 kcal
-                  </span>
-                </div>
-                {[
-                  {
-                    icon: "🥣",
-                    name: "Owsianka z owocami",
-                    detail: "250g · 12g B · 58g W · 8g T",
-                    kcal: "350 kcal",
-                    highlighted: true,
-                  },
-                  {
-                    icon: "☕",
-                    name: "Kawa z mlekiem",
-                    detail: "200ml · 3g B · 5g W · 3g T",
-                    kcal: "137 kcal",
-                    highlighted: false,
-                  },
-                ].map((entry) => (
-                  <div
-                    key={entry.name}
-                    className="flex items-center justify-between h-[52px] px-3 rounded-xl"
-                    style={
-                      entry.highlighted
-                        ? {
-                            background: "var(--color-dash-surface)",
-                            border: "1px solid var(--color-dash-border)",
-                          }
-                        : { background: "transparent" }
-                    }
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center text-base"
-                        style={{
-                          background: "var(--color-dash-surface-alt)",
-                          border: "1px solid var(--color-dash-border)",
-                        }}
-                      >
-                        {entry.icon}
-                      </div>
-                      <div className="flex flex-col gap-0.5">
-                        <span
-                          className="text-[13px] font-semibold"
-                          style={{ color: "var(--color-dash-fg)" }}
-                        >
-                          {entry.name}
-                        </span>
-                        <span
-                          className="text-[11px]"
-                          style={{ color: "var(--color-dash-fg-muted)" }}
-                        >
-                          {entry.detail}
-                        </span>
-                      </div>
-                    </div>
-                    <span
-                      className="text-[13px] font-semibold"
-                      style={{
-                        color: "var(--color-dash-green)",
-                        fontFamily: "var(--font-ibm-plex-mono)",
-                      }}
-                    >
-                      {entry.kcal}
-                    </span>
-                  </div>
-                ))}
-              </div>
+        {/* Example label — the product in one picture */}
+        <AnimateOnScroll animation="fade-in-right" delay={150}>
+          <figure className="border-2 border-ink bg-card px-3 pt-1.5 pb-3 shadow-[var(--shadow-hard)]">
+            <p className="font-display text-[38px] leading-none">
+              Wartości dnia
+            </p>
+            <div className="flex justify-between text-sm pt-0.5 pb-1 border-b border-ink">
+              <span>Cel dzienny</span>
+              <span className="font-mono font-semibold">2200 kcal</span>
             </div>
-          </div>
-        </div>
+            <div className="rule-thick" />
+            <div className="flex items-end justify-between pt-1.5">
+              <span className="font-display text-[32px] leading-none [font-stretch:75%]">
+                Kalorie
+              </span>
+              <span className="font-mono text-[52px] font-semibold leading-none tracking-[-0.04em]">
+                1418
+              </span>
+            </div>
+            <div className="h-3.5 border-[1.5px] border-ink mt-2 mb-1">
+              <div className="h-full w-[64%] bg-ink" />
+            </div>
+            <div className="flex justify-between font-mono text-xs pb-1">
+              <span>64% celu</span>
+              <span>
+                zostało{" "}
+                <strong className="font-semibold text-accent">782 kcal</strong>
+              </span>
+            </div>
+            <div className="rule-medium" />
+            {SAMPLE_MACROS.map((macro, idx) => (
+              <div
+                key={macro.label}
+                className={`grid grid-cols-[minmax(0,1fr)_104px_44px] items-baseline py-1.5 text-[15px] ${
+                  idx < SAMPLE_MACROS.length - 1 ? "border-b border-ink" : ""
+                }`}
+              >
+                <span className="font-extrabold">{macro.label}</span>
+                <span className="font-mono text-[13px]">{macro.value}</span>
+                <span className="font-mono font-semibold text-right">
+                  {macro.percent}
+                </span>
+              </div>
+            ))}
+            <div className="rule-thick" />
+            <figcaption className="mt-1.5 text-[11px]">
+              * Przykładowy dzień w aplikacji.
+            </figcaption>
+          </figure>
+        </AnimateOnScroll>
       </section>
 
       {/* Features */}
       <section
         id="funkcje"
-        className="flex flex-col items-center gap-16 px-4 md:px-20 py-20"
-        style={{ background: "var(--color-landing-dark)" }}
+        aria-labelledby="features-heading"
+        className={`py-14 lg:py-20 border-t-2 border-ink ${SECTION_X}`}
       >
-        <AnimateOnScroll className="flex flex-col items-center gap-4 text-center">
-          <div
-            className="px-4 py-1.5 rounded-full"
-            style={{
-              background: "var(--color-dash-surface)",
-              border: "1px solid var(--color-dash-border)",
-            }}
-          >
-            <span
-              className="text-[13px] font-semibold"
-              style={{ color: "var(--color-dash-green)" }}
+        <div className="grid gap-8 lg:grid-cols-[400px_minmax(0,1fr)]">
+          <div className="flex flex-col gap-3">
+            <p className="font-mono text-xs uppercase">Funkcje</p>
+            <h2
+              id="features-heading"
+              className="font-display text-[48px] sm:text-[56px] lg:text-[60px] uppercase leading-[0.9] [font-stretch:62%] break-words"
             >
-              Funkcje
-            </span>
+              Wszystko, czego potrzebujesz
+            </h2>
+            <p>Jeden tracker do zarządzania dietą, przepisami i postępami.</p>
           </div>
-          <h2
-            className="text-[40px] font-extrabold"
-            style={{ color: "var(--color-dash-fg)" }}
-          >
-            Wszystko czego potrzebujesz
-          </h2>
-          <p
-            className="text-lg leading-relaxed max-w-[520px] text-center"
-            style={{ color: "var(--color-dash-fg-muted)" }}
-          >
-            Jeden tracker do zarządzania dietą, przepisami i postępami.
-          </p>
-        </AnimateOnScroll>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-          {[
-            {
-              emoji: "📓",
-              title: "Dziennik żywieniowy",
-              desc: "Loguj posiłki w sekundy. Baza tysięcy produktów z gotowymi makrami.",
-            },
-            {
-              emoji: "📊",
-              title: "Śledzenie makroskładników",
-              desc: "Wizualne wykresy białka, węglowodanów i tłuszczów w czasie rzeczywistym.",
-            },
-            {
-              emoji: "🍽️",
-              title: "Kreator przepisów",
-              desc: "Twórz własne przepisy i automatycznie obliczaj ich wartości odżywcze.",
-            },
-          ].map((card, i) => (
-            <AnimateOnScroll key={card.title} delay={i * 120}>
-              <div
-                className="flex flex-col gap-5 p-8 rounded-2xl hover:-translate-y-1 transition-all duration-300 h-full"
-                style={{
-                  background: "var(--color-dash-surface-darker)",
-                  border: "1px solid var(--color-dash-border)",
-                  boxShadow: "var(--shadow-dash-card)",
-                }}
-              >
-                <div
-                  className="w-[52px] h-[52px] rounded-[14px] flex items-center justify-center text-[26px]"
-                  style={{
-                    background: "var(--color-dash-surface)",
-                    border: "1px solid var(--color-dash-border)",
-                  }}
+          <AnimateOnScroll>
+            <ol className="border-t-[10px] border-ink">
+              {FEATURES.map((feature, idx) => (
+                <li
+                  key={feature.title}
+                  className="grid grid-cols-[48px_minmax(0,1fr)] gap-4 py-5 border-b border-ink"
                 >
-                  {card.emoji}
-                </div>
-                <h3
-                  className="text-xl font-bold"
-                  style={{ color: "var(--color-dash-fg)" }}
-                >
-                  {card.title}
-                </h3>
-                <p
-                  className="text-[15px] leading-relaxed"
-                  style={{ color: "var(--color-dash-fg-muted)" }}
-                >
-                  {card.desc}
-                </p>
-              </div>
-            </AnimateOnScroll>
-          ))}
+                  <span className="font-mono text-sm font-semibold pt-1.5">
+                    {String(idx + 1).padStart(2, "0")}
+                  </span>
+                  <div className="flex flex-col gap-1">
+                    <h3 className="font-display text-[32px] leading-none">
+                      {feature.title}
+                    </h3>
+                    <p className="max-w-[560px]">{feature.desc}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </AnimateOnScroll>
         </div>
       </section>
 
       {/* How it works */}
       <section
         id="jak-to-dziala"
-        className="flex flex-col items-center gap-16 px-4 md:px-20 py-20"
-        style={{ background: "var(--background)" }}
+        aria-labelledby="steps-heading"
+        className={`py-14 lg:py-20 border-t-2 border-ink bg-card ${SECTION_X}`}
       >
-        <AnimateOnScroll className="flex flex-col items-center gap-4 text-center">
-          <div
-            className="px-4 py-1.5 rounded-full"
-            style={{
-              background: "var(--color-dash-surface)",
-              border: "1px solid var(--color-dash-border)",
-            }}
-          >
-            <span
-              className="text-[13px] font-semibold"
-              style={{ color: "var(--color-dash-green)" }}
+        <p className="font-mono text-xs uppercase">Jak to działa</p>
+        <h2
+          id="steps-heading"
+          className="font-display text-[56px] lg:text-[72px] uppercase leading-[0.9] [font-stretch:65%] mt-3"
+        >
+          Zacznij w 3 krokach
+        </h2>
+        <ol className="grid gap-0 md:grid-cols-3 mt-8 border-2 border-ink">
+          {STEPS.map((step, idx) => (
+            <li
+              key={step.title}
+              className={`flex flex-col gap-3 p-5 ${
+                idx > 0
+                  ? "border-t-2 md:border-t-0 md:border-l-2 border-ink"
+                  : ""
+              }`}
             >
-              Jak to działa
-            </span>
-          </div>
-          <h2
-            className="text-[40px] font-extrabold"
-            style={{ color: "var(--color-dash-fg)" }}
-          >
-            Zacznij w 3 krokach
-          </h2>
-        </AnimateOnScroll>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
-          {[
-            {
-              num: "1",
-              title: "Załóż konto",
-              desc: "Rejestracja zajmuje 30 sekund. Podaj cel — schudnięcie, przybranie lub utrzymanie wagi.",
-            },
-            {
-              num: "2",
-              title: "Loguj posiłki",
-              desc: "Wyszukaj produkt lub zeskanuj kod kreskowy. Dodaj porcję i gotowe — makra przeliczają się automatycznie.",
-            },
-            {
-              num: "3",
-              title: "Obserwuj postępy",
-              desc: "Analizuj trendy, sprawdzaj bilans kalorii i dostosowuj dietę na podstawie danych.",
-            },
-          ].map((step, i) => (
-            <AnimateOnScroll
-              key={step.num}
-              animation="scale-in"
-              delay={i * 150}
-            >
-              <div className="flex flex-col items-center gap-5 text-center">
-                <div
-                  className="w-14 h-14 rounded-full flex items-center justify-center text-[22px] font-extrabold text-white"
-                  style={{
-                    background: "var(--gradient-green-button)",
-                    boxShadow: "var(--shadow-green-step)",
-                    fontFamily: "var(--font-ibm-plex-mono)",
-                  }}
-                >
-                  {step.num}
-                </div>
-                <h3
-                  className="text-xl font-bold"
-                  style={{ color: "var(--color-dash-fg)" }}
-                >
-                  {step.title}
-                </h3>
-                <p
-                  className="text-[15px] leading-relaxed"
-                  style={{ color: "var(--color-dash-fg-muted)" }}
-                >
-                  {step.desc}
-                </p>
-              </div>
-            </AnimateOnScroll>
+              <span className="font-display text-[88px] leading-[0.8] [font-stretch:62%]">
+                {idx + 1}
+              </span>
+              <div className="rule-medium" />
+              <h3 className="text-lg font-extrabold uppercase">{step.title}</h3>
+              <p className="text-sm">{step.desc}</p>
+            </li>
           ))}
-        </div>
+        </ol>
       </section>
 
       {/* CTA */}
       <section
-        className="flex flex-col items-center gap-8 px-4 md:px-20 py-20"
-        style={{
-          background: "var(--gradient-cta)",
-          borderTop: "1px solid var(--color-dash-border)",
-        }}
+        aria-labelledby="cta-heading"
+        className={`py-16 lg:py-24 bg-ink text-paper ${SECTION_X}`}
       >
-        <AnimateOnScroll className="flex flex-col items-center gap-8 w-full">
-          <h2
-            className="text-[48px] font-extrabold text-center"
-            style={{
-              color: "var(--color-dash-fg)",
-              fontFamily: "var(--font-newsreader)",
-            }}
-          >
-            Gotowy na zmianę diety?
-          </h2>
-          <p
-            className="text-lg text-center leading-relaxed max-w-[560px]"
-            style={{ color: "var(--color-dash-fg-muted)" }}
-          >
-            Zacznij śledzić makra już dziś — za darmo, bez karty kredytowej.
-          </p>
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+          <div className="flex flex-col gap-4">
+            <h2
+              id="cta-heading"
+              className="font-display text-[64px] lg:text-[96px] uppercase leading-[0.85] [font-stretch:62%]"
+            >
+              Gotowy na
+              <br />
+              zmianę diety?
+            </h2>
+            <p className="text-lg max-w-[520px]">
+              Zacznij śledzić makra już dziś — za darmo, bez karty kredytowej.
+            </p>
+          </div>
           <Link
             href="/register"
-            className="px-10 py-[18px] text-lg font-bold text-white rounded-2xl hover:scale-105 transition-all"
-            style={{
-              background: "var(--gradient-green-button)",
-              boxShadow: "var(--shadow-green-cta-lg)",
-            }}
+            className="self-start lg:self-auto flex items-center gap-3 min-h-14 px-6 bg-accent text-white text-base font-extrabold uppercase tracking-wide hover:bg-paper hover:text-ink transition-colors"
           >
-            Stwórz darmowe konto →
+            Stwórz darmowe konto <span aria-hidden="true">→</span>
           </Link>
-          <p
-            className="text-sm text-center"
-            style={{ color: "var(--color-dash-fg-muted)" }}
-          >
-            Dołącz do 12 000+ użytkowników • Brak limitu wpisów
-          </p>
-        </AnimateOnScroll>
+        </div>
       </section>
 
       {/* Footer */}
       <footer
-        className="flex items-center justify-between h-16 px-4 md:px-20"
-        style={{
-          background: "var(--color-dash-surface-darker)",
-          borderTop: "1px solid var(--color-dash-border)",
-        }}
+        className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-6 border-t-2 border-ink ${SECTION_X}`}
       >
-        <div className="flex items-center gap-2.5">
-          <div
-            className="w-7 h-7 rounded-lg flex items-center justify-center text-sm"
-            style={{
-              background: "var(--gradient-green-logo)",
-            }}
-          >
-            🥗
-          </div>
-          <span
-            className="text-base font-bold"
-            style={{ color: "var(--color-dash-fg)" }}
-          >
-            DietTracker
-          </span>
-        </div>
-        <div className="flex items-center gap-6">
-          {["Prywatność", "Regulamin", "Kontakt"].map((link) => (
-            <a
-              key={link}
-              href="#"
-              className="text-[13px] transition-colors"
-              style={{ color: "var(--color-dash-fg-muted)" }}
-            >
-              {link}
-            </a>
-          ))}
-        </div>
-        <span
-          className="text-[13px]"
-          style={{ color: "var(--color-dash-fg-muted)" }}
-        >
-          © 2025 DietTracker
+        <span className="font-display text-xl uppercase [font-stretch:62%]">
+          Diet Tracker
+        </span>
+        <span className="font-mono text-xs">
+          © {new Date().getFullYear()} Diet Tracker
         </span>
       </footer>
     </main>

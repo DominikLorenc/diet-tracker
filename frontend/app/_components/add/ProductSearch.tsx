@@ -1,5 +1,6 @@
 "use client";
 
+import { pluralPl } from "@/utils/format";
 import {
   Dispatch,
   SetStateAction,
@@ -18,6 +19,7 @@ import {
   BarcodeScannerModal,
   type ScannedProduct,
 } from "@/app/_components/barcode/BarcodeScannerModal";
+import { Plus, ScanBarcode, Search } from "lucide-react";
 
 const searchSchema = z.object({
   search: z.string().min(1, "Wpisz nazwę produktu"),
@@ -206,40 +208,28 @@ export const ProductSearch = ({
 
   return (
     <div>
-      {/* ── Pasek wyszukiwania + przycisk "Nowy produkt" ── */}
-      <div className="flex items-center gap-2 mb-5">
-        <form
-          className="flex items-center gap-2 flex-1"
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          {/* Pole wyszukiwania */}
-          <div className="relative flex-1">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              width={16}
-              height={16}
-              fill="none"
-              stroke="var(--color-dash-fg-muted)"
-              strokeWidth={2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
+      {/* ── Pasek wyszukiwania + skaner + "Nowy produkt" ── */}
+      <div className="flex items-stretch mb-2">
+        <form className="flex flex-1 min-w-0" onSubmit={handleSubmit(onSubmit)}>
+          <label className="flex-1 min-w-0 flex items-center gap-2 h-[52px] px-3 border-2 border-ink bg-card focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent">
+            <Search
+              size={18}
+              strokeWidth={2.5}
+              strokeLinecap="square"
+              aria-hidden="true"
+            />
+            <span className="sr-only">Szukaj produktu</span>
             <input
               type="text"
-              placeholder="Szukaj produktu..."
-              className="w-full bg-dash-surface-card text-white placeholder:text-dash-svg-inactive pl-10 pr-4 py-2.5 rounded-xl border border-dash-border focus:outline-none focus:border-dash-green-mid text-sm transition-colors"
+              placeholder="Szukaj produktu…"
+              className="flex-1 min-w-0 bg-transparent text-base font-semibold text-ink placeholder:text-ink-muted placeholder:font-normal outline-none"
               {...register("search")}
             />
-          </div>
+          </label>
           <button
             type="submit"
             disabled={isSearching}
-            className="bg-green-600 hover:bg-green-700 disabled:opacity-60 transition-colors px-4 py-2.5 rounded-xl text-white font-semibold text-sm"
+            className="shrink-0 px-4 border-2 border-l-0 border-ink bg-ink text-paper text-sm font-extrabold uppercase hover:bg-accent hover:border-accent disabled:opacity-60 transition-colors cursor-pointer"
           >
             Szukaj
           </button>
@@ -250,28 +240,11 @@ export const ProductSearch = ({
           <button
             type="button"
             onClick={() => setIsScannerOpen(true)}
+            aria-label="Skanuj kod kreskowy"
             title="Skanuj kod kreskowy"
-            className="shrink-0 flex items-center gap-1.5 bg-dash-badge-bg border border-[var(--color-green-mid-alpha-md)] hover:border-dash-green-mid transition-colors px-3 py-2.5 rounded-xl text-dash-green"
+            className="shrink-0 w-14 border-2 border-l-0 border-ink flex items-center justify-center hover:bg-ink hover:text-paper transition-colors cursor-pointer"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              width={16}
-              height={16}
-              fill="none"
-              stroke="var(--color-dash-green)"
-              strokeWidth={2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <rect x="3" y="3" width="7" height="7" />
-              <rect x="14" y="3" width="7" height="7" />
-              <rect x="3" y="14" width="7" height="7" />
-              <line x1="14" y1="14" x2="14" y2="21" />
-              <line x1="14" y1="14" x2="21" y2="14" />
-              <line x1="21" y1="17" x2="21" y2="21" />
-              <line x1="17" y1="21" x2="21" y2="21" />
-            </svg>
+            <ScanBarcode size={24} strokeWidth={2} strokeLinecap="square" />
           </button>
         )}
 
@@ -279,53 +252,50 @@ export const ProductSearch = ({
         {onGoToNewProduct && (
           <button
             onClick={onGoToNewProduct}
-            className="shrink-0 flex items-center gap-1.5 bg-dash-badge-bg border border-[var(--color-green-mid-alpha-md)] hover:border-dash-green-mid transition-colors px-3 py-2.5 rounded-xl text-dash-green text-sm font-semibold"
+            className="shrink-0 flex items-center gap-1 px-3 border-2 border-l-0 border-ink text-sm font-extrabold uppercase hover:bg-ink hover:text-paper transition-colors cursor-pointer"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              width={14}
-              height={14}
-              fill="none"
-              stroke="var(--color-dash-green)"
-              strokeWidth={2.5}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-            Nowy
+            <Plus size={16} strokeWidth={3} strokeLinecap="square" />
+            <span className="hidden sm:inline">Nowy</span>
+            <span className="sr-only sm:hidden">Nowy produkt</span>
           </button>
         )}
       </div>
 
       {errors.search && (
-        <p className="text-red-400 text-xs mb-3">{errors.search.message}</p>
+        <p role="alert" className="font-mono text-accent text-xs mb-3">
+          {errors.search.message}
+        </p>
       )}
 
       {/* ── Wyniki wyszukiwania ── */}
       {hasSearched && (
         <div>
-          {isSearching && (
-            <p className="text-dash-fg-muted text-sm text-center py-6">
-              Szukam...
-            </p>
-          )}
+          <div className="flex justify-between font-mono text-[11px] uppercase mt-3 pb-1 border-b-[5px] border-ink">
+            <span>
+              {isSearching
+                ? "Szukam…"
+                : pluralPl(displayedProducts.length, {
+                    one: "wynik",
+                    few: "wyniki",
+                    many: "wyników",
+                  })}
+            </span>
+            <span>kcal / 100 g</span>
+          </div>
           {!isSearching && displayedProducts.length === 0 && (
-            <div className="text-center py-8 bg-dash-surface-darker rounded-xl border border-dash-border">
-              <p className="text-dash-fg-muted mb-3 text-sm">
+            <div className="mt-3 py-6 px-4 border-2 border-dashed border-ink">
+              <p className="mb-2 text-sm font-extrabold uppercase">
                 Nie znaleziono produktu
               </p>
               {onGoToNewProduct ? (
                 <button
                   onClick={onGoToNewProduct}
-                  className="text-dash-green text-sm font-semibold underline underline-offset-2"
+                  className="text-accent text-sm font-extrabold uppercase min-h-11 cursor-pointer"
                 >
                   Nie znaleziono? → Dodaj nowy produkt
                 </button>
               ) : (
-                <p className="text-dash-fg-dim text-xs px-4">
+                <p className="text-sm">
                   Bazę produktów uzupełnia administrator — zgłoś mu brakujący
                   produkt.
                 </p>
@@ -358,16 +328,19 @@ export const ProductSearch = ({
 
       {/* ── Stan początkowy: Ostatnio jedzone + Ulubione ── */}
       {showInitialState && (
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-7 mt-4">
           {/* Ostatnio jedzone */}
           {recentProducts.length > 0 && (
-            <section className="bg-dash-surface-darker rounded-xl border border-dash-border p-4">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-dash-green font-mono text-xs font-bold tracking-widest uppercase">
+            <section aria-labelledby="recent-heading">
+              <div className="flex items-baseline justify-between border-b-[5px] border-ink pb-0.5">
+                <h2
+                  id="recent-heading"
+                  className="font-display text-[26px] uppercase"
+                >
                   Ostatnio jedzone
                 </h2>
-                <span className="text-dash-svg-inactive text-xs">
-                  {recentProducts.length} produktów
+                <span className="font-mono text-[11px] uppercase">
+                  kcal / 100 g
                 </span>
               </div>
               {recentProducts.map((product) => (
@@ -395,24 +368,17 @@ export const ProductSearch = ({
 
           {/* Ulubione produkty */}
           {favoriteProducts.length > 0 && (
-            <section className="bg-dash-surface-darker rounded-xl border border-dash-border p-4">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-dash-green font-mono text-xs font-bold tracking-widest uppercase">
-                  Ulubione produkty
-                </h2>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  width={13}
-                  height={13}
-                  fill="var(--color-dash-green)"
-                  stroke="var(--color-dash-green)"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+            <section aria-labelledby="favorites-heading">
+              <div className="flex items-baseline justify-between border-b-[5px] border-ink pb-0.5">
+                <h2
+                  id="favorites-heading"
+                  className="font-display text-[26px] uppercase"
                 >
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                </svg>
+                  Ulubione
+                </h2>
+                <span className="font-mono text-[11px] uppercase">
+                  kcal / 100 g
+                </span>
               </div>
               {favoriteProducts.map((fav) => (
                 <AddProductCard
@@ -434,8 +400,8 @@ export const ProductSearch = ({
 
           {/* Stan pusty — brak historii i ulubionych */}
           {recentProducts.length === 0 && favoriteProducts.length === 0 && (
-            <div className="text-center py-12 bg-dash-surface-darker rounded-xl border border-dash-border">
-              <p className="text-dash-svg-inactive text-sm">
+            <div className="py-10 px-4 border-2 border-dashed border-ink">
+              <p className="text-sm font-extrabold uppercase">
                 Wyszukaj produkt lub dodaj nowy
               </p>
             </div>

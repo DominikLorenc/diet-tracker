@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { uploadImage } from "@/utils/uploadImage";
 import { apiClient } from "@/app/lib/apiClient";
+import { ImageUp } from "lucide-react";
 
 type AvatarCardProps = {
   name: string;
@@ -47,45 +48,46 @@ export const AvatarCard = ({ name, email, imageUrl }: AvatarCardProps) => {
   };
 
   return (
-    <div className="flex flex-col items-center gap-3 py-6">
-      {/* Avatar */}
-      <div className="w-20 h-20 rounded-full bg-gradient-green ring-avatar-green flex items-center justify-center shrink-0">
+    <div className="flex flex-col gap-3 p-4">
+      <div className="w-24 h-24 bg-ink text-paper border-2 border-ink flex items-center justify-center shrink-0 overflow-hidden">
         {userImage ? (
           <Image
             src={userImage}
             alt={name}
-            className="w-full h-full rounded-full object-cover"
-            width={80}
-            height={80}
+            className="w-full h-full object-cover"
+            width={96}
+            height={96}
             loading="eager"
-            loader={({ src }) => `${src}?w=80&h=80&fit=crop`}
+            loader={({ src }) => `${src}?w=96&h=96&fit=crop`}
           />
         ) : (
-          <span className="text-white text-3xl font-semibold font-sans">
-            {initial}
-          </span>
+          <span className="font-display text-5xl">{initial}</span>
         )}
       </div>
 
-      <div className="flex flex-col items-center gap-1">
-        <h2 className="text-lg font-bold text-dash-fg font-sans">{name}</h2>
-        {email && (
-          <p className="text-sm text-dash-fg-muted font-sans">{email}</p>
-        )}
+      <div className="flex flex-col border-t-[10px] border-ink pt-2">
+        <h2 className="font-display text-[30px] leading-none break-words">
+          {name}
+        </h2>
+        {email && <p className="font-mono text-xs pt-1 break-all">{email}</p>}
       </div>
 
-      <label className="flex items-center gap-2 px-5 py-2 rounded-xl border border-dash-border bg-dash-surface-alt text-sm text-dash-fg-muted font-sans transition-opacity hover:opacity-80 cursor-pointer">
-        <span>🖼</span>
-        <span>Change Photo</span>
+      <label className="flex items-center justify-center gap-2 min-h-11 px-4 border-2 border-ink text-sm font-extrabold uppercase cursor-pointer hover:bg-ink hover:text-paper transition-colors focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent">
+        <ImageUp size={16} strokeWidth={2.5} aria-hidden="true" />
+        Zmień zdjęcie
         <input
           onChange={onFileChange}
           type="file"
           accept="image/*"
-          className="hidden"
+          className="sr-only"
         />
       </label>
 
-      {error && <p className="text-sm text-red-400 font-sans">{error}</p>}
+      {error && (
+        <p role="alert" className="font-mono text-xs text-accent">
+          {error}
+        </p>
+      )}
     </div>
   );
 };

@@ -90,12 +90,11 @@ export const Modal = ({ children, open, onClose, labelledBy }: Props) => {
   if (!open) return null;
 
   return (
-    <div
-      className={`fixed inset-0 z-60 flex items-center justify-center bg-black/50 p-4 sm:p-6`}
-    >
+    <div className="fixed inset-0 z-60 flex items-end sm:items-center justify-center p-0 sm:p-6">
       <div
-        className={`fixed inset-0 z-60 bg-black/50 backdrop-blur-sm`}
+        className="fixed inset-0 z-60 bg-ink/40"
         onClick={onClose}
+        aria-hidden="true"
       ></div>
       <div
         ref={panelRef}
@@ -103,7 +102,7 @@ export const Modal = ({ children, open, onClose, labelledBy }: Props) => {
         aria-modal="true"
         aria-labelledby={labelledBy}
         tabIndex={-1}
-        className="relative z-60 w-full max-w-2xl mx-auto max-h-[90dvh] overflow-y-auto rounded-2xl bg-gray-800 p-5 shadow-xl sm:p-8"
+        className="relative z-60 w-full max-w-2xl mx-auto max-h-[90dvh] overflow-y-auto bg-paper border-t-2 sm:border-2 border-ink p-4 sm:p-6 sm:shadow-[var(--shadow-hard)]"
       >
         {children}
       </div>

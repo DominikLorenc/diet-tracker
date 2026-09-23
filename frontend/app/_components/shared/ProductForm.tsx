@@ -1,6 +1,7 @@
 "use client";
 
 import { useForm, SubmitHandler } from "react-hook-form";
+import { ScanBarcode } from "lucide-react";
 import { productSchema } from "@/schemas/productSchem";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -198,9 +199,8 @@ export const ProductForm = ({
   const submitButtonText = productToEdit ? "Zaktualizuj" : "Dodaj produkt";
 
   const inputClass =
-    "block w-full rounded-xl bg-[var(--background)] border border-dash-border px-3 py-2.5 text-sm text-white placeholder:text-dash-svg-inactive focus:outline-none focus:border-dash-green-mid transition-colors";
-  const labelClass =
-    "block text-xs font-bold text-dash-fg-muted uppercase tracking-wider font-mono";
+    "block w-full h-12 bg-card border-2 border-ink px-3 font-mono text-[15px] text-ink placeholder:text-ink-muted focus:outline-2 focus:outline-offset-2 focus:outline-accent file:mr-3 file:h-full file:border-0 file:bg-ink file:px-3 file:text-paper file:font-sans file:text-xs file:font-extrabold file:uppercase";
+  const labelClass = "block text-[13px] font-extrabold uppercase";
 
   return (
     <>
@@ -208,38 +208,18 @@ export const ProductForm = ({
         <button
           type="button"
           onClick={() => setIsScannerOpen(true)}
-          className="flex items-center justify-center gap-2 w-full rounded-xl bg-dash-badge-bg border border-[var(--color-green-mid-alpha-md)] hover:border-dash-green-mid transition-colors px-3 py-2.5 text-dash-green text-sm font-semibold mb-2"
+          className="flex items-center justify-center gap-2 w-full min-h-12 border-2 border-ink text-sm font-extrabold uppercase hover:bg-ink hover:text-paper transition-colors cursor-pointer mb-4"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width={16}
-            height={16}
-            fill="none"
-            stroke="var(--color-dash-green)"
-            strokeWidth={2}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <rect x="3" y="3" width="7" height="7" />
-            <rect x="14" y="3" width="7" height="7" />
-            <rect x="3" y="14" width="7" height="7" />
-            <line x1="14" y1="14" x2="14" y2="21" />
-            <line x1="14" y1="14" x2="21" y2="14" />
-            <line x1="21" y1="17" x2="21" y2="21" />
-            <line x1="17" y1="21" x2="21" y2="21" />
-          </svg>
-          Skanuj kod kreskowy
+          <ScanBarcode size={18} strokeWidth={2} strokeLinecap="square" />
+          Wypełnij ze skanu kodu kreskowego
         </button>
       )}
       <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col gap-1.5 items-center">
-          <h1
-            id={titleId}
-            className="text-center text-3xl font-bold tracking-tight text-white"
-          >
-            {submitButtonText}
+        <div>
+          <h1 id={titleId} className="font-display text-[34px] leading-none">
+            {productToEdit ? "Edytuj produkt" : "Nowy produkt"}
           </h1>
+          <div className="rule-thick mt-2" />
         </div>
         <div className="flex flex-col gap-1.5">
           <label htmlFor="name" className={labelClass}>
@@ -253,7 +233,9 @@ export const ProductForm = ({
             {...register("name")}
           />
           {errors.name && (
-            <p className="text-sm text-red-400">{errors.name.message}</p>
+            <p role="alert" className="font-mono text-xs text-accent">
+              {errors.name.message}
+            </p>
           )}
         </div>
 
@@ -279,13 +261,18 @@ export const ProductForm = ({
             ))}
           </select>
           {errors.category && (
-            <p className="text-sm text-red-400">{errors.category.message}</p>
+            <p role="alert" className="font-mono text-xs text-accent">
+              {errors.category.message}
+            </p>
           )}
         </div>
 
         <div className="flex flex-col gap-1.5">
           <label htmlFor="calories" className={labelClass}>
-            Kalorie <span className="text-gray-500">(kcal / 100g)</span>
+            Kalorie{" "}
+            <span className="font-mono font-normal normal-case text-ink-muted">
+              (kcal / 100g)
+            </span>
           </label>
           <input
             type="number"
@@ -297,13 +284,18 @@ export const ProductForm = ({
             {...register("calories", { valueAsNumber: true })}
           />
           {errors.calories && (
-            <p className="text-sm text-red-400">{errors.calories.message}</p>
+            <p role="alert" className="font-mono text-xs text-accent">
+              {errors.calories.message}
+            </p>
           )}
         </div>
 
         <div className="flex flex-col gap-1.5">
           <label htmlFor="gramsPerUnit" className={labelClass}>
-            Waga sztuki <span className="text-gray-500">(g, opcjonalne)</span>
+            Waga sztuki{" "}
+            <span className="font-mono font-normal normal-case text-ink-muted">
+              (g, opcjonalne)
+            </span>
           </label>
           <input
             type="number"
@@ -317,7 +309,7 @@ export const ProductForm = ({
             })}
           />
           {errors.gramsPerUnit && (
-            <p className="text-sm text-red-400">
+            <p role="alert" className="font-mono text-xs text-accent">
               {errors.gramsPerUnit.message}
             </p>
           )}
@@ -326,7 +318,10 @@ export const ProductForm = ({
         <div className="grid grid-cols-2 gap-4">
           <div className="flex flex-col gap-1.5">
             <label htmlFor="carbs" className={labelClass}>
-              Węglowodany <span className="text-gray-500">(g)</span>
+              Węglowodany{" "}
+              <span className="font-mono font-normal normal-case text-ink-muted">
+                (g)
+              </span>
             </label>
             <input
               type="number"
@@ -338,13 +333,18 @@ export const ProductForm = ({
               {...register("carbs", { valueAsNumber: true })}
             />
             {errors.carbs && (
-              <p className="text-sm text-red-400">{errors.carbs.message}</p>
+              <p role="alert" className="font-mono text-xs text-accent">
+                {errors.carbs.message}
+              </p>
             )}
           </div>
 
           <div className="flex flex-col gap-1.5">
             <label htmlFor="protein" className={labelClass}>
-              Białko <span className="text-gray-500">(g)</span>
+              Białko{" "}
+              <span className="font-mono font-normal normal-case text-ink-muted">
+                (g)
+              </span>
             </label>
             <input
               type="number"
@@ -356,13 +356,18 @@ export const ProductForm = ({
               {...register("protein", { valueAsNumber: true })}
             />
             {errors.protein && (
-              <p className="text-sm text-red-400">{errors.protein.message}</p>
+              <p role="alert" className="font-mono text-xs text-accent">
+                {errors.protein.message}
+              </p>
             )}
           </div>
 
           <div className="flex flex-col gap-1.5">
             <label htmlFor="fat" className={labelClass}>
-              Tłuszcze <span className="text-gray-500">(g)</span>
+              Tłuszcze{" "}
+              <span className="font-mono font-normal normal-case text-ink-muted">
+                (g)
+              </span>
             </label>
             <input
               type="number"
@@ -374,7 +379,9 @@ export const ProductForm = ({
               {...register("fat", { valueAsNumber: true })}
             />
             {errors.fat && (
-              <p className="text-sm text-red-400">{errors.fat.message}</p>
+              <p role="alert" className="font-mono text-xs text-accent">
+                {errors.fat.message}
+              </p>
             )}
           </div>
 
@@ -388,7 +395,7 @@ export const ProductForm = ({
                 alt="Podgląd z Open Food Facts"
                 width={80}
                 height={80}
-                className="object-contain rounded-lg border border-dash-border"
+                className="object-contain border border-ink"
               />
             )}
             <input
@@ -405,7 +412,10 @@ export const ProductForm = ({
 
         <div className="flex flex-col gap-1.5">
           <label htmlFor="barcode" className={labelClass}>
-            Kod kreskowy <span className="text-gray-500">(opcjonalne)</span>
+            Kod kreskowy{" "}
+            <span className="font-mono font-normal normal-case text-ink-muted">
+              (opcjonalne)
+            </span>
           </label>
           <input
             type="text"
@@ -415,18 +425,20 @@ export const ProductForm = ({
             {...register("barcode")}
           />
           {errors.barcode && (
-            <p className="text-sm text-red-400">{errors.barcode.message}</p>
+            <p role="alert" className="font-mono text-xs text-accent">
+              {errors.barcode.message}
+            </p>
           )}
         </div>
 
         <button
           type="submit"
           disabled={isLoading}
-          className="flex items-center justify-center gap-2 w-full rounded-xl bg-green-600 hover:bg-green-700 px-3 py-3 text-sm font-semibold text-white shadow-sm disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+          className="flex items-center justify-center gap-2 w-full min-h-14 bg-ink hover:bg-accent text-base font-extrabold uppercase tracking-wide text-paper disabled:opacity-60 disabled:cursor-not-allowed transition-colors cursor-pointer"
         >
           {isLoading && (
             <svg
-              className="animate-spin h-4 w-4 text-white"
+              className="animate-spin h-4 w-4 text-current"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -448,7 +460,11 @@ export const ProductForm = ({
           )}
           {submitButtonText}
         </button>
-        {error && <p className="text-sm text-red-400">{error}</p>}
+        {error && (
+          <p role="alert" className="font-mono text-xs text-accent">
+            {error}
+          </p>
+        )}
       </form>
       {/* Mount only while open so the scanner unmounts on close and its
           internal state resets — otherwise it stays stuck on "loading". */}

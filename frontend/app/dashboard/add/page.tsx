@@ -1,8 +1,10 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import { pageClass } from "@/app/_components/ui/PageHeader";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 import { ProductSearch } from "@/app/_components/add/ProductSearch";
 import { RecipeSearch } from "@/app/_components/add/RecipeSearch";
 import { ProductForm } from "@/app/_components/shared/ProductForm";
@@ -19,14 +21,6 @@ type Product = {
   fat: number;
   imageUrl: string;
   createdAt: string;
-};
-
-// Ikona słońca dla posiłku Śniadanie — dobierana do mealType z URL
-const MEAL_ICONS: Record<string, string> = {
-  BREAKFAST: "☀️",
-  LUNCH: "🌤️",
-  DINNER: "🌙",
-  SNACK: "🍎",
 };
 
 const MEAL_LABELS: Record<string, string> = {
@@ -72,134 +66,59 @@ function AddPageContent() {
       })
     : "";
 
-  const tabs: {
-    id: Tab;
-    label: string;
-    icon: React.ReactNode;
-    adminOnly?: boolean;
-  }[] = [
-    {
-      id: "products",
-      label: "Produkty",
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          width={15}
-          height={15}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-        </svg>
-      ),
-    },
-    {
-      id: "recipes",
-      label: "Przepisy",
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          width={15}
-          height={15}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" />
-          <path d="M7 2v20" />
-          <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
-        </svg>
-      ),
-    },
-    {
-      id: "new",
-      label: "Nowy produkt",
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          width={15}
-          height={15}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2.5}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <circle cx="12" cy="12" r="10" />
-          <line x1="12" y1="8" x2="12" y2="16" />
-          <line x1="8" y1="12" x2="16" y2="12" />
-        </svg>
-      ),
-      adminOnly: true,
-    },
+  const tabs: { id: Tab; label: string; adminOnly?: boolean }[] = [
+    { id: "products", label: "Produkty" },
+    { id: "recipes", label: "Przepisy" },
+    { id: "new", label: "Nowy produkt", adminOnly: true },
   ];
 
   const visibleTabs = tabs.filter((tab) => !tab.adminOnly || isAdmin);
 
   return (
-    <div className="max-w-3xl mx-auto w-full py-8 px-4">
+    <div className={pageClass("narrow")}>
       {/* ── Header ── */}
-      <div className="flex items-center justify-between mb-6 gap-3 flex-wrap">
+      <div className="flex items-center gap-2.5">
         <Link
           href="/dashboard"
-          className="flex items-center gap-1.5 bg-dash-surface-card border border-dash-border hover:border-dash-svg-inactive transition-colors px-3 py-2 rounded-lg text-dash-fg-muted text-sm"
+          aria-label="Wróć do dziennika"
+          className="w-11 h-11 shrink-0 border-2 border-ink flex items-center justify-center hover:bg-ink hover:text-paper transition-colors"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width={14}
-            height={14}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="19" y1="12" x2="5" y2="12" />
-            <polyline points="12 19 5 12 12 5" />
-          </svg>
-          Dziennik
+          <ChevronLeft size={18} strokeWidth={2.5} strokeLinecap="square" />
         </Link>
-
-        <h1 className="text-dash-fg text-2xl font-bold flex-1">
-          Dodaj do dziennika
+        <h1 className="font-display text-[40px] sm:text-[52px] uppercase leading-none [font-stretch:68%]">
+          Dodaj
         </h1>
-
-        {mealType && (
-          <div className="flex items-center gap-1.5 bg-dash-badge-bg border border-[var(--color-green-mid-alpha)] px-3.5 py-2 rounded-full text-sm">
-            <span>{MEAL_ICONS[mealType] ?? "🍽️"}</span>
-            <span className="text-dash-green font-semibold">
-              {MEAL_LABELS[mealType] ?? mealType}
-            </span>
-            {formattedDate && (
-              <span className="text-dash-fg-muted">· {formattedDate}</span>
-            )}
-          </div>
-        )}
       </div>
 
+      {mealType && (
+        <p className="flex items-baseline justify-between gap-3 border-y-2 border-ink py-2">
+          <span className="text-sm font-extrabold uppercase">
+            Do: {MEAL_LABELS[mealType] ?? mealType}
+          </span>
+          {formattedDate && (
+            <span className="font-mono text-xs uppercase">{formattedDate}</span>
+          )}
+        </p>
+      )}
+
       {/* ── Tab bar ── */}
-      <div className="flex gap-1 mb-6 bg-dash-surface-darker p-1 rounded-xl border border-dash-border">
+      <div
+        role="tablist"
+        className="flex gap-5 border-b border-ink overflow-x-auto"
+      >
         {visibleTabs.map((tab) => (
           <button
             key={tab.id}
+            role="tab"
+            aria-selected={currentTab === tab.id}
             onClick={() => setTab(tab.id)}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-sm font-semibold transition-colors ${
+            className={`py-2 text-sm uppercase whitespace-nowrap cursor-pointer transition-colors ${
               currentTab === tab.id
-                ? "bg-gradient-to-b from-green-600 to-green-700 text-green-100 shadow-[0_2px_8px_var(--color-green-mid-alpha)]"
-                : "text-dash-fg-muted hover:text-dash-fg"
+                ? "font-extrabold text-ink shadow-[inset_0_-4px_0_var(--color-ink)]"
+                : "font-semibold text-ink-muted hover:text-ink"
             }`}
           >
-            {tab.icon}
-            <span className="hidden sm:inline">{tab.label}</span>
+            {tab.label}
           </button>
         ))}
       </div>
@@ -217,9 +136,7 @@ function AddPageContent() {
       )}
 
       {currentTab === "new" && isAdmin && (
-        <div className="bg-dash-surface-darker rounded-2xl border border-dash-border p-6">
-          <h2 className="text-dash-fg font-bold text-lg mb-6">Nowy produkt</h2>
-
+        <div className="border-2 border-ink bg-card p-4 sm:p-6">
           <ProductForm onSuccess={handleNewProductSuccess} />
         </div>
       )}

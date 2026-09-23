@@ -41,11 +41,11 @@ const MANUAL_DEFAULTS: ManualInputs = {
 };
 
 const inputBase =
-  "bg-dash-surface-alt border border-dash-border rounded-lg px-2 py-1.5 text-sm font-medium text-dash-fg text-right focus:outline-none font-mono [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
+  "bg-card border-2 border-ink h-10 px-2 text-sm font-medium text-ink text-right focus:outline-2 focus:outline-offset-2 focus:outline-accent font-mono [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
 
 const inputGrams = `${inputBase} w-20`;
 const inputPct = `${inputBase} w-16`;
-const inputKcal = `${inputBase} w-24 border-macro-calories/40 text-macro-calories`;
+const inputKcal = `${inputBase} w-24`;
 
 type Props = {
   onSuccess?: (userGoals: UserGoals) => void;
@@ -132,23 +132,19 @@ export const ManualForm = ({ onSuccess }: Props) => {
   return (
     <form onSubmit={handleSubmit(handleSave)} className="flex flex-col">
       <div className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-2 pb-2 px-1">
-        <span className="text-xs text-dash-fg-muted font-sans">
-          Makroskładnik
-        </span>
-        <span className="text-xs text-dash-fg-muted w-20 text-center font-sans">
+        <span className="text-xs text-ink-muted font-sans">Makroskładnik</span>
+        <span className="text-xs text-ink-muted w-20 text-center font-sans">
           g
         </span>
         <span className="text-xs w-4" />
-        <span className="text-xs text-dash-fg-muted w-16 text-center font-sans">
+        <span className="text-xs text-ink-muted w-16 text-center font-sans">
           %
         </span>
         <span className="text-xs w-4" />
       </div>
 
-      <div className="flex items-center gap-2 py-3 border-t border-dash-border">
-        <span className="flex-1 text-sm font-semibold text-macro-calories font-mono">
-          Kalorie
-        </span>
+      <div className="flex items-center gap-2 py-3 border-t border-ink">
+        <span className="flex-1 text-sm font-extrabold">Kalorie</span>
         <Controller
           name="kcal"
           control={control}
@@ -164,7 +160,7 @@ export const ManualForm = ({ onSuccess }: Props) => {
             />
           )}
         />
-        <span className="text-xs text-dash-fg-muted w-4 font-sans">kcal</span>
+        <span className="text-xs text-ink-muted w-4 font-sans">kcal</span>
         <span className="w-16" />
         <span className="w-4" />
       </div>
@@ -172,7 +168,7 @@ export const ManualForm = ({ onSuccess }: Props) => {
       {MACRO_ROWS.map(({ label, colorClass, gField, pctField }) => (
         <div
           key={gField}
-          className="flex items-center gap-2 py-3 border-t border-dash-border"
+          className="flex items-center gap-2 py-3 border-t border-ink"
         >
           <span
             className={`flex-1 text-sm font-semibold font-mono ${colorClass}`}
@@ -195,7 +191,7 @@ export const ManualForm = ({ onSuccess }: Props) => {
               />
             )}
           />
-          <span className="text-xs text-dash-fg-muted w-4 font-sans">g</span>
+          <span className="text-xs text-ink-muted w-4 font-sans">g</span>
 
           <Controller
             name={pctField}
@@ -212,26 +208,33 @@ export const ManualForm = ({ onSuccess }: Props) => {
               />
             )}
           />
-          <span className="text-xs text-dash-fg-muted w-4 font-sans">%</span>
+          <span className="text-xs text-ink-muted w-4 font-sans">%</span>
         </div>
       ))}
 
-      <div className="flex items-center justify-between py-2.5 px-1 border-t border-dash-border rounded-b-lg bg-[var(--background)]">
-        <span className="text-sm font-semibold text-dash-fg-secondary font-sans">
+      <div className="flex items-center justify-between py-2.5 px-1 border-t-[5px] border-ink">
+        <span className="text-sm font-semibold text-ink-soft font-sans">
           Razem
         </span>
         <span
-          className={`text-sm font-bold font-mono ${isValid ? "text-macro-calories" : "text-red-400"}`}
+          className={`text-sm font-bold font-mono ${isValid ? "text-macro-calories" : "text-accent"}`}
         >
           {total} %
         </span>
       </div>
 
-      {error && <p className="text-sm text-red-500 mt-2 font-sans">{error}</p>}
+      {error && (
+        <p role="alert" className="font-mono text-sm text-accent mt-2">
+          {error}
+        </p>
+      )}
 
       {success ? (
-        <p className="text-sm text-center text-macro-calories font-medium mt-3 font-sans">
-          ✓ Cel zaktualizowany!
+        <p
+          role="status"
+          className="flex items-center justify-center min-h-11 mt-3 border-2 border-ink text-sm font-extrabold uppercase"
+        >
+          Cel zaktualizowany
         </p>
       ) : (
         <Button
@@ -241,7 +244,7 @@ export const ManualForm = ({ onSuccess }: Props) => {
           disabled={!isValid}
           className="w-full mt-4"
         >
-          ✓ Zapisz cel
+          Zapisz cel
         </Button>
       )}
     </form>

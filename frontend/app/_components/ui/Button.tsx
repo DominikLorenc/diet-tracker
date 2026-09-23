@@ -10,9 +10,9 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-gradient-green text-white shadow-green-glow hover:opacity-85 disabled:opacity-50",
+    "bg-ink text-paper border-2 border-ink hover:bg-accent hover:border-accent disabled:opacity-50",
   outline:
-    "border border-dash-border text-dash-fg-muted hover:opacity-80 disabled:opacity-50",
+    "border-2 border-ink text-ink bg-transparent hover:bg-ink hover:text-paper disabled:opacity-50",
 };
 
 export const Button = ({
@@ -25,7 +25,7 @@ export const Button = ({
 }: Props) => (
   <button
     disabled={disabled || isLoading}
-    className={`flex items-center justify-center gap-2 text-sm font-medium px-5 py-2.5 rounded-xl transition-opacity cursor-pointer font-sans ${variantClasses[variant]} ${className}`}
+    className={`flex items-center justify-center gap-2 min-h-11 text-sm font-extrabold uppercase tracking-wide px-5 py-2.5 transition-colors cursor-pointer font-sans ${variantClasses[variant]} ${className}`}
     {...props}
   >
     {isLoading && <Spinner />}

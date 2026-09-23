@@ -1,4 +1,6 @@
 import { Fragment, useState } from "react";
+import { formatAmount } from "@/utils/format";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 
 type Product = {
@@ -38,72 +40,82 @@ export const ProductCard = ({
   };
 
   return (
-    <div className="rounded-xl bg-dash-surface-card border border-dash-border hover:border-dash-svg-inactive transition-colors mb-2 overflow-hidden">
-      <div className="flex items-center gap-3 px-3 py-3">
+    <div className="border-b border-ink">
+      <div className="flex items-center gap-3 min-h-14 py-2">
         {product.imageUrl ? (
           <Image
             src={product.imageUrl}
-            alt={product.name}
+            alt=""
             width={36}
             height={36}
-            className="rounded-lg shrink-0 object-cover"
+            className="w-9 h-9 shrink-0 object-cover border border-ink"
           />
         ) : (
-          <div className="w-9 h-9 rounded-lg bg-dash-surface-darker shrink-0" />
+          <span
+            aria-hidden="true"
+            className="w-9 h-9 shrink-0 border border-ink bg-paper"
+          />
         )}
 
-        <div className="flex-1 min-w-0 flex flex-col gap-0.5">
-          <p className="text-dash-fg font-semibold text-sm truncate">
-            {product.name}
-          </p>
-          <p className="text-dash-fg-muted text-xs truncate">
-            {product.calories} kcal · B: {product.protein}g · T: {product.fat}g
-            · W: {product.carbs}g
+        <div className="flex-1 min-w-0 flex flex-col">
+          <p className="text-[15px] font-bold truncate">{product.name}</p>
+          <p className="font-mono text-[11px] truncate">
+            B {formatAmount(product.protein)} · W {formatAmount(product.carbs)}{" "}
+            · T {formatAmount(product.fat)}
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5 shrink-0">
-          {canBeDeleted && (
-            <button
-              onClick={() => onDelete?.(product.id)}
-              className="text-dash-fg-muted hover:text-red-400 transition-colors"
-              aria-label="Usuń produkt"
-            >
-              🗑️
-            </button>
-          )}
+        <span className="font-mono text-base font-semibold">
+          {formatAmount(product.calories, 0)}
+        </span>
+
+        <div className="flex items-center shrink-0">
           {canBeEdited && (
             <button
               onClick={() => handleEdit?.(product.id)}
-              className="text-dash-fg-muted hover:text-dash-green transition-colors"
-              aria-label="Edytuj produkt"
+              className="w-11 h-11 flex items-center justify-center hover:text-accent transition-colors cursor-pointer"
+              aria-label={`Edytuj: ${product.name}`}
             >
-              ✏️
+              <Pencil size={16} strokeWidth={2.5} />
+            </button>
+          )}
+          {canBeDeleted && (
+            <button
+              onClick={() => onDelete?.(product.id)}
+              className="w-11 h-11 flex items-center justify-center text-ink-muted hover:text-accent transition-colors cursor-pointer"
+              aria-label={`Usuń: ${product.name}`}
+            >
+              <Trash2 size={16} strokeWidth={2.5} />
             </button>
           )}
           {onProductSelect && (
             <button
               onClick={() => onProductSelect?.(product)}
-              className="text-dash-fg-muted hover:text-dash-green transition-colors"
-              aria-label="Wybierz produkt"
+              className="w-11 h-11 flex items-center justify-center hover:text-accent transition-colors cursor-pointer"
+              aria-label={`Wybierz: ${product.name}`}
             >
-              ➕
+              <Plus size={18} strokeWidth={3} strokeLinecap="square" />
             </button>
           )}
         </div>
       </div>
 
       {addProductToDiary && (
-        <div className="flex items-center gap-2 px-3 pb-3">
-          <input
-            type="number"
-            placeholder="Ilość (g)"
-            onChange={(e) => handleOnChange(e)}
-            className="flex-1 min-w-0 bg-dash-surface-darker border border-dash-border rounded-lg px-3 py-2 text-sm text-dash-fg placeholder:text-dash-fg-muted focus:outline-none focus:border-dash-green-mid transition-colors"
-          />
+        <div className="flex items-stretch pb-3">
+          <label className="flex-1 min-w-0 flex items-center gap-2 h-11 px-3 border-2 border-ink bg-card focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent">
+            <span className="sr-only">Ilość w gramach</span>
+            <input
+              type="number"
+              inputMode="decimal"
+              placeholder="Ilość"
+              onChange={(e) => handleOnChange(e)}
+              className="flex-1 min-w-0 bg-transparent font-mono text-[15px] outline-none placeholder:text-ink-muted"
+            />
+            <span className="font-mono text-sm">g</span>
+          </label>
           <button
             onClick={() => addProductToDiary?.(product, quantity)}
-            className="shrink-0 bg-green-600 hover:bg-green-700 transition-colors rounded-lg px-4 py-2 text-sm font-semibold text-white"
+            className="shrink-0 px-4 border-2 border-l-0 border-ink bg-ink text-paper text-sm font-extrabold uppercase hover:bg-accent hover:border-accent transition-colors cursor-pointer"
           >
             Dodaj
           </button>

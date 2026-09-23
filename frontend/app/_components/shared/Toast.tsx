@@ -5,7 +5,7 @@ import { useToastStore } from "@/store/useToastStore";
 
 const config = {
   success: {
-    color: "var(--color-dash-green-mid)",
+    color: "var(--color-ink)",
     border: "var(--color-toast-success-border)",
     shadow: "var(--shadow-toast-success)",
     closeBg: "var(--color-toast-success-bg)",
@@ -38,7 +38,7 @@ export function Toast() {
 
   return (
     <div
-      className={`fixed bottom-6 left-6 right-6 z-50 sm:left-auto sm:w-[400px] transition-all duration-300 ${
+      className={`fixed bottom-24 left-4 right-4 z-50 sm:bottom-6 sm:left-auto sm:right-6 sm:w-[400px] transition-all duration-300 ${
         isActive
           ? "translate-y-0 opacity-100"
           : "translate-y-4 opacity-0 pointer-events-none"
@@ -47,8 +47,8 @@ export function Toast() {
       <div
         style={{
           background: "var(--color-toast-bg)",
-          border: `1px solid ${border}`,
-          borderRadius: 14,
+          border: `2px solid ${border}`,
+          borderRadius: 0,
           boxShadow: shadow,
           padding: "14px 16px",
           display: "flex",
@@ -60,7 +60,7 @@ export function Toast() {
         <div
           style={{
             background: color,
-            borderRadius: 10,
+            borderRadius: 0,
             width: 36,
             height: 36,
             display: "flex",
@@ -93,7 +93,7 @@ export function Toast() {
           onClick={hideToast}
           style={{
             background: closeBg,
-            borderRadius: 8,
+            borderRadius: 0,
             width: 28,
             height: 28,
             display: "flex",

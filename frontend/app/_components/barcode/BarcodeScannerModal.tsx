@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useId } from "react";
+import { X } from "lucide-react";
+import { Modal } from "@/app/_components/shared/Modal";
 import { BarcodeScanner } from "./BarcodeScanner";
 import { apiClient } from "@/app/lib/apiClient";
 
@@ -40,6 +42,7 @@ export const BarcodeScannerModal = ({
   intent,
 }: BarcodeScannerModalProps) => {
   const [state, setState] = useState<ScanState>("scanning");
+  const titleId = useId();
   const hasScanned = useRef(false);
 
   const handleScan = useCallback(
@@ -64,65 +67,74 @@ export const BarcodeScannerModal = ({
     [onProductFound, onNotFound, onClose, intent],
   );
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
-      <div className="bg-dash-surface-darker border border-dash-border rounded-2xl p-6 w-full max-w-md">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-white font-bold text-lg">Skanuj kod kreskowy</h2>
+    <Modal open={isOpen} onClose={onClose} labelledBy={titleId}>
+      <div className="flex items-start justify-between gap-3">
+        <h2 id={titleId} className="font-display text-[34px] leading-none">
+          Skanuj kod kreskowy
+        </h2>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Zamknij skaner"
+          className="w-11 h-11 shrink-0 flex items-center justify-center border-2 border-ink hover:bg-ink hover:text-paper transition-colors cursor-pointer"
+        >
+          <X size={18} strokeWidth={2.5} strokeLinecap="square" />
+        </button>
+      </div>
+      <div className="rule-thick mt-3 mb-4" />
+
+      {state === "scanning" && (
+        <BarcodeScanner
+          onScan={handleScan}
+          onError={() => setState("camera_error")}
+        />
+      )}
+
+      {state === "loading" && (
+        <p role="status" className="py-12 font-mono text-sm">
+          Wyszukuję produkt…
+        </p>
+      )}
+
+      {state === "not_found" && (
+        <div className="flex flex-col items-start gap-3 py-6 px-4 border-2 border-dashed border-ink">
+          <p className="text-sm font-extrabold uppercase">
+            Nie znaleziono produktu
+          </p>
           <button
-            onClick={onClose}
-            className="text-dash-fg-muted hover:text-white transition-colors text-xl leading-none"
+            type="button"
+            onClick={() => {
+              hasScanned.current = false;
+              setState("scanning");
+            }}
+            className="min-h-11 px-4 bg-ink text-paper text-sm font-extrabold uppercase hover:bg-accent transition-colors cursor-pointer"
           >
-            ✕
+            Skanuj ponownie
           </button>
         </div>
+      )}
 
-        {state === "scanning" && (
-          <BarcodeScanner
-            onScan={handleScan}
-            onError={() => setState("camera_error")}
-          />
-        )}
-
-        {state === "loading" && (
-          <div className="flex items-center justify-center py-16">
-            <p className="text-dash-fg-muted text-sm">Wyszukuję produkt...</p>
-          </div>
-        )}
-
-        {state === "not_found" && (
-          <div className="text-center py-10">
-            <p className="text-dash-fg-muted mb-5 text-sm">
-              Nie znaleziono produktu.
-            </p>
-            <button
-              onClick={() => {
-                hasScanned.current = false;
-                setState("scanning");
-              }}
-              className="text-dash-green text-sm font-semibold"
-            >
-              Skanuj ponownie
-            </button>
-          </div>
-        )}
-
-        {state === "camera_error" && (
-          <div className="text-center py-10">
-            <p className="text-dash-fg-muted mb-5 text-sm">
-              Brak dostępu do kamery. Sprawdź uprawnienia w przeglądarce.
-            </p>
-            <button
-              onClick={onClose}
-              className="text-dash-green text-sm font-semibold"
-            >
-              Zamknij
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
+      {state === "camera_error" && (
+        <div
+          role="alert"
+          className="flex flex-col items-start gap-3 py-6 px-4 border-2 border-accent"
+        >
+          <p className="text-sm">
+            <strong className="font-extrabold uppercase">
+              Brak dostępu do kamery.
+            </strong>{" "}
+            Sprawdź uprawnienia w przeglądarce.
+          </p>
+          <button
+            type="button"
+            onClick={onClose}
+            className="min-h-11 px-4 border-2 border-ink text-sm font-extrabold uppercase hover:bg-ink hover:text-paper transition-colors cursor-pointer"
+          >
+            Zamknij
+          </button>
+        </div>
+      )}
+    </Modal>
   );
 };

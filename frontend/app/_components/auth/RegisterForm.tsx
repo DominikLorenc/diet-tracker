@@ -12,10 +12,10 @@ import { Mail, Lock, Eye, EyeOff, User, Loader2 } from "lucide-react";
 type Inputs = z.infer<typeof registerSchema>;
 
 const inputWrapClass =
-  "flex items-center gap-2.5 h-12 px-4 rounded-xl bg-dash-surface border border-dash-border focus-within:border-dash-green-mid focus-within:ring-2 focus-within:ring-dash-green-mid/20 transition-all";
+  "flex items-center gap-2.5 h-12 px-3 bg-card border-2 border-ink focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent";
 
 const inputClass =
-  "flex-1 bg-transparent text-sm text-dash-fg placeholder:text-dash-input-placeholder outline-none";
+  "flex-1 min-w-0 bg-transparent font-mono text-[15px] text-ink placeholder:text-ink-muted outline-none";
 
 export const RegisterForm = () => {
   const {
@@ -56,12 +56,12 @@ export const RegisterForm = () => {
       <div className="flex flex-col gap-1.5">
         <label
           htmlFor="username"
-          className="text-sm font-medium text-dash-fg-secondary"
+          className="text-[13px] font-extrabold uppercase"
         >
           Nazwa użytkownika
         </label>
         <div className={inputWrapClass}>
-          <User className="w-4 h-4 shrink-0 text-dash-fg-muted" />
+          <User className="w-4 h-4 shrink-0 text-ink-muted" />
           <input
             type="text"
             id="username"
@@ -71,20 +71,19 @@ export const RegisterForm = () => {
           />
         </div>
         {errors.username && (
-          <p className="text-xs text-red-400">{errors.username.message}</p>
+          <p className="font-mono text-xs text-accent">
+            {errors.username.message}
+          </p>
         )}
       </div>
 
       {/* Email */}
       <div className="flex flex-col gap-1.5">
-        <label
-          htmlFor="email"
-          className="text-sm font-medium text-dash-fg-secondary"
-        >
+        <label htmlFor="email" className="text-[13px] font-extrabold uppercase">
           Adres email
         </label>
         <div className={inputWrapClass}>
-          <Mail className="w-4 h-4 shrink-0 text-dash-fg-muted" />
+          <Mail className="w-4 h-4 shrink-0 text-ink-muted" />
           <input
             type="email"
             id="email"
@@ -94,7 +93,9 @@ export const RegisterForm = () => {
           />
         </div>
         {errors.email && (
-          <p className="text-xs text-red-400">{errors.email.message}</p>
+          <p className="font-mono text-xs text-accent">
+            {errors.email.message}
+          </p>
         )}
       </div>
 
@@ -102,12 +103,12 @@ export const RegisterForm = () => {
       <div className="flex flex-col gap-1.5">
         <label
           htmlFor="password"
-          className="text-sm font-medium text-dash-fg-secondary"
+          className="text-[13px] font-extrabold uppercase"
         >
           Hasło
         </label>
         <div className={inputWrapClass}>
-          <Lock className="w-4 h-4 shrink-0 text-dash-fg-muted" />
+          <Lock className="w-4 h-4 shrink-0 text-ink-muted" />
           <input
             type={showPassword ? "text" : "password"}
             id="password"
@@ -118,7 +119,7 @@ export const RegisterForm = () => {
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            className="text-dash-fg-muted hover:opacity-80 transition-colors cursor-pointer"
+            className="text-ink-muted hover:opacity-80 transition-colors cursor-pointer"
           >
             {showPassword ? (
               <EyeOff className="w-4 h-4" />
@@ -128,7 +129,9 @@ export const RegisterForm = () => {
           </button>
         </div>
         {errors.password && (
-          <p className="text-xs text-red-400">{errors.password.message}</p>
+          <p className="font-mono text-xs text-accent">
+            {errors.password.message}
+          </p>
         )}
       </div>
 
@@ -136,12 +139,12 @@ export const RegisterForm = () => {
       <div className="flex flex-col gap-1.5">
         <label
           htmlFor="passwordConfirm"
-          className="text-sm font-medium text-dash-fg-secondary"
+          className="text-[13px] font-extrabold uppercase"
         >
           Potwierdź hasło
         </label>
         <div className={inputWrapClass}>
-          <Lock className="w-4 h-4 shrink-0 text-dash-fg-muted" />
+          <Lock className="w-4 h-4 shrink-0 text-ink-muted" />
           <input
             type={showConfirm ? "text" : "password"}
             id="passwordConfirm"
@@ -152,7 +155,7 @@ export const RegisterForm = () => {
           <button
             type="button"
             onClick={() => setShowConfirm((v) => !v)}
-            className="text-dash-fg-muted hover:opacity-80 transition-colors cursor-pointer"
+            className="text-ink-muted hover:opacity-80 transition-colors cursor-pointer"
           >
             {showConfirm ? (
               <EyeOff className="w-4 h-4" />
@@ -162,7 +165,7 @@ export const RegisterForm = () => {
           </button>
         </div>
         {errors.passwordConfirm && (
-          <p className="text-xs text-red-400">
+          <p className="font-mono text-xs text-accent">
             {errors.passwordConfirm.message}
           </p>
         )}
@@ -170,11 +173,12 @@ export const RegisterForm = () => {
 
       {error && (
         <div
-          className="text-sm rounded-xl px-4 py-3"
+          role="alert"
+          className="font-mono text-sm px-3 py-2 border-2"
           style={{
-            color: "var(--color-form-error)",
-            background: "var(--color-form-error-bg)",
-            border: "1px solid var(--color-form-error-border)",
+            color: "var(--color-accent)",
+            background: "var(--color-accent-tint)",
+            border: "1px solid var(--color-accent)",
           }}
         >
           {error}
@@ -184,11 +188,7 @@ export const RegisterForm = () => {
       <button
         type="submit"
         disabled={isLoading}
-        className="mt-2 flex items-center justify-center gap-2 h-12 w-full rounded-xl text-white text-sm font-semibold hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
-        style={{
-          background: "var(--gradient-green-button)",
-          boxShadow: "var(--shadow-green-logo)",
-        }}
+        className="mt-2 flex items-center justify-center gap-2 min-h-14 w-full bg-ink text-paper text-base font-extrabold uppercase tracking-wide hover:bg-accent transition-colors disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
       >
         {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
         Utwórz konto

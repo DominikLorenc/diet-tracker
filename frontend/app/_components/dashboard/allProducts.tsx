@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useId, useState } from "react";
+import { Search as SearchIcon } from "lucide-react";
 
 import { ProductCard } from "../search/ProductCard";
 import { Modal } from "../shared/Modal";
@@ -8,7 +9,6 @@ import { ProductForm } from "../shared/ProductForm";
 import { useToastStore } from "@/store/useToastStore";
 import { useUserStore } from "@/store/useUserStore";
 import { apiClient } from "@/app/lib/apiClient";
-import { Spinner } from "../ui/Spinner";
 import { Button } from "../ui/Button";
 import { useDebounce } from "@/app/_hooks/useDebounce";
 import type { ProductCategory } from "@/app/lib/productCategories";
@@ -107,53 +107,48 @@ export const AllProducts = () => {
   };
 
   return (
-    <div className="mt-8 flex flex-col gap-6">
+    <div className="flex flex-col gap-5">
       {/* Pole szukania */}
-      <div className="relative">
-        <svg
-          className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 pointer-events-none"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"
-          />
-        </svg>
+      <label className="flex items-center gap-2 h-[52px] px-3 border-2 border-ink bg-card focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent">
+        <SearchIcon
+          size={18}
+          strokeWidth={2.5}
+          strokeLinecap="square"
+          aria-hidden="true"
+        />
+        <span className="sr-only">Szukaj produktu</span>
         <input
           type="text"
-          placeholder="Szukaj produktu..."
+          placeholder="Szukaj produktu…"
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
             setPage(1);
           }}
-          className="w-full bg-gray-800 text-white placeholder-gray-500 pl-11 pr-4 py-2.5 rounded-lg border border-gray-700 focus:outline-none focus:border-indigo-500 transition-colors"
+          className="flex-1 min-w-0 bg-transparent text-base font-semibold text-ink placeholder:text-ink-muted placeholder:font-normal outline-none"
         />
-      </div>
+      </label>
 
       {/* Zawartość: spinner / empty state / lista */}
       {isLoading ? (
-        <div className="flex justify-center items-center py-16">
-          <Spinner />
-        </div>
+        <p className="py-6 font-mono text-sm">Ładowanie…</p>
       ) : products.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
+        <div className="py-6 px-4 border-2 border-dashed border-ink text-sm font-extrabold uppercase">
           {debouncedSearch ? (
-            <p className="text-gray-400">
+            <p>
               Brak wyników dla „
-              <span className="text-white">{debouncedSearch}</span>”
+              <span className="font-mono normal-case">{debouncedSearch}</span>”
             </p>
           ) : (
-            <p className="text-gray-500">Brak produktów</p>
+            <p>Brak produktów</p>
           )}
         </div>
       ) : (
         <>
           <div className="flex flex-col">
+            <div className="flex justify-end font-mono text-[11px] uppercase pb-1 border-b-[5px] border-ink">
+              kcal / 100 g
+            </div>
             {products.map((product) => (
               <ProductCard
                 key={product.id}
@@ -178,7 +173,7 @@ export const AllProducts = () => {
                 ← Poprzednia
               </Button>
 
-              <span className="text-sm text-dash-fg-muted order-first sm:order-none">
+              <span className="font-mono text-sm order-first sm:order-none">
                 Strona {page} z {totalPages}
               </span>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useForm, SubmitHandler } from "react-hook-form";
+import { ScanBarcode, Search as SearchIcon } from "lucide-react";
 import { searchSchema } from "@/schemas/searchSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -182,18 +183,24 @@ export const Search = ({
 
   return (
     <div>
-      <div className="flex flex-col gap-2">
-        <form
-          className="flex items-center gap-2"
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <input
-            type="text"
-            placeholder="Szukaj produktu..."
-            className="flex-1 min-w-0 bg-dash-surface-card text-dash-fg placeholder:text-dash-fg-muted px-4 py-3 rounded-xl border border-dash-border focus:outline-none focus:border-dash-green-mid transition-colors"
-            {...register("search")}
-          />
-          <button className="shrink-0 bg-green-600 hover:bg-green-700 transition-colors px-5 py-3 rounded-xl text-white font-semibold">
+      <div className="flex items-stretch">
+        <form className="flex flex-1 min-w-0" onSubmit={handleSubmit(onSubmit)}>
+          <label className="flex-1 min-w-0 flex items-center gap-2 h-[52px] px-3 border-2 border-ink bg-card focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent">
+            <SearchIcon
+              size={18}
+              strokeWidth={2.5}
+              strokeLinecap="square"
+              aria-hidden="true"
+            />
+            <span className="sr-only">Szukaj produktu</span>
+            <input
+              type="text"
+              placeholder="Szukaj produktu…"
+              className="flex-1 min-w-0 bg-transparent text-base font-semibold text-ink placeholder:text-ink-muted placeholder:font-normal outline-none"
+              {...register("search")}
+            />
+          </label>
+          <button className="shrink-0 px-4 border-2 border-l-0 border-ink bg-ink text-paper text-sm font-extrabold uppercase hover:bg-accent hover:border-accent transition-colors cursor-pointer">
             Szukaj
           </button>
         </form>
@@ -202,68 +209,42 @@ export const Search = ({
           <button
             type="button"
             onClick={() => setIsScannerOpen(true)}
-            className="flex items-center justify-center gap-1.5 bg-dash-badge-bg border border-[var(--color-green-mid-alpha-md)] hover:border-dash-green-mid transition-colors px-3 py-2.5 rounded-xl text-dash-green text-sm font-semibold"
+            aria-label="Skanuj kod kreskowy"
+            title="Skanuj kod kreskowy"
+            className="shrink-0 w-14 border-2 border-l-0 border-ink flex items-center justify-center hover:bg-ink hover:text-paper transition-colors cursor-pointer"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              width={16}
-              height={16}
-              fill="none"
-              stroke="var(--color-dash-green)"
-              strokeWidth={2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <rect x="3" y="3" width="7" height="7" />
-              <rect x="14" y="3" width="7" height="7" />
-              <rect x="3" y="14" width="7" height="7" />
-              <line x1="14" y1="14" x2="14" y2="21" />
-              <line x1="14" y1="14" x2="21" y2="14" />
-              <line x1="21" y1="17" x2="21" y2="21" />
-              <line x1="17" y1="21" x2="21" y2="21" />
-            </svg>
-            Skanuj kod kreskowy
+            <ScanBarcode size={24} strokeWidth={2} strokeLinecap="square" />
           </button>
         )}
       </div>
 
       {errors.search && (
-        <div className="mt-2 text-sm text-red-400">{errors.search.message}</div>
+        <p role="alert" className="mt-2 font-mono text-xs text-accent">
+          {errors.search.message}
+        </p>
       )}
 
-      {error && <div className="mt-2 text-sm text-red-400">{error}</div>}
-
-      {isLoading && (
-        <div className="flex justify-center mt-8">
-          <svg
-            className="animate-spin h-8 w-8 text-dash-green"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            ></circle>
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
-        </div>
+      {error && (
+        <p role="alert" className="mt-2 font-mono text-sm text-accent">
+          {error}
+        </p>
       )}
+
+      {isLoading && <p className="mt-6 font-mono text-sm">Szukam…</p>}
 
       {recentSearches.length > 0 && (
-        <div className="mt-8">
-          <h2 className="text-xs font-bold text-dash-fg-muted uppercase tracking-wider font-mono mb-3">
-            Ostatnie wyszukiwania
-          </h2>
+        <section aria-labelledby="recent-searches" className="mt-7">
+          <div className="flex items-baseline justify-between border-b-[5px] border-ink pb-0.5">
+            <h2
+              id="recent-searches"
+              className="font-display text-[26px] uppercase"
+            >
+              Ostatnio szukane
+            </h2>
+            <span className="font-mono text-[11px] uppercase">
+              kcal / 100 g
+            </span>
+          </div>
           {recentSearches.map((result) => (
             <ProductCard
               key={result.id}
@@ -272,7 +253,7 @@ export const Search = ({
               onProductSelect={onProductSelect}
             />
           ))}
-        </div>
+        </section>
       )}
 
       <div className="mt-6">
@@ -287,17 +268,19 @@ export const Search = ({
       </div>
 
       {hasSearched && results.length === 0 && !isLoading && (
-        <div className="mt-8 flex flex-col items-center gap-4 text-center">
-          <span className="text-dash-fg-muted">Nie znaleziono produktów</span>
+        <div className="mt-6 flex flex-col items-start gap-3 py-6 px-4 border-2 border-dashed border-ink">
+          <span className="text-sm font-extrabold uppercase">
+            Nie znaleziono produktów
+          </span>
           {isAdmin ? (
             <button
               onClick={() => setOpenModal(true)}
-              className="bg-green-600 hover:bg-green-700 transition-colors px-5 py-2.5 rounded-xl text-white font-semibold"
+              className="min-h-11 px-4 bg-ink text-paper text-sm font-extrabold uppercase hover:bg-accent transition-colors cursor-pointer"
             >
               + Dodaj produkt
             </button>
           ) : (
-            <span className="text-dash-fg-dim text-sm">
+            <span className="text-sm">
               Bazę produktów uzupełnia administrator — zgłoś mu brakujący
               produkt.
             </span>

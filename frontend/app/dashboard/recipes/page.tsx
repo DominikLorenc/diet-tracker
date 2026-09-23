@@ -1,8 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
+import { formatAmount, pluralPl } from "@/utils/format";
 import Link from "next/link";
 import { apiClient } from "@/app/lib/apiClient";
 import { useUserStore } from "@/store/useUserStore";
+import { useToastStore } from "@/store/useToastStore";
+import { PageHeader, pageClass } from "@/app/_components/ui/PageHeader";
 
 export interface Product {
   id: string;
@@ -40,6 +43,7 @@ export default function Recipes() {
 
   const user = useUserStore((s) => s.user);
   const isAdmin = user?.role === "ADMIN";
+  const showToast = useToastStore((s) => s.showToast);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,174 +55,184 @@ export default function Recipes() {
     fetchData();
   }, []);
 
-  const handleAddProductToDiary = async (id: string, quantity: number) => {
-    const currentDate = new Date();
-
+  const handleAddRecipeToDiary = async (recipe: Recipe) => {
     const { error } = await apiClient.POST("/diary", {
       body: {
-        date: currentDate.toISOString().split("T")[0],
-        recipeId: id,
-        quantity,
+        date: new Date().toISOString().split("T")[0],
+        recipeId: recipe.id,
+        quantity: DEFAULT_RECIPE_GRAMS,
         mealType: "BREAKFAST",
       },
     });
 
     if (error) {
-      console.log(error);
+      showToast("error", "Nie udało się dodać przepisu", error.message);
+      return;
     }
+    showToast("success", `${recipe.name} dodany do śniadania`);
   };
 
   return (
-    <div className="flex flex-col gap-4 p-6 w-full max-w-3xl">
-      <h2 className="text-2xl font-bold text-white">Lista przepisów</h2>
-      {recipes.map((recipe) => (
-        <div
-          key={recipe.id}
-          className="rounded-xl border border-white/10 bg-white/5 overflow-hidden"
-        >
-          <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between">
-            <h3 className="text-sm font-semibold uppercase tracking-widest text-white/50">
-              {recipe.name}
-            </h3>
-            <div className="flex items-center gap-3">
-              {isAdmin && (
-                <Link
-                  href={`/dashboard/recipe-builder?id=${recipe.id}`}
-                  className="text-xs text-white/40 hover:text-white transition-colors"
-                >
-                  Edytuj
-                </Link>
-              )}
-              <button
-                onClick={() => handleAddProductToDiary(recipe.id, 100)}
-                className="flex items-center justify-center w-7 h-7 rounded-full bg-yellow-400 text-black font-bold text-lg hover:bg-yellow-300 transition-colors"
-              >
-                +
-              </button>
-            </div>
-          </div>
-          <div className="px-4 py-3">
-            <div className="flex flex-col divide-y divide-white/5">
-              {recipe.products.map((product) => (
-                <div
-                  key={product.productId}
-                  className="flex items-center gap-4 px-4 py-3"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-white/5 shrink-0" />
-                  <div className="flex flex-col flex-1 gap-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-white">
-                        {product.product.name}
-                      </span>
-                      <span className="text-sm font-semibold text-yellow-400 shrink-0">
-                        {(
-                          (parseFloat(product.quantity) / 100) *
-                          parseFloat(product.product.calories)
-                        ).toFixed(0)}{" "}
-                        kcal
-                      </span>
-                    </div>
-                    <div className="flex gap-4 text-xs text-white/40">
-                      <span>{product.quantity}g</span>
-                      <span>
-                        🌾{" "}
-                        {(
-                          (parseFloat(product.quantity) / 100) *
-                          parseFloat(product.product.carbs)
-                        ).toFixed(1)}
-                        g
-                      </span>
-                      <span>
-                        💪{" "}
-                        {(
-                          (parseFloat(product.quantity) / 100) *
-                          parseFloat(product.product.protein)
-                        ).toFixed(1)}
-                        g
-                      </span>
-                      <span>
-                        🧈{" "}
-                        {(
-                          (parseFloat(product.quantity) / 100) *
-                          parseFloat(product.product.fat)
-                        ).toFixed(1)}
-                        g
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            {recipe.steps.length > 0 && (
-              <div className="flex flex-col gap-2 px-4 py-3 border-t border-white/10">
-                <span className="text-xs font-semibold uppercase tracking-widest text-white/40">
-                  Jak to zrobić?
-                </span>
-                <ol className="flex flex-col gap-1.5 list-decimal list-inside">
-                  {recipe.steps.map((step, index) => (
-                    <li key={index} className="text-sm text-white/70">
-                      {step}
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            )}
-            <div className="flex gap-6 px-4 py-3 mt-2 border-t border-white/10">
-              <span className="text-sm font-semibold text-yellow-400">
-                {recipe.products
-                  .reduce(
-                    (sum, p) =>
-                      sum +
-                      (parseFloat(p.quantity) / 100) *
-                        parseFloat(p.product.calories),
-                    0,
-                  )
-                  .toFixed(0)}{" "}
-                kcal
-              </span>
-              <span className="text-xs text-white/40">
-                🌾{" "}
-                {recipe.products
-                  .reduce(
-                    (sum, p) =>
-                      sum +
-                      (parseFloat(p.quantity) / 100) *
-                        parseFloat(p.product.carbs),
-                    0,
-                  )
-                  .toFixed(1)}
-                g
-              </span>
-              <span className="text-xs text-white/40">
-                💪{" "}
-                {recipe.products
-                  .reduce(
-                    (sum, p) =>
-                      sum +
-                      (parseFloat(p.quantity) / 100) *
-                        parseFloat(p.product.protein),
-                    0,
-                  )
-                  .toFixed(1)}
-                g
-              </span>
-              <span className="text-xs text-white/40">
-                🧈{" "}
-                {recipe.products
-                  .reduce(
-                    (sum, p) =>
-                      sum +
-                      (parseFloat(p.quantity) / 100) *
-                        parseFloat(p.product.fat),
-                    0,
-                  )
-                  .toFixed(1)}
-                g
-              </span>
-            </div>
-          </div>
-        </div>
-      ))}
+    <div className={pageClass()}>
+      <PageHeader
+        title="Przepisy"
+        eyebrow={pluralPl(recipes.length, {
+          one: "przepis",
+          few: "przepisy",
+          many: "przepisów",
+        })}
+      />
+
+      <div className="grid gap-6 xl:grid-cols-2 items-start">
+        {recipes.map((recipe) => (
+          <RecipeLabel
+            key={recipe.id}
+            recipe={recipe}
+            canEdit={isAdmin}
+            onAdd={() => handleAddRecipeToDiary(recipe)}
+          />
+        ))}
+      </div>
     </div>
+  );
+}
+
+const DEFAULT_RECIPE_GRAMS = 100;
+
+function productMacros(item: RecipeProduct) {
+  const factor = parseFloat(item.quantity) / 100;
+  return {
+    calories: factor * parseFloat(item.product.calories),
+    protein: factor * parseFloat(item.product.protein),
+    carbs: factor * parseFloat(item.product.carbs),
+    fat: factor * parseFloat(item.product.fat),
+  };
+}
+
+type RecipeLabelProps = {
+  recipe: Recipe;
+  canEdit: boolean;
+  onAdd: () => void;
+};
+
+function RecipeLabel({ recipe, canEdit, onAdd }: RecipeLabelProps) {
+  const totals = recipe.products.reduce(
+    (sum, item) => {
+      const m = productMacros(item);
+      return {
+        calories: sum.calories + m.calories,
+        protein: sum.protein + m.protein,
+        carbs: sum.carbs + m.carbs,
+        fat: sum.fat + m.fat,
+        grams: sum.grams + parseFloat(item.quantity),
+      };
+    },
+    { calories: 0, protein: 0, carbs: 0, fat: 0, grams: 0 },
+  );
+
+  return (
+    <article className="border-2 border-ink bg-card px-3 pt-1.5 pb-3 flex flex-col">
+      <div className="flex items-start justify-between gap-3">
+        <h2 className="font-display text-[30px] leading-none">{recipe.name}</h2>
+        {canEdit && (
+          <Link
+            href={`/dashboard/recipe-builder?id=${recipe.id}`}
+            className="shrink-0 min-h-8 flex items-center text-xs font-extrabold uppercase underline underline-offset-4 hover:text-accent"
+          >
+            Edytuj
+          </Link>
+        )}
+      </div>
+      <div className="flex justify-between text-sm pt-1 pb-1 border-b border-ink">
+        <span>Cały przepis</span>
+        <span className="font-mono font-semibold">
+          {formatAmount(totals.grams)} g
+        </span>
+      </div>
+      <div className="rule-thick" />
+      <div className="flex justify-between items-end py-1">
+        <span className="font-display text-[26px] leading-none [font-stretch:75%]">
+          Kalorie
+        </span>
+        <span className="font-mono text-4xl font-semibold leading-none tracking-[-0.04em]">
+          {totals.calories.toFixed(0)}
+        </span>
+      </div>
+      <div className="rule-medium" />
+      <div className="grid grid-cols-3 border-b border-ink">
+        {(
+          [
+            ["Białko", totals.protein],
+            ["Węgle", totals.carbs],
+            ["Tłuszcze", totals.fat],
+          ] as const
+        ).map(([label, value], idx) => (
+          <div
+            key={label}
+            className={`py-1.5 flex flex-col ${idx > 0 ? "border-l border-ink pl-2" : ""}`}
+          >
+            <span className="text-xs font-extrabold">{label}</span>
+            <span className="font-mono text-sm">{formatAmount(value)} g</span>
+          </div>
+        ))}
+      </div>
+
+      <h3 className="mt-4 text-xs font-extrabold uppercase border-b-[5px] border-ink pb-0.5">
+        Składniki
+      </h3>
+      <ul>
+        {recipe.products.map((item) => {
+          const m = productMacros(item);
+          return (
+            <li
+              key={item.productId}
+              className="flex items-baseline gap-3 py-2 border-b border-ink"
+            >
+              <span className="flex-1 min-w-0 flex flex-col">
+                <span className="text-[15px] font-bold">
+                  {item.product.name}
+                </span>
+                <span className="font-mono text-[11px]">
+                  {formatAmount(parseFloat(item.quantity))} g · B{" "}
+                  {m.protein.toFixed(0)} · W {m.carbs.toFixed(0)} · T{" "}
+                  {m.fat.toFixed(0)}
+                </span>
+              </span>
+              <span className="font-mono text-[15px] font-semibold">
+                {m.calories.toFixed(0)}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+
+      {recipe.steps.length > 0 && (
+        <>
+          <h3 className="mt-4 text-xs font-extrabold uppercase border-b-[5px] border-ink pb-0.5">
+            Jak to zrobić
+          </h3>
+          <ol className="flex flex-col">
+            {recipe.steps.map((step, index) => (
+              <li
+                key={index}
+                className="flex gap-3 py-2 border-b border-ink text-sm"
+              >
+                <span className="font-mono text-xs font-semibold pt-0.5">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span>{step}</span>
+              </li>
+            ))}
+          </ol>
+        </>
+      )}
+
+      <button
+        onClick={onAdd}
+        className="mt-4 flex items-center justify-between min-h-12 px-4 bg-ink text-paper text-sm font-extrabold uppercase hover:bg-accent transition-colors cursor-pointer"
+      >
+        <span>+ {DEFAULT_RECIPE_GRAMS} g do dzisiejszego śniadania</span>
+      </button>
+    </article>
   );
 }

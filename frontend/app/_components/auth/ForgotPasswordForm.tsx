@@ -12,10 +12,10 @@ import { Mail, Loader2, MailCheck, ArrowLeft } from "lucide-react";
 type Inputs = z.infer<typeof forgotPasswordSchema>;
 
 const inputWrapClass =
-  "flex items-center gap-2.5 h-12 px-4 rounded-xl bg-dash-surface border border-dash-border focus-within:border-dash-green-mid focus-within:ring-2 focus-within:ring-dash-green-mid/20 transition-all";
+  "flex items-center gap-2.5 h-12 px-3 bg-card border-2 border-ink focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent";
 
 const inputClass =
-  "flex-1 bg-transparent text-sm text-dash-fg placeholder:text-dash-input-placeholder outline-none";
+  "flex-1 min-w-0 bg-transparent font-mono text-[15px] text-ink placeholder:text-ink-muted outline-none";
 
 export const ForgotPasswordForm = () => {
   const {
@@ -53,30 +53,23 @@ export const ForgotPasswordForm = () => {
   // Success state — swap the form for a neutral confirmation.
   if (submitted) {
     return (
-      <div className="flex flex-col items-center gap-4 text-center">
-        <div
-          className="w-14 h-14 rounded-2xl flex items-center justify-center"
-          style={{
-            background: "var(--color-dash-surface)",
-            border: "1px solid var(--color-dash-border)",
-          }}
-        >
-          <MailCheck
-            className="w-7 h-7"
-            style={{ color: "var(--color-dash-green)" }}
-          />
-        </div>
-        <p className="text-sm text-dash-fg-secondary">
+      <div role="status" className="flex flex-col gap-4">
+        <p className="flex items-center gap-2 text-sm font-extrabold uppercase">
+          <MailCheck className="w-5 h-5" aria-hidden="true" />
+          Sprawdź skrzynkę
+        </p>
+        <p className="text-sm">
           Jeśli konto o tym adresie istnieje, wysłaliśmy na nie link do
           zresetowania hasła. Sprawdź swoją skrzynkę (również folder spam).
         </p>
         <Link
           href="/login"
-          className="mt-2 inline-flex items-center gap-2 text-sm font-semibold hover:opacity-80 transition-opacity"
-          style={{ color: "var(--color-dash-green)" }}
+          className="flex items-center justify-between min-h-12 px-4 bg-ink text-paper text-sm font-extrabold uppercase hover:bg-accent transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" />
-          Wróć do logowania
+          <span className="flex items-center gap-2">
+            <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+            Wróć do logowania
+          </span>
         </Link>
       </div>
     );
@@ -85,14 +78,11 @@ export const ForgotPasswordForm = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <div className="flex flex-col gap-1.5">
-        <label
-          htmlFor="email"
-          className="text-sm font-medium text-dash-fg-secondary"
-        >
+        <label htmlFor="email" className="text-[13px] font-extrabold uppercase">
           Adres email
         </label>
         <div className={inputWrapClass}>
-          <Mail className="w-4 h-4 shrink-0 text-dash-fg-muted" />
+          <Mail className="w-4 h-4 shrink-0 text-ink-muted" />
           <input
             type="email"
             id="email"
@@ -103,17 +93,20 @@ export const ForgotPasswordForm = () => {
           />
         </div>
         {errors.email && (
-          <p className="text-xs text-red-400">{errors.email.message}</p>
+          <p className="font-mono text-xs text-accent">
+            {errors.email.message}
+          </p>
         )}
       </div>
 
       {error && (
         <div
-          className="text-sm rounded-xl px-4 py-3"
+          role="alert"
+          className="font-mono text-sm px-3 py-2 border-2"
           style={{
-            color: "var(--color-form-error)",
-            background: "var(--color-form-error-bg)",
-            border: "1px solid var(--color-form-error-border)",
+            color: "var(--color-accent)",
+            background: "var(--color-accent-tint)",
+            border: "1px solid var(--color-accent)",
           }}
         >
           {error}
@@ -123,11 +116,7 @@ export const ForgotPasswordForm = () => {
       <button
         type="submit"
         disabled={isLoading}
-        className="mt-2 flex items-center justify-center gap-2 h-12 w-full rounded-xl text-white text-sm font-semibold hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
-        style={{
-          background: "var(--gradient-green-button)",
-          boxShadow: "var(--shadow-green-logo)",
-        }}
+        className="mt-2 flex items-center justify-center gap-2 min-h-14 w-full bg-ink text-paper text-base font-extrabold uppercase tracking-wide hover:bg-accent transition-colors disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
       >
         {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
         Wyślij link resetujący
@@ -135,7 +124,7 @@ export const ForgotPasswordForm = () => {
 
       <Link
         href="/login"
-        className="inline-flex items-center justify-center gap-2 text-sm text-dash-fg-muted hover:opacity-80 transition-opacity"
+        className="inline-flex items-center justify-center gap-2 text-sm text-ink-muted hover:opacity-80 transition-opacity"
       >
         <ArrowLeft className="w-4 h-4" />
         Wróć do logowania
