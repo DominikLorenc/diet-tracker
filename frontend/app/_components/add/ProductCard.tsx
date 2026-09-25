@@ -128,7 +128,7 @@ export const AddProductCard = ({
         >
           <ProductThumb src={product.imageUrl} />
           <span className="flex-1 min-w-0 flex flex-col">
-            <span className="text-[15px] font-bold truncate">
+            <span className="text-[15px] font-bold leading-tight break-words">
               {product.name}
             </span>
             <span className="font-mono text-[11px]">
@@ -136,7 +136,7 @@ export const AddProductCard = ({
               {formatAmount(product.carbs)} · T {formatAmount(product.fat)}
             </span>
           </span>
-          <span className="font-mono text-base font-semibold">
+          <span className="shrink-0 font-mono text-base font-semibold">
             {formatAmount(product.calories, 0)}
           </span>
           <ChevronDown

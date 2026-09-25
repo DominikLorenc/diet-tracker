@@ -45,14 +45,16 @@ export const ProductCard = ({
         <ProductThumb src={product.imageUrl} />
 
         <div className="flex-1 min-w-0 flex flex-col">
-          <p className="text-[15px] font-bold truncate">{product.name}</p>
+          <p className="text-[15px] font-bold leading-tight break-words">
+            {product.name}
+          </p>
           <p className="font-mono text-[11px] truncate">
             B {formatAmount(product.protein)} · W {formatAmount(product.carbs)}{" "}
             · T {formatAmount(product.fat)}
           </p>
         </div>
 
-        <span className="font-mono text-base font-semibold">
+        <span className="shrink-0 font-mono text-base font-semibold">
           {formatAmount(product.calories, 0)}
         </span>
 
