@@ -14,6 +14,7 @@ export const measurementsSchema = registry.register(
         waist: z.coerce.number().nonnegative(),
         hips: z.coerce.number().nonnegative(),
         arm: z.coerce.number().nonnegative(),
+        thigh: z.coerce.number().nonnegative(),
     }),
 );
 

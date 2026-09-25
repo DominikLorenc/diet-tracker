@@ -31,6 +31,7 @@ const schema = z.object({
   waist: positiveNum("Musi być > 0"),
   hips: positiveNum("Musi być > 0"),
   arm: positiveNum("Musi być > 0"),
+  thigh: positiveNum("Musi być > 0"),
 });
 
 type Props = {
@@ -104,6 +105,7 @@ export const MeasurementModal = ({
         waist: initialData.waist,
         hips: initialData.hips,
         arm: initialData.arm,
+        thigh: initialData.thigh ?? undefined,
       });
     } else {
       reset({ date: today() });
@@ -175,6 +177,12 @@ export const MeasurementModal = ({
             label="Ramię"
             unit="cm"
             error={errors.arm?.message}
+          />
+          <NumberField
+            {...register("thigh")}
+            label="Udo"
+            unit="cm"
+            error={errors.thigh?.message}
           />
         </div>
 

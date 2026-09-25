@@ -85,9 +85,14 @@ export default function ProgressPage() {
     [measurements, dateFrom, dateTo],
   );
 
+  // Skips measurements without a value (e.g. thigh before it was tracked)
   const chartData = (
-    key: keyof Pick<Measurement, "weight" | "waist" | "hips" | "arm">,
-  ) => [...filtered].reverse().map((m) => ({ date: m.date, value: m[key] }));
+    key: keyof Pick<Measurement, "weight" | "waist" | "hips" | "arm" | "thigh">,
+  ) =>
+    [...filtered].reverse().flatMap((m) => {
+      const value = m[key];
+      return value == null ? [] : [{ date: m.date, value }];
+    });
 
   const openAdd = () => {
     setEditingMeasurement(null);
@@ -237,7 +242,7 @@ export default function ProgressPage() {
         </p>
       )}
 
-      {/* Charts — 2×2 grid */}
+      {/* Charts grid */}
       {!loading && (
         <>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
@@ -264,6 +269,12 @@ export default function ProgressPage() {
               unit="cm"
               color="var(--color-ink)"
               data={chartData("arm")}
+            />
+            <MeasurementChart
+              label="UDO"
+              unit="cm"
+              color="var(--color-ink)"
+              data={chartData("thigh")}
             />
           </div>
 

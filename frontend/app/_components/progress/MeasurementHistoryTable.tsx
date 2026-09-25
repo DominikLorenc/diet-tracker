@@ -52,6 +52,9 @@ export const MeasurementHistoryTable = ({
             <th scope="col" className={`${headCell} hidden sm:table-cell`}>
               Ramię
             </th>
+            <th scope="col" className={`${headCell} hidden sm:table-cell`}>
+              Udo
+            </th>
             <th scope="col" className="w-[88px]">
               <span className="sr-only">Akcje</span>
             </th>
@@ -72,6 +75,9 @@ export const MeasurementHistoryTable = ({
               </td>
               <td className="text-right hidden sm:table-cell">
                 {fmtValue(m.arm)}
+              </td>
+              <td className="text-right hidden sm:table-cell">
+                {fmtValue(m.thigh)}
               </td>
               <td className="text-right whitespace-nowrap">
                 <button

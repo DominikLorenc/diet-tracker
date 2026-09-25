@@ -94,6 +94,7 @@ model User {
     waist     Decimal
     hips      Decimal
     arm     Decimal
+    thigh   Decimal?
   }
 
   model UserGoal {

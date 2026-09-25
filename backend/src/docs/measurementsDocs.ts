@@ -13,6 +13,8 @@ const measurementResponseSchema = z.object({
     waist: decimalResponseSchema,
     hips: decimalResponseSchema,
     arm: decimalResponseSchema,
+    // Nullable: measurements created before thigh was tracked have no value
+    thigh: z.number().nullable(),
     createdAt: z.iso.datetime(),
     updatedAt: z.iso.datetime(),
 });

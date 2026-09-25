@@ -1832,6 +1832,7 @@ export interface paths {
                 waist: number;
                 hips: number;
                 arm: number;
+                thigh: number | null;
                 /** Format: date-time */
                 createdAt: string;
                 /** Format: date-time */
@@ -1906,6 +1907,7 @@ export interface paths {
                 waist: number;
                 hips: number;
                 arm: number;
+                thigh: number | null;
                 /** Format: date-time */
                 createdAt: string;
                 /** Format: date-time */
@@ -1961,6 +1963,7 @@ export interface paths {
                 waist: number;
                 hips: number;
                 arm: number;
+                thigh: number | null;
                 /** Format: date-time */
                 createdAt: string;
                 /** Format: date-time */
@@ -2037,6 +2040,7 @@ export interface paths {
                 waist: number;
                 hips: number;
                 arm: number;
+                thigh: number | null;
                 /** Format: date-time */
                 createdAt: string;
                 /** Format: date-time */
@@ -2102,6 +2106,7 @@ export interface paths {
                 waist: number;
                 hips: number;
                 arm: number;
+                thigh: number | null;
                 /** Format: date-time */
                 createdAt: string;
                 /** Format: date-time */
@@ -2155,6 +2160,7 @@ export interface paths {
             waist?: number | null;
             hips?: number | null;
             arm?: number | null;
+            thigh?: number | null;
           };
         };
       };
@@ -2178,6 +2184,7 @@ export interface paths {
                 waist: number;
                 hips: number;
                 arm: number;
+                thigh: number | null;
                 /** Format: date-time */
                 createdAt: string;
                 /** Format: date-time */
@@ -3770,6 +3777,7 @@ export interface components {
       waist: number | null;
       hips: number | null;
       arm: number | null;
+      thigh: number | null;
     };
     UserProfile: {
       id: string;

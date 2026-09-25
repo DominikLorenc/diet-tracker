@@ -5,6 +5,8 @@ export type Measurement = {
   waist: number;
   hips: number;
   arm: number;
+  // Null for measurements created before thigh was tracked
+  thigh: number | null;
   date: string;
 };
 
@@ -14,4 +16,5 @@ export type MeasurementFormData = {
   waist: number;
   hips: number;
   arm: number;
+  thigh: number;
 };
