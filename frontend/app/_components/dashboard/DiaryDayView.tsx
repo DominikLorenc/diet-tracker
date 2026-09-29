@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { formatAmount, pluralPl } from "@/utils/format";
+import { pluralPl } from "@/utils/format";
 import { DateNavigator } from "./DateNavigator";
 import { MacroSummary } from "./MacroSummary";
 import Link from "next/link";
@@ -9,6 +9,7 @@ import { useToastStore } from "@/store/useToastStore";
 import { apiClient } from "@/app/lib/apiClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, ChevronDown, Plus, X } from "lucide-react";
+import { EditableQuantity } from "./EditableQuantity";
 
 export type MealType = "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
 
@@ -229,6 +230,56 @@ export const DiaryDayView = () => {
     });
   };
 
+  const quantityMutation = useMutation({
+    mutationFn: async ({ id, quantity }: { id: string; quantity: number }) => {
+      const { error: updateError } = await apiClient.PATCH(
+        "/diary/{id}/quantity",
+        {
+          params: { path: { id } },
+          body: { quantity },
+        },
+      );
+      if (updateError) {
+        throw new Error(updateError.message);
+      }
+    },
+    // Optimistic update: rewrite the cached quantity right away so the row macros
+    // and MacroSummary recalc before the request resolves.
+    onMutate: async ({ id, quantity }) => {
+      await queryClient.cancelQueries({ queryKey: ["diary", dateParam] });
+      const previous = queryClient.getQueryData<DiaryEntriesResponse>([
+        "diary",
+        dateParam,
+      ]);
+      queryClient.setQueryData<DiaryEntriesResponse>(
+        ["diary", dateParam],
+        (old) =>
+          old?.map((entry) => ({
+            ...entry,
+            items: entry.items.map((item) =>
+              item.id === id ? { ...item, quantity: String(quantity) } : item,
+            ),
+          })),
+      );
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      // Roll back to the exact snapshot taken in onMutate.
+      if (context?.previous) {
+        queryClient.setQueryData(["diary", dateParam], context.previous);
+      }
+      showToast(
+        "error",
+        "Nie udało się zaktualizować ilości",
+        "Spróbuj ponownie lub odśwież stronę",
+      );
+    },
+    // Resync with the server regardless of outcome.
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["diary", dateParam] });
+    },
+  });
+
   const eatenMutation = useMutation({
     mutationFn: async ({ id, isEaten }: { id: string; isEaten: boolean }) => {
       const { error: updateError } = await apiClient.PATCH(
@@ -359,6 +410,12 @@ export const DiaryDayView = () => {
                                   isEaten: !item.isEaten,
                                 })
                               }
+                              onUpdateQuantity={(quantity) =>
+                                quantityMutation.mutate({
+                                  id: item.id,
+                                  quantity,
+                                })
+                              }
                               onDelete={() => deleteMutation.mutate(item.id)}
                             />
                           ))}
@@ -390,15 +447,20 @@ export const DiaryDayView = () => {
 type DiaryItemRowProps = {
   item: DiaryItem;
   onToggleEaten: () => void;
+  onUpdateQuantity: (quantity: number) => void;
   onDelete: () => void;
 };
 
-function DiaryItemRow({ item, onToggleEaten, onDelete }: DiaryItemRowProps) {
+function DiaryItemRow({
+  item,
+  onToggleEaten,
+  onUpdateQuantity,
+  onDelete,
+}: DiaryItemRowProps) {
   const macros = getItemMacros(item);
   const name = item.recipe?.name ?? item.userRecipe?.name ?? item.product?.name;
   const isRecipe = Boolean(item.recipe || item.userRecipe);
-  const details = [
-    isRecipe ? "przepis" : `${formatAmount(item.quantity)} g`,
+  const macroDetails = [
     `B ${macros.protein.toFixed(0)}`,
     `W ${macros.carbs.toFixed(0)}`,
     `T ${macros.fat.toFixed(0)}`,
@@ -432,7 +494,19 @@ function DiaryItemRow({ item, onToggleEaten, onDelete }: DiaryItemRowProps) {
       </button>
       <div className="flex flex-col flex-1 min-w-0">
         <span className="text-[15px] font-bold truncate">{name}</span>
-        <span className="font-mono text-[11px]">{details}</span>
+        <span className="font-mono text-[11px]">
+          {isRecipe ? (
+            `przepis · ${macroDetails}`
+          ) : (
+            <>
+              <EditableQuantity
+                quantity={item.quantity}
+                onSave={onUpdateQuantity}
+              />
+              {` · ${macroDetails}`}
+            </>
+          )}
+        </span>
       </div>
       <span className="font-mono text-[15px] font-semibold">
         {macros.calories.toFixed(0)}
