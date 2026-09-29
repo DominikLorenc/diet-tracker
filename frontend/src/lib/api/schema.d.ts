@@ -453,6 +453,7 @@ export interface paths {
                       | "DRY_GOODS"
                       | "SPICES"
                       | "OTHER";
+                    gramsPerUnit: string | null;
                   } | null;
                   recipe: {
                     id: string;
@@ -479,6 +480,7 @@ export interface paths {
                           | "DRY_GOODS"
                           | "SPICES"
                           | "OTHER";
+                        gramsPerUnit: string | null;
                       };
                     }[];
                   } | null;
@@ -516,6 +518,7 @@ export interface paths {
                           | "DRY_GOODS"
                           | "SPICES"
                           | "OTHER";
+                        gramsPerUnit: string | null;
                       };
                     }[];
                   } | null;
@@ -595,6 +598,7 @@ export interface paths {
                       | "DRY_GOODS"
                       | "SPICES"
                       | "OTHER";
+                    gramsPerUnit: string | null;
                   } | null;
                   recipe: {
                     id: string;
@@ -621,6 +625,7 @@ export interface paths {
                           | "DRY_GOODS"
                           | "SPICES"
                           | "OTHER";
+                        gramsPerUnit: string | null;
                       };
                     }[];
                   } | null;
@@ -658,6 +663,7 @@ export interface paths {
                           | "DRY_GOODS"
                           | "SPICES"
                           | "OTHER";
+                        gramsPerUnit: string | null;
                       };
                     }[];
                   } | null;
@@ -761,6 +767,7 @@ export interface paths {
                       | "DRY_GOODS"
                       | "SPICES"
                       | "OTHER";
+                    gramsPerUnit: string | null;
                   } | null;
                   recipe: {
                     id: string;
@@ -787,6 +794,7 @@ export interface paths {
                           | "DRY_GOODS"
                           | "SPICES"
                           | "OTHER";
+                        gramsPerUnit: string | null;
                       };
                     }[];
                   } | null;
@@ -824,6 +832,7 @@ export interface paths {
                           | "DRY_GOODS"
                           | "SPICES"
                           | "OTHER";
+                        gramsPerUnit: string | null;
                       };
                     }[];
                   } | null;
@@ -930,6 +939,7 @@ export interface paths {
                     | "DRY_GOODS"
                     | "SPICES"
                     | "OTHER";
+                  gramsPerUnit: string | null;
                 } | null;
                 recipe: {
                   id: string;
@@ -956,6 +966,7 @@ export interface paths {
                         | "DRY_GOODS"
                         | "SPICES"
                         | "OTHER";
+                      gramsPerUnit: string | null;
                     };
                   }[];
                 } | null;
@@ -993,6 +1004,7 @@ export interface paths {
                         | "DRY_GOODS"
                         | "SPICES"
                         | "OTHER";
+                      gramsPerUnit: string | null;
                     };
                   }[];
                 } | null;
@@ -1106,6 +1118,7 @@ export interface paths {
                     | "DRY_GOODS"
                     | "SPICES"
                     | "OTHER";
+                  gramsPerUnit: string | null;
                 } | null;
                 recipe: {
                   id: string;
@@ -1132,6 +1145,7 @@ export interface paths {
                         | "DRY_GOODS"
                         | "SPICES"
                         | "OTHER";
+                      gramsPerUnit: string | null;
                     };
                   }[];
                 } | null;
@@ -1169,6 +1183,7 @@ export interface paths {
                         | "DRY_GOODS"
                         | "SPICES"
                         | "OTHER";
+                      gramsPerUnit: string | null;
                     };
                   }[];
                 } | null;
@@ -1273,6 +1288,7 @@ export interface paths {
                     | "DRY_GOODS"
                     | "SPICES"
                     | "OTHER";
+                  gramsPerUnit: string | null;
                 } | null;
                 recipe: {
                   id: string;
@@ -1299,6 +1315,7 @@ export interface paths {
                         | "DRY_GOODS"
                         | "SPICES"
                         | "OTHER";
+                      gramsPerUnit: string | null;
                     };
                   }[];
                 } | null;
@@ -1336,6 +1353,7 @@ export interface paths {
                         | "DRY_GOODS"
                         | "SPICES"
                         | "OTHER";
+                      gramsPerUnit: string | null;
                     };
                   }[];
                 } | null;

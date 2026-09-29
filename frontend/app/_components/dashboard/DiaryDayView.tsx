@@ -22,6 +22,8 @@ export interface Product {
   fat: string;
   createdAt: string;
   imageUrl: string;
+  // Per-piece weight (e.g. one egg = 60 g), null when the product has no piece unit.
+  gramsPerUnit: string | null;
 }
 
 interface RecipeProduct {
@@ -501,6 +503,7 @@ function DiaryItemRow({
             <>
               <EditableQuantity
                 quantity={item.quantity}
+                gramsPerUnit={item.product?.gramsPerUnit}
                 onSave={onUpdateQuantity}
               />
               {` · ${macroDetails}`}

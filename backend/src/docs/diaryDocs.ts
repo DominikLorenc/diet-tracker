@@ -15,6 +15,8 @@ const productSchema = z.object({
     imageUrl: z.string(),
     createdAt: z.string(),
     category: z.enum(ProductCategory),
+    // Nullable: only some products carry a per-piece weight (e.g. one egg = 60 g).
+    gramsPerUnit: z.string().nullable(),
 });
 
 const diaryItemSchema = z.object({
