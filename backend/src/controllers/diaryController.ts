@@ -5,8 +5,15 @@ import {
     deleteDiaryService,
     getDiaryServiceByDate,
     updateDiaryEntry,
+    updateDiaryItemQuantity,
 } from '../services/diaryService';
-import { diaryEntrySchema, dateDiarySchema, diaryIdSchema, toggleEatenSchema } from '../schemas/diarySchema';
+import {
+    diaryEntrySchema,
+    dateDiarySchema,
+    diaryIdSchema,
+    toggleEatenSchema,
+    updateQuantitySchema,
+} from '../schemas/diarySchema';
 
 export const createDiaryEntry = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -138,6 +145,37 @@ export const deleteDiaryItem = async (req: Request, res: Response, next: NextFun
 
         const deleted = await deleteDiaryItemProductService(result.data, userId);
         res.status(200).json({ message: 'Diary entry deleted', deleted });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const updateQuantityItem = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+
+        const userId = req.userId;
+        if (!userId) {
+            res.status(401).json({ message: 'Unauthorized' });
+            return;
+        }
+
+        const result = diaryIdSchema.safeParse(id);
+        if (!result.success) {
+            res.status(400).json({ message: result.error.issues });
+            return;
+        }
+
+        const validation = updateQuantitySchema.safeParse(req.body);
+        if (!validation.success) {
+            res.status(400).json({ message: validation.error.issues });
+            return;
+        }
+
+        const { quantity } = validation.data;
+
+        const updated = await updateDiaryItemQuantity(result.data, userId, quantity);
+        res.status(200).json({ message: 'Diary entry updated', updated });
     } catch (error) {
         next(error);
     }

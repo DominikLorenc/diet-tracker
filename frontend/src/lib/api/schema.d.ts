@@ -1037,6 +1037,182 @@ export interface paths {
     };
     trace?: never;
   };
+  "/diary/{id}/quantity": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Update quantity of diary item */
+    patch: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: {
+        content: {
+          "application/json": {
+            quantity: number;
+          };
+        };
+      };
+      responses: {
+        /** @description Item updated */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              updated: {
+                id: string;
+                diaryEntryId: string;
+                productId: string | null;
+                recipeId: string | null;
+                /** @enum {string} */
+                mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
+                isEaten: boolean;
+                quantity: string;
+                createdAt: string;
+                product: {
+                  id: string;
+                  name: string;
+                  calories: string;
+                  carbs: string;
+                  protein: string;
+                  fat: string;
+                  imageUrl: string;
+                  createdAt: string;
+                  /** @enum {string} */
+                  category:
+                    | "BREAD"
+                    | "DAIRY"
+                    | "MEAT"
+                    | "VEGETABLES"
+                    | "FRUITS"
+                    | "BEVERAGES"
+                    | "DRY_GOODS"
+                    | "SPICES"
+                    | "OTHER";
+                } | null;
+                recipe: {
+                  id: string;
+                  name: string;
+                  products: {
+                    quantity: string;
+                    product: {
+                      id: string;
+                      name: string;
+                      calories: string;
+                      carbs: string;
+                      protein: string;
+                      fat: string;
+                      imageUrl: string;
+                      createdAt: string;
+                      /** @enum {string} */
+                      category:
+                        | "BREAD"
+                        | "DAIRY"
+                        | "MEAT"
+                        | "VEGETABLES"
+                        | "FRUITS"
+                        | "BEVERAGES"
+                        | "DRY_GOODS"
+                        | "SPICES"
+                        | "OTHER";
+                    };
+                  }[];
+                } | null;
+                userRecipeId: string | null;
+                userRecipe: {
+                  id: string;
+                  userId: string;
+                  createdAt: string;
+                  sourceRecipeId: string;
+                  name: string;
+                  userRecipeIngredients: {
+                    id: string;
+                    userRecipeId: string;
+                    productId: string;
+                    quantity: string;
+                    createdAt: string;
+                    updatedAt: string;
+                    product: {
+                      id: string;
+                      name: string;
+                      calories: string;
+                      carbs: string;
+                      protein: string;
+                      fat: string;
+                      imageUrl: string;
+                      createdAt: string;
+                      /** @enum {string} */
+                      category:
+                        | "BREAD"
+                        | "DAIRY"
+                        | "MEAT"
+                        | "VEGETABLES"
+                        | "FRUITS"
+                        | "BEVERAGES"
+                        | "DRY_GOODS"
+                        | "SPICES"
+                        | "OTHER";
+                    };
+                  }[];
+                } | null;
+              };
+            };
+          };
+        };
+        /** @description Validation error */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+        /** @description Item not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    trace?: never;
+  };
   "/diary/{id}/item": {
     parameters: {
       query?: never;

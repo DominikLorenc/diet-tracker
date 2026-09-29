@@ -5,6 +5,7 @@ import {
     deleteDiaryEntry,
     deleteDiaryItem,
     toggleEatenItem,
+    updateQuantityItem,
 } from '../controllers/diaryController';
 import { authMiddleware } from '../middleware/authMiddleware';
 
@@ -15,7 +16,9 @@ router.use(authMiddleware);
 router.post('/', createDiaryEntry);
 router.get('/', getDiary);
 router.patch('/:id/eaten', toggleEatenItem);
+router.patch('/:id/quantity', updateQuantityItem);
 router.delete('/:id', deleteDiaryEntry);
+
 router.delete('/:id/item', deleteDiaryItem);
 
 export default router;

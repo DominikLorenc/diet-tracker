@@ -1,5 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { addDiaryService, getDiaryServiceByDate, deleteDiaryService } from '../services/diaryService';
+import {
+    addDiaryService,
+    getDiaryServiceByDate,
+    deleteDiaryService,
+    updateDiaryItemQuantity,
+} from '../services/diaryService';
+import { Prisma } from '../generated/prisma';
 import request from 'supertest';
 import app from '../app';
 import { AppError } from '../utils/AppError';
@@ -9,7 +15,8 @@ process.env.JWT_SECRET = 'test-secret';
 
 vi.mock('../services/diaryService');
 
-const token = jwt.sign({ id: crypto.randomUUID(), role: 'USER' }, process.env.JWT_SECRET!);
+const tokenUserId = crypto.randomUUID();
+const token = jwt.sign({ id: tokenUserId, role: 'USER' }, process.env.JWT_SECRET!);
 const productId = 'e87f94c7-0e0c-46ab-90a2-6537a30fa688';
 const userId = 'e87f94c7-0e0c-46ab-90a2-6537a30fa688';
 const recipeId = 'e87f94c7-0e0c-46ab-90a2-6537a30fa688';
@@ -196,5 +203,115 @@ describe('DELETE /api/v1/diary/:id', () => {
             .delete(`/api/v1/diary/123`)
             .set('Cookie', ['token=' + token]);
         expect(res.status).toBe(400);
+    });
+});
+
+describe('PATCH /api/v1/diary/:id/quantity', () => {
+    const diaryItem = {
+        id: diaryId,
+        diaryEntryId: diaryId,
+        productId,
+        recipeId: null,
+        userRecipeId: null,
+        mealType: 'BREAKFAST' as const,
+        createdAt: new Date(),
+        quantity: new Prisma.Decimal(10),
+        isEaten: false,
+    };
+
+    beforeEach(() => {
+        vi.resetAllMocks();
+    });
+
+    it('should return 200 and call service with id, userId from token and quantity', async () => {
+        vi.mocked(updateDiaryItemQuantity).mockResolvedValue(diaryItem);
+
+        const res = await request(app)
+            .patch(`/api/v1/diary/${diaryId}/quantity`)
+            .send({ quantity: 10 })
+            .set('Cookie', ['token=' + token]);
+
+        expect(res.status).toBe(200);
+        expect(updateDiaryItemQuantity).toHaveBeenCalledWith(diaryId, tokenUserId, 10);
+    });
+
+    it('should accept decimal quantity', async () => {
+        vi.mocked(updateDiaryItemQuantity).mockResolvedValue(diaryItem);
+
+        const res = await request(app)
+            .patch(`/api/v1/diary/${diaryId}/quantity`)
+            .send({ quantity: 12.5 })
+            .set('Cookie', ['token=' + token]);
+
+        expect(res.status).toBe(200);
+        expect(updateDiaryItemQuantity).toHaveBeenCalledWith(diaryId, tokenUserId, 12.5);
+    });
+
+    it('should return 401 when user is not logged in', async () => {
+        const res = await request(app).patch(`/api/v1/diary/${diaryId}/quantity`).send({ quantity: 10 });
+
+        expect(res.status).toBe(401);
+        expect(updateDiaryItemQuantity).not.toHaveBeenCalled();
+    });
+
+    it('should return 400 when id is not a uuid', async () => {
+        const res = await request(app)
+            .patch('/api/v1/diary/abc/quantity')
+            .send({ quantity: 10 })
+            .set('Cookie', ['token=' + token]);
+
+        expect(res.status).toBe(400);
+        expect(updateDiaryItemQuantity).not.toHaveBeenCalled();
+    });
+
+    it.each([
+        ['zero', 0],
+        ['negative', -5],
+        ['above max', 50001],
+        ['numeric string', '10'],
+        ['boolean', true],
+        ['array', [25]],
+        ['null', null],
+    ])('should return 400 when quantity is %s', async (_label, quantity) => {
+        const res = await request(app)
+            .patch(`/api/v1/diary/${diaryId}/quantity`)
+            .send({ quantity })
+            .set('Cookie', ['token=' + token]);
+
+        expect(res.status).toBe(400);
+        expect(updateDiaryItemQuantity).not.toHaveBeenCalled();
+    });
+
+    it('should return 400 when quantity is missing', async () => {
+        const res = await request(app)
+            .patch(`/api/v1/diary/${diaryId}/quantity`)
+            .send({})
+            .set('Cookie', ['token=' + token]);
+
+        expect(res.status).toBe(400);
+        expect(updateDiaryItemQuantity).not.toHaveBeenCalled();
+    });
+
+    it('should return 404 when item not found or owned by another user', async () => {
+        vi.mocked(updateDiaryItemQuantity).mockRejectedValue(new AppError('Diary entry not found', 404));
+
+        const res = await request(app)
+            .patch(`/api/v1/diary/${diaryId}/quantity`)
+            .send({ quantity: 10 })
+            .set('Cookie', ['token=' + token]);
+
+        expect(res.status).toBe(404);
+    });
+
+    it('should return 500 on unexpected service error', async () => {
+        vi.mocked(updateDiaryItemQuantity).mockRejectedValue(new Error('DB down'));
+
+        const res = await request(app)
+            .patch(`/api/v1/diary/${diaryId}/quantity`)
+            .send({ quantity: 10 })
+            .set('Cookie', ['token=' + token]);
+
+        expect(res.status).toBe(500);
+        expect(res.body.message).not.toContain('DB down');
     });
 });

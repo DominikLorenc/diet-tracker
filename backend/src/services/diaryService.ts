@@ -186,3 +186,28 @@ export const deleteDiaryItemProductService = async (id: string, userId: string):
         throw new AppError('Diary entry not found', 404);
     }
 };
+
+export const updateDiaryItemQuantity = async (
+    id: string,
+    userId: string,
+    quantity: number,
+): Promise<DiaryEntryItem> => {
+    try {
+        const updated = await prisma.diaryEntryItem.update({
+            where: {
+                id,
+                diaryEntry: {
+                    userId,
+                },
+            },
+            data: toDecimalSafe({ quantity }, ['quantity']),
+        });
+        return updated;
+    } catch (error) {
+        // P2025 = no record matched `where` (missing or owned by another user)
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+            throw new AppError('Diary entry not found', 404);
+        }
+        throw error;
+    }
+};

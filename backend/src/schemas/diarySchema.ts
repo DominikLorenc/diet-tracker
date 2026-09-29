@@ -34,3 +34,7 @@ export const diaryIdSchema = z.uuid();
 export const toggleEatenSchema = z.object({
     isEaten: z.boolean(),
 });
+
+export const updateQuantitySchema = z.object({
+    quantity: z.number().positive().max(50000),
+});
