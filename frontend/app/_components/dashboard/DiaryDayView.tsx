@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { pluralPl } from "@/utils/format";
+import { toLocalDateString } from "@/utils/date";
 import { DateNavigator } from "./DateNavigator";
 import { MacroSummary } from "./MacroSummary";
 import Link from "next/link";
@@ -156,7 +157,7 @@ export const DiaryDayView = () => {
 
   const showToast = useToastStore((state) => state.showToast);
 
-  const dateParam = date.toISOString().split("T")[0];
+  const dateParam = toLocalDateString(date);
 
   const {
     data: entries = [],

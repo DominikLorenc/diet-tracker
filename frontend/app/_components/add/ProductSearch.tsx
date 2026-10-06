@@ -1,6 +1,7 @@
 "use client";
 
 import { pluralPl } from "@/utils/format";
+import { todayLocal } from "@/utils/date";
 import {
   Dispatch,
   SetStateAction,
@@ -139,8 +140,7 @@ export const ProductSearch = ({
       return;
     }
 
-    const today = new Date().toISOString().split("T")[0];
-    const isToday = date === today;
+    const isToday = date === todayLocal();
 
     const { error } = await apiClient.POST("/diary", {
       body: {

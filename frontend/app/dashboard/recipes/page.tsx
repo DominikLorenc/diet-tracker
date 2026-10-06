@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { formatAmount, pluralPl } from "@/utils/format";
+import { todayLocal } from "@/utils/date";
 import Link from "next/link";
 import { apiClient } from "@/app/lib/apiClient";
 import { useUserStore } from "@/store/useUserStore";
@@ -58,7 +59,7 @@ export default function Recipes() {
   const handleAddRecipeToDiary = async (recipe: Recipe) => {
     const { error } = await apiClient.POST("/diary", {
       body: {
-        date: new Date().toISOString().split("T")[0],
+        date: todayLocal(),
         recipeId: recipe.id,
         quantity: DEFAULT_RECIPE_GRAMS,
         mealType: "BREAKFAST",

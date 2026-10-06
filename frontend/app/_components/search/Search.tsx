@@ -115,7 +115,6 @@ export const Search = ({
     product: Product,
     quantity: number,
   ) => {
-    const currentDate = new Date();
     const mealType = searchParams.get("mealType");
     const date = searchParams.get("date");
 
@@ -125,7 +124,7 @@ export const Search = ({
 
     const { error: diaryError } = await apiClient.POST("/diary", {
       body: {
-        date: currentDate.toISOString().split("T")[0],
+        date,
         productId: product.id,
         quantity,
         mealType: mealType as "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK",

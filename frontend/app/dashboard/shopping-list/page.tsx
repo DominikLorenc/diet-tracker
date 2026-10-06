@@ -5,6 +5,7 @@ import { Download } from "lucide-react";
 import { PageHeader, pageClass } from "@/app/_components/ui/PageHeader";
 import { Button } from "@/app/_components/ui/Button";
 import { apiClient } from "@/app/lib/apiClient";
+import { parseLocalDate, toLocalDateString } from "@/utils/date";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import {
@@ -21,11 +22,11 @@ type ShoppingItem = {
 
 function getDatesInRange(from: string, to: string): string[] {
   const dates: string[] = [];
-  const current = new Date(from);
-  const end = new Date(to);
+  const current = parseLocalDate(from);
+  const end = parseLocalDate(to);
 
   while (current <= end) {
-    dates.push(current.toISOString().split("T")[0]);
+    dates.push(toLocalDateString(current));
     current.setDate(current.getDate() + 1);
   }
 
@@ -143,8 +144,8 @@ function getDefaultDates() {
   const weekLater = new Date(today);
   weekLater.setDate(today.getDate() + 6);
   return {
-    from: today.toISOString().split("T")[0],
-    to: weekLater.toISOString().split("T")[0],
+    from: toLocalDateString(today),
+    to: toLocalDateString(weekLater),
   };
 }
 

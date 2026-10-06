@@ -9,6 +9,7 @@ import {
   YAxis,
   Tooltip,
 } from "recharts";
+import { parseLocalDate } from "@/utils/date";
 
 type Props = {
   label: string;
@@ -25,7 +26,7 @@ export const MeasurementChart = ({ label, unit, color, data }: Props) => {
     latest !== undefined && first !== undefined ? latest - first : null;
 
   const chartData = data.map((d) => ({
-    date: new Date(d.date).toLocaleDateString("pl-PL", {
+    date: parseLocalDate(d.date.slice(0, 10)).toLocaleDateString("pl-PL", {
       day: "2-digit",
       month: "2-digit",
     }),

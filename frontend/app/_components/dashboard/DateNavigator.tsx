@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { parseLocalDate, toLocalDateString } from "@/utils/date";
 
 type Props = {
   title: string;
@@ -11,8 +12,7 @@ type Props = {
 
 const WEEKDAY_LABELS = ["PN", "WT", "ŚR", "CZ", "PT", "SO", "ND"];
 
-// Noon avoids the day flipping when the date is later serialized with
-// toISOString() (UTC) in a timezone ahead of UTC.
+// Noon keeps the calendar day stable when adding days across DST changes.
 function atNoon(date: Date) {
   const d = new Date(date);
   d.setHours(12, 0, 0, 0);
@@ -88,9 +88,9 @@ export const DateNavigator = ({ title, date, onDateChange }: Props) => {
       <input
         ref={inputRef}
         type="date"
-        value={date.toISOString().split("T")[0]}
+        value={toLocalDateString(date)}
         onChange={(e) =>
-          e.target.value && onDateChange(new Date(`${e.target.value}T12:00`))
+          e.target.value && onDateChange(parseLocalDate(e.target.value))
         }
         className="sr-only"
         tabIndex={-1}

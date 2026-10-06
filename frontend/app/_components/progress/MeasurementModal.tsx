@@ -5,13 +5,12 @@ import { X } from "lucide-react";
 import { Modal } from "@/app/_components/shared/Modal";
 import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { todayLocal } from "@/utils/date";
 import { z } from "zod";
 import type {
   Measurement,
   MeasurementFormData,
 } from "@/app/_types/measurements";
-
-const today = () => new Date().toISOString().split("T")[0];
 
 const positiveNum = (msg: string) =>
   z
@@ -25,7 +24,7 @@ const schema = z.object({
     .string()
     .min(1, "Wymagana data")
     .refine((date) => {
-      return date <= today();
+      return date <= todayLocal();
     }, "Data nie może być w przyszłości"),
   weight: positiveNum("Musi być > 0"),
   waist: positiveNum("Musi być > 0"),
@@ -92,7 +91,7 @@ export const MeasurementModal = ({
     formState: { errors, isSubmitting },
   } = useForm<MeasurementFormData>({
     resolver: zodResolver(schema) as unknown as Resolver<MeasurementFormData>,
-    defaultValues: { date: today() },
+    defaultValues: { date: todayLocal() },
   });
   const titleId = useId();
 
@@ -108,7 +107,7 @@ export const MeasurementModal = ({
         thigh: initialData.thigh ?? undefined,
       });
     } else {
-      reset({ date: today() });
+      reset({ date: todayLocal() });
     }
   }, [initialData, open, reset]);
 
@@ -141,7 +140,7 @@ export const MeasurementModal = ({
             <input
               {...register("date")}
               type="date"
-              max={today()}
+              max={todayLocal()}
               aria-invalid={Boolean(errors.date)}
               className="flex-1 min-w-0 bg-transparent font-mono text-[15px] text-ink outline-none"
             />

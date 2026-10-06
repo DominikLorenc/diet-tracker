@@ -12,6 +12,7 @@ import type {
 } from "@/app/_types/measurements";
 import { apiClient } from "@/app/lib/apiClient";
 import { useToastStore } from "@/store/useToastStore";
+import { toLocalDateString } from "@/utils/date";
 
 const PRESETS = [
   { id: "30d", label: "30 dni", days: 30 },
@@ -24,19 +25,12 @@ type PresetId = (typeof PRESETS)[number]["id"];
 
 const currentDate = new Date();
 
-const toDateStr = (d: Date) => {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-};
-
-const todayStr = toDateStr(currentDate);
+const todayStr = toLocalDateString(currentDate);
 
 const yesterday = new Date(currentDate);
 yesterday.setDate(yesterday.getDate() - 1);
 
-const yesterdayStr = toDateStr(yesterday);
+const yesterdayStr = toLocalDateString(yesterday);
 
 const headerDate = new Date().toLocaleDateString("pl-PL", {
   weekday: "long",
@@ -50,13 +44,13 @@ export default function ProgressPage() {
   const [dateFrom, setDateFrom] = useState<string>(() => {
     const d = new Date();
     d.setDate(d.getDate() - 30);
-    return toDateStr(d);
+    return toLocalDateString(d);
   });
   const [activePreset, setActivePreset] = useState<PresetId>("30d");
 
   const { measurements, loading, error, refetch } = useMeasurements(
-    new Date(dateFrom),
-    new Date(dateTo),
+    dateFrom,
+    dateTo,
   );
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -68,7 +62,7 @@ export default function ProgressPage() {
     setActivePreset(preset.id);
     const from = new Date();
     from.setDate(from.getDate() - preset.days);
-    setDateFrom(toDateStr(from));
+    setDateFrom(toLocalDateString(from));
     setDateTo(todayStr);
   };
 

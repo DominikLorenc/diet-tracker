@@ -11,13 +11,10 @@ export type UseMeasurementsReturn = {
   refetch: () => void;
 };
 
-export const useMeasurements = (startDate: Date, endDate: Date) => {
+export const useMeasurements = (startDateStr: string, endDateStr: string) => {
   const [measurements, setMeasurements] = useState<Measurement[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const startDateStr = startDate.toISOString().split("T")[0];
-  const endDateStr = endDate.toISOString().split("T")[0];
 
   const fetchData = useCallback(async () => {
     setLoading(true);

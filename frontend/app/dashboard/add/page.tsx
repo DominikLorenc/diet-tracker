@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { pageClass } from "@/app/_components/ui/PageHeader";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -9,6 +9,7 @@ import { ProductSearch } from "@/app/_components/add/ProductSearch";
 import { RecipeSearch } from "@/app/_components/add/RecipeSearch";
 import { ProductForm } from "@/app/_components/shared/ProductForm";
 import { useUserStore } from "@/store/useUserStore";
+import { parseLocalDate, todayLocal } from "@/utils/date";
 
 type Tab = "products" | "recipes" | "new";
 
@@ -30,6 +31,15 @@ const MEAL_LABELS: Record<string, string> = {
   SNACK: "Przekąska",
 };
 
+// Best guess for the meal when the page is opened without context
+// (e.g. from the bottom nav), based on the current local hour.
+function guessMealTypeByHour(hour: number): string {
+  if (hour < 11) return "BREAKFAST";
+  if (hour < 16) return "LUNCH";
+  if (hour < 21) return "DINNER";
+  return "SNACK";
+}
+
 function AddPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -48,9 +58,28 @@ function AddPageContent() {
   const [newlyCreatedProduct, setNewlyCreatedProduct] =
     useState<Product | null>(null);
 
+  // Child searches read mealType/date straight from the URL, so missing params
+  // must be filled in the URL itself, not just in local state.
+  useEffect(() => {
+    if (mealType && date) return;
+    const params = new URLSearchParams(searchParams.toString());
+    if (!mealType) {
+      params.set("mealType", guessMealTypeByHour(new Date().getHours()));
+    }
+    if (!date) {
+      params.set("date", todayLocal());
+    }
+    router.replace(`?${params.toString()}`);
+  }, [mealType, date, searchParams, router]);
+
   const setTab = (tab: Tab) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("tab", tab);
+    router.replace(`?${params.toString()}`);
+  };
+  const setMealType = (meal: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("mealType", meal);
     router.replace(`?${params.toString()}`);
   };
   const handleNewProductSuccess = (product: Product) => {
@@ -59,7 +88,7 @@ function AddPageContent() {
   };
 
   const formattedDate = date
-    ? new Date(date).toLocaleDateString("pl-PL", {
+    ? parseLocalDate(date).toLocaleDateString("pl-PL", {
         weekday: "short",
         day: "numeric",
         month: "long",
@@ -90,16 +119,44 @@ function AddPageContent() {
         </h1>
       </div>
 
-      {mealType && (
-        <p className="flex items-baseline justify-between gap-3 border-y-2 border-ink py-2">
-          <span className="text-sm font-extrabold uppercase">
-            Do: {MEAL_LABELS[mealType] ?? mealType}
+      <div className="flex flex-col gap-2 border-y-2 border-ink py-2">
+        <div className="flex items-baseline justify-between gap-3">
+          <span
+            id="meal-picker-label"
+            className="text-sm font-extrabold uppercase"
+          >
+            Do:
           </span>
           {formattedDate && (
             <span className="font-mono text-xs uppercase">{formattedDate}</span>
           )}
-        </p>
-      )}
+        </div>
+        <div
+          role="radiogroup"
+          aria-labelledby="meal-picker-label"
+          className="grid grid-cols-4 gap-1.5"
+        >
+          {Object.entries(MEAL_LABELS).map(([value, label]) => {
+            const isSelected = mealType === value;
+            return (
+              <button
+                key={value}
+                type="button"
+                role="radio"
+                aria-checked={isSelected}
+                onClick={() => setMealType(value)}
+                className={`min-w-0 px-1 py-1.5 border-2 border-ink text-[11px] sm:text-xs uppercase truncate cursor-pointer transition-colors ${
+                  isSelected
+                    ? "bg-ink text-paper font-extrabold"
+                    : "font-semibold hover:bg-ink hover:text-paper"
+                }`}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       {/* ── Tab bar ── */}
       <div

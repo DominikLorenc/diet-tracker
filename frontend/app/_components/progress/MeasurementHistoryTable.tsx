@@ -1,5 +1,6 @@
 import { Pencil, Trash2 } from "lucide-react";
 import type { Measurement } from "@/app/_types/measurements";
+import { parseLocalDate } from "@/utils/date";
 
 type Props = {
   measurements: Measurement[];
@@ -8,7 +9,7 @@ type Props = {
 };
 
 const fmt = (date: string) =>
-  new Date(date).toLocaleDateString("pl-PL", {
+  parseLocalDate(date.slice(0, 10)).toLocaleDateString("pl-PL", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
