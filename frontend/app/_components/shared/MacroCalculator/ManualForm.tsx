@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm, Controller } from "react-hook-form";
+import { useForm, useWatch, Controller } from "react-hook-form";
 import { useState } from "react";
 import { Button } from "@/app/_components/ui/Button";
 import { apiClient } from "@/app/lib/apiClient";
@@ -52,8 +52,9 @@ type Props = {
 };
 
 export const ManualForm = ({ onSuccess }: Props) => {
-  const { control, handleSubmit, getValues, setValue, watch } =
-    useForm<ManualInputs>({ defaultValues: MANUAL_DEFAULTS });
+  const { control, handleSubmit, getValues, setValue } = useForm<ManualInputs>({
+    defaultValues: MANUAL_DEFAULTS,
+  });
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -70,9 +71,10 @@ export const ManualForm = ({ onSuccess }: Props) => {
     carbs_pct: String(MANUAL_DEFAULTS.carbs_pct),
   });
 
-  const proteinPct = watch("protein_pct") ?? 0;
-  const fatPct = watch("fat_pct") ?? 0;
-  const carbsPct = watch("carbs_pct") ?? 0;
+  const [proteinPct = 0, fatPct = 0, carbsPct = 0] = useWatch({
+    control,
+    name: ["protein_pct", "fat_pct", "carbs_pct"],
+  });
   const total = proteinPct + fatPct + carbsPct;
   const isValid = total === 100;
 
@@ -80,14 +82,17 @@ export const ManualForm = ({ onSuccess }: Props) => {
   // only the *other*, derived fields get their text buffer synced to the recalculated number.
   const applyRecalculate = (field: keyof ManualInputs, val: number) => {
     const result = recalculate(field, val, getValues());
+    const entries = Object.entries(result) as [keyof ManualInputs, number][];
+
+    // setValue must run outside the state updater: updaters execute during
+    // render, and setValue notifies useWatch subscribers (another setState).
+    entries.forEach(([f, v]) => setValue(f, v));
+
     setTextValues((prev) => {
       const next = { ...prev };
-      (Object.entries(result) as [keyof ManualInputs, number][]).forEach(
-        ([f, v]) => {
-          setValue(f, v);
-          if (f !== field) next[f] = String(v);
-        },
-      );
+      entries.forEach(([f, v]) => {
+        if (f !== field) next[f] = String(v);
+      });
       return next;
     });
   };
