@@ -1,25 +1,16 @@
-<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <!-- Brand green gradient, matches the app logo -->
-    <linearGradient id="bg" x1="16" y1="0" x2="16" y2="32" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#22C55E"/>
-      <stop offset="1" stop-color="#15803D"/>
-    </linearGradient>
-  </defs>
-
-  <!-- Rounded square background -->
-  <rect width="32" height="32" rx="8" fill="url(#bg)"/>
-
-  <!-- Leaf mark (diet / health) -->
-  <path
-    d="M9 23c-1.6-6.4 2.2-12.4 8.6-14 1.9-.5 3.9-.5 5.4-.2.4.1.6.5.5.9-1 5.9-4.9 10.9-10.6 12.4-1.3.3-2.6.4-3.9.2Z"
-    fill="#FFFFFF"
-  />
-  <!-- Central vein -->
-  <path
-    d="M22 10.5C17.5 13 13.5 17.5 11 23"
-    stroke="#16A34A"
-    stroke-width="1.5"
-    stroke-linecap="round"
-  />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Progress-chart mark: same look as MeasurementChart (square dots, last one in accent) -->
+  <rect width="512" height="512" fill="#f6f4ee"/>
+  <!-- Dashed grid lines -->
+  <g stroke="#111111" stroke-width="4" stroke-dasharray="6 12">
+    <line x1="120" y1="180" x2="392" y2="180"/>
+    <line x1="120" y1="260" x2="392" y2="260"/>
+  </g>
+  <polyline points="146,214 222,286 300,248 366,330" fill="none" stroke="#111111" stroke-width="22" stroke-linejoin="miter"/>
+  <rect x="128" y="196" width="36" height="36" fill="#ffffff" stroke="#111111" stroke-width="10"/>
+  <rect x="204" y="268" width="36" height="36" fill="#ffffff" stroke="#111111" stroke-width="10"/>
+  <rect x="282" y="230" width="36" height="36" fill="#ffffff" stroke="#111111" stroke-width="10"/>
+  <rect x="340" y="304" width="52" height="52" fill="#c8321f"/>
+  <!-- Axis -->
+  <rect x="112" y="380" width="288" height="16" fill="#111111"/>
 </svg>
