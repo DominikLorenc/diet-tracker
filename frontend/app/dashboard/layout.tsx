@@ -89,9 +89,11 @@ export default function DashboardLayout({
   }, [pathname]);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-paper text-ink font-sans">
+    // The document scrolls (not an inner container) — mobile browsers handle
+    // that best: address bar collapses, no stuck gestures at scroll edges
+    <div className="flex min-h-dvh bg-paper text-ink font-sans">
       {/* ── Desktop sidebar ─────────────────────────────────────── */}
-      <aside className="hidden sm:flex w-[260px] h-full flex-col shrink-0 border-r-2 border-ink px-5 py-6 gap-7">
+      <aside className="hidden sm:flex sticky top-0 w-[260px] h-dvh overflow-y-auto flex-col shrink-0 border-r-2 border-ink px-5 py-6 gap-7">
         <Link href="/dashboard" className="flex flex-col">
           <span className="font-display text-[30px] uppercase leading-[0.9] [font-stretch:62%]">
             Diet
@@ -147,7 +149,11 @@ export default function DashboardLayout({
       </aside>
 
       {/* ── Main content ────────────────────────────────────────── */}
-      <main className="flex-1 overflow-auto pb-[80px] sm:pb-0">{children}</main>
+      {/* relative: makes main the containing block for absolute descendants (e.g. sr-only).
+          min-w-0: lets wide children (tables) shrink instead of widening the page */}
+      <main className="relative flex-1 min-w-0 pb-[80px] sm:pb-0">
+        {children}
+      </main>
 
       {/* ── Mobile "Więcej" sheet ───────────────────────────────── */}
       {isMoreOpen && (
