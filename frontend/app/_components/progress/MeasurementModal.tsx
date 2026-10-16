@@ -3,9 +3,9 @@
 import { forwardRef, useEffect, useId } from "react";
 import { X } from "lucide-react";
 import { Modal } from "@/app/_components/shared/Modal";
-import { useForm, type Resolver } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { todayLocal } from "@/utils/date";
+import { parseLocalDate, todayLocal } from "@/utils/date";
 import { z } from "zod";
 import type {
   Measurement,
@@ -38,73 +38,141 @@ type Props = {
   onClose: () => void;
   onSave: (data: MeasurementFormData) => Promise<void>;
   initialData?: Measurement;
+  lastMeasurement?: Measurement;
 };
+
+// What the inputs hold (strings) vs what the schema returns (MeasurementFormData, numbers)
+type FormInput = z.input<typeof schema>;
+type NumericField = Exclude<keyof FormInput, "date">;
 
 type FieldProps = {
   label: string;
   unit: string;
   error?: string;
+  // Value from the latest measurement, shown next to the label
+  lastValue?: number | null;
+  onUseLastValue?: () => void;
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
 const fieldBoxClass =
   "flex items-center gap-2 h-12 px-3 border-2 border-ink bg-card focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent";
 
-// Label wraps the input, so clicking the label focuses the field
+// Not wrapped in <label>: a <button> inside a label would steal the label's
+// click target, so the label is linked to the input via htmlFor instead
 const NumberField = forwardRef<HTMLInputElement, FieldProps>(
-  ({ label, unit, error, ...props }, ref) => (
-    <label className="flex flex-col gap-1">
-      <span className="text-[13px] font-extrabold uppercase">{label}</span>
-      <span className={fieldBoxClass}>
-        <input
-          ref={ref}
-          type="number"
-          inputMode="decimal"
-          step="0.1"
-          placeholder="0"
-          aria-invalid={Boolean(error)}
-          className="flex-1 min-w-0 bg-transparent font-mono text-[15px] text-ink outline-none placeholder:text-ink-muted"
-          onFocus={(e) => e.target.select()}
-          {...props}
-        />
-        <span className="font-mono text-sm">{unit}</span>
-      </span>
-      {error && (
-        <span role="alert" className="font-mono text-xs text-accent">
-          {error}
+  ({ label, unit, error, lastValue, onUseLastValue, ...props }, ref) => {
+    const inputId = useId();
+    return (
+      <div className="flex flex-col gap-1">
+        {/* Previous value sits in the label row, so inputs stay aligned across the grid */}
+        <div className="flex items-baseline justify-between gap-2">
+          <label
+            htmlFor={inputId}
+            className="text-[13px] font-extrabold uppercase"
+          >
+            {label}
+          </label>
+          {/* != null also skips undefined (no previous measurement) */}
+          {lastValue != null && (
+            <button
+              type="button"
+              onClick={onUseLastValue}
+              aria-label={`Wpisz ostatnią wartość: ${lastValue} ${unit}`}
+              className="font-mono text-[11px] text-ink-muted underline decoration-dotted underline-offset-2 hover:text-accent hover:decoration-solid transition-colors cursor-pointer"
+            >
+              ost. <span className="font-bold text-ink-soft">{lastValue}</span>{" "}
+              {unit}
+            </button>
+          )}
+        </div>
+        <span className={fieldBoxClass}>
+          <input
+            id={inputId}
+            ref={ref}
+            type="number"
+            inputMode="decimal"
+            step="0.1"
+            placeholder="0"
+            aria-invalid={Boolean(error)}
+            className="flex-1 min-w-0 bg-transparent font-mono text-[15px] text-ink outline-none placeholder:text-ink-muted"
+            onFocus={(e) => e.target.select()}
+            {...props}
+          />
+          <span className="font-mono text-sm">{unit}</span>
         </span>
-      )}
-    </label>
-  ),
+        {error && (
+          <span role="alert" className="font-mono text-xs text-accent">
+            {error}
+          </span>
+        )}
+      </div>
+    );
+  },
 );
 NumberField.displayName = "NumberField";
+
+// Parse only the date part at local noon, so the day doesn't shift across timezones
+const toLocalDay = (isoDate: string): Date =>
+  parseLocalDate(isoDate.split("T")[0]);
+
+// e.g. "12.10.2026"
+const formatShortDate = (isoDate: string): string =>
+  toLocalDay(isoDate).toLocaleDateString("pl-PL", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+
+// e.g. "dziś", "wczoraj", "4 dni temu"
+const formatDaysAgo = (isoDate: string): string => {
+  const MS_PER_DAY = 24 * 60 * 60 * 1000;
+  const days = Math.round(
+    (parseLocalDate(todayLocal()).getTime() - toLocalDay(isoDate).getTime()) /
+      MS_PER_DAY,
+  );
+  if (days <= 0) return "dziś";
+  if (days === 1) return "wczoraj";
+  return `${days} dni temu`;
+};
 
 export const MeasurementModal = ({
   open,
   onClose,
   onSave,
   initialData,
+  lastMeasurement,
 }: Props) => {
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors, isSubmitting },
-  } = useForm<MeasurementFormData>({
-    resolver: zodResolver(schema) as unknown as Resolver<MeasurementFormData>,
+  } = useForm({
+    resolver: zodResolver(schema),
     defaultValues: { date: todayLocal() },
   });
   const titleId = useId();
+  // Only when adding — while editing, the latest is often the same record
+  const previous = initialData ? undefined : lastMeasurement;
+
+  // Inputs hold strings, so the number is converted before it goes into the form
+  const fillFromPrevious = (field: NumericField) => {
+    const value = previous?.[field];
+    if (value == null) return;
+    setValue(field, String(value), { shouldValidate: true, shouldDirty: true });
+  };
 
   useEffect(() => {
     if (!open) return;
     if (initialData) {
       reset({
         date: initialData.date.split("T")[0],
-        weight: initialData.weight,
-        waist: initialData.waist,
-        hips: initialData.hips,
-        arm: initialData.arm,
-        thigh: initialData.thigh ?? undefined,
+        weight: String(initialData.weight),
+        waist: String(initialData.waist),
+        hips: String(initialData.hips),
+        arm: String(initialData.arm),
+        thigh: initialData.thigh != null ? String(initialData.thigh) : "",
       });
     } else {
       reset({ date: todayLocal() });
@@ -152,36 +220,57 @@ export const MeasurementModal = ({
           )}
         </label>
 
+        {previous && (
+          <div className="flex items-center justify-between gap-3 px-3 py-2 border-2 border-dashed border-ink-muted bg-ink-tint">
+            <span className="text-[11px] font-extrabold uppercase tracking-wide">
+              Ostatni pomiar
+            </span>
+            <span className="font-mono text-xs text-ink-soft">
+              {formatShortDate(previous.date)} · {formatDaysAgo(previous.date)}
+            </span>
+          </div>
+        )}
+
         <div className="grid grid-cols-2 gap-4">
           <NumberField
             {...register("weight")}
             label="Waga"
             unit="kg"
             error={errors.weight?.message}
+            lastValue={previous?.weight}
+            onUseLastValue={() => fillFromPrevious("weight")}
           />
           <NumberField
             {...register("waist")}
             label="Talia"
             unit="cm"
             error={errors.waist?.message}
+            lastValue={previous?.waist}
+            onUseLastValue={() => fillFromPrevious("waist")}
           />
           <NumberField
             {...register("hips")}
             label="Biodra"
             unit="cm"
             error={errors.hips?.message}
+            lastValue={previous?.hips}
+            onUseLastValue={() => fillFromPrevious("hips")}
           />
           <NumberField
             {...register("arm")}
             label="Ramię"
             unit="cm"
             error={errors.arm?.message}
+            lastValue={previous?.arm}
+            onUseLastValue={() => fillFromPrevious("arm")}
           />
           <NumberField
             {...register("thigh")}
             label="Udo"
             unit="cm"
             error={errors.thigh?.message}
+            lastValue={previous?.thigh}
+            onUseLastValue={() => fillFromPrevious("thigh")}
           />
         </div>
 

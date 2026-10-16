@@ -297,6 +297,8 @@ export default function ProgressPage() {
         onClose={() => setModalOpen(false)}
         onSave={handleSave}
         initialData={editingMeasurement ?? undefined}
+        // Limited to the selected date range — older measurements won't show up here
+        lastMeasurement={filtered[0]}
       />
     </div>
   );
