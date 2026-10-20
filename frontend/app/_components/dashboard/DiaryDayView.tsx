@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { pluralPl } from "@/utils/format";
+import { formatAmount, pluralPl } from "@/utils/format";
 import { toLocalDateString } from "@/utils/date";
 import { DateNavigator } from "./DateNavigator";
 import { MacroSummary } from "./MacroSummary";
@@ -36,6 +36,7 @@ interface Recipe {
   id: string;
   name: string;
   products: RecipeProduct[];
+  steps: string[];
 }
 
 interface UserRecipeIngredient {
@@ -47,6 +48,7 @@ interface UserRecipe {
   id: string;
   name: string;
   userRecipeIngredients: UserRecipeIngredient[];
+  steps: string[];
 }
 
 export interface DiaryItem {
@@ -463,6 +465,7 @@ function DiaryItemRow({
   const macros = getItemMacros(item);
   const name = item.recipe?.name ?? item.userRecipe?.name ?? item.product?.name;
   const isRecipe = Boolean(item.recipe || item.userRecipe);
+  const [expanded, setExpanded] = useState(false);
   const macroDetails = [
     `B ${macros.protein.toFixed(0)}`,
     `W ${macros.carbs.toFixed(0)}`,
@@ -471,57 +474,134 @@ function DiaryItemRow({
 
   return (
     <li
-      className={`group flex items-center gap-2.5 min-h-[52px] border-b border-ink ${
-        item.isEaten ? "" : "text-ink-muted"
-      }`}
+      className={`border-b border-ink ${item.isEaten ? "" : "text-ink-muted"}`}
     >
-      <button
-        onClick={onToggleEaten}
-        aria-pressed={item.isEaten}
-        aria-label={
-          item.isEaten
-            ? `Oznacz jako niezjedzone: ${name}`
-            : `Oznacz jako zjedzone: ${name}`
-        }
-        className="w-11 h-11 -ml-2.5 shrink-0 flex items-center justify-center cursor-pointer"
-      >
-        <span
-          className={`w-6 h-6 border-2 border-ink flex items-center justify-center transition-colors ${
-            item.isEaten ? "bg-ink text-paper" : "bg-card"
-          }`}
+      <div className="group flex items-center gap-2.5 min-h-[52px]">
+        <button
+          onClick={onToggleEaten}
+          aria-pressed={item.isEaten}
+          aria-label={
+            item.isEaten
+              ? `Oznacz jako niezjedzone: ${name}`
+              : `Oznacz jako zjedzone: ${name}`
+          }
+          className="w-11 h-11 -ml-2.5 shrink-0 flex items-center justify-center cursor-pointer"
         >
-          {item.isEaten && (
-            <Check size={14} strokeWidth={4} strokeLinecap="square" />
-          )}
+          <span
+            className={`w-6 h-6 border-2 border-ink flex items-center justify-center transition-colors ${
+              item.isEaten ? "bg-ink text-paper" : "bg-card"
+            }`}
+          >
+            {item.isEaten && (
+              <Check size={14} strokeWidth={4} strokeLinecap="square" />
+            )}
+          </span>
+        </button>
+        {isRecipe ? (
+          // The whole name area toggles the recipe details, like an accordion
+          <button
+            type="button"
+            onClick={() => setExpanded((prev) => !prev)}
+            aria-expanded={expanded}
+            className="flex items-center gap-1.5 flex-1 min-w-0 text-left cursor-pointer"
+          >
+            <span className="flex flex-col flex-1 min-w-0">
+              <span className="text-[15px] font-bold truncate">{name}</span>
+              <span className="font-mono text-[11px]">
+                {`przepis · ${macroDetails}`}
+              </span>
+            </span>
+            <ChevronDown
+              size={16}
+              strokeWidth={2.5}
+              strokeLinecap="square"
+              className={`shrink-0 transition-transform ${expanded ? "rotate-180" : ""}`}
+            />
+          </button>
+        ) : (
+          <div className="flex flex-col flex-1 min-w-0">
+            <span className="text-[15px] font-bold truncate">{name}</span>
+            <span className="font-mono text-[11px]">
+              {
+                <>
+                  <EditableQuantity
+                    quantity={item.quantity}
+                    gramsPerUnit={item.product?.gramsPerUnit}
+                    onSave={onUpdateQuantity}
+                  />
+                  {` · ${macroDetails}`}
+                </>
+              }
+            </span>
+          </div>
+        )}
+        <span className="font-mono text-[15px] font-semibold">
+          {macros.calories.toFixed(0)}
         </span>
-      </button>
-      <div className="flex flex-col flex-1 min-w-0">
-        <span className="text-[15px] font-bold truncate">{name}</span>
-        <span className="font-mono text-[11px]">
-          {isRecipe ? (
-            `przepis · ${macroDetails}`
-          ) : (
-            <>
-              <EditableQuantity
-                quantity={item.quantity}
-                gramsPerUnit={item.product?.gramsPerUnit}
-                onSave={onUpdateQuantity}
-              />
-              {` · ${macroDetails}`}
-            </>
-          )}
-        </span>
+        <button
+          onClick={onDelete}
+          aria-label={`Usuń: ${name}`}
+          className="w-11 h-11 -mr-2 shrink-0 flex items-center justify-center text-ink-muted hover:text-accent transition-colors cursor-pointer"
+        >
+          <X size={16} strokeWidth={2.5} strokeLinecap="square" />
+        </button>
       </div>
-      <span className="font-mono text-[15px] font-semibold">
-        {macros.calories.toFixed(0)}
-      </span>
-      <button
-        onClick={onDelete}
-        aria-label={`Usuń: ${name}`}
-        className="w-11 h-11 -mr-2 shrink-0 flex items-center justify-center text-ink-muted hover:text-accent transition-colors cursor-pointer"
-      >
-        <X size={16} strokeWidth={2.5} strokeLinecap="square" />
-      </button>
+      {expanded && <DiaryRecipeDetails item={item} />}
     </li>
+  );
+}
+
+// Ingredients scaled to the eaten amount, plus the cooking steps
+function DiaryRecipeDetails({ item }: { item: DiaryItem }) {
+  const ingredients =
+    item.recipe?.products ?? item.userRecipe?.userRecipeIngredients ?? [];
+  const steps = item.recipe?.steps ?? item.userRecipe?.steps ?? [];
+  const totalGrams = ingredients.reduce(
+    (sum, ing) => sum + parseFloat(ing.quantity),
+    0,
+  );
+  // Diary stores eaten grams of the whole dish, so each ingredient shrinks by the same ratio
+  const ratio = totalGrams > 0 ? parseFloat(item.quantity) / totalGrams : 0;
+
+  return (
+    <div className="pb-3 pl-9 flex flex-col gap-3 text-ink">
+      {ingredients.length > 0 && (
+        <div>
+          <h4 className="text-xs font-extrabold uppercase border-b-[3px] border-ink pb-0.5">
+            Składniki · {formatAmount(parseFloat(item.quantity))} g
+          </h4>
+          <ul>
+            {ingredients.map((ing) => (
+              <li
+                key={ing.product.id}
+                className="flex justify-between gap-3 py-1 border-b border-ink/30 text-sm"
+              >
+                <span>{ing.product.name}</span>
+                <span className="font-mono">
+                  {formatAmount(parseFloat(ing.quantity) * ratio)} g
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {steps.length > 0 && (
+        <div>
+          <h4 className="text-xs font-extrabold uppercase border-b-[3px] border-ink pb-0.5">
+            Jak to zrobić
+          </h4>
+          <ol>
+            {steps.map((step, index) => (
+              <li key={index} className="flex gap-3 py-1 text-sm">
+                <span className="font-mono text-xs font-semibold pt-0.5">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span>{step}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+    </div>
   );
 }

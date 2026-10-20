@@ -39,6 +39,7 @@ const diaryItemSchema = z.object({
                     product: productSchema,
                 }),
             ),
+            steps: z.array(z.string()),
         })
         .nullable(),
     userRecipeId: z.string().nullable(),
@@ -60,6 +61,7 @@ const diaryItemSchema = z.object({
                     product: productSchema,
                 }),
             ),
+            steps: z.array(z.string()),
         })
         .nullable(),
 });
