@@ -4,9 +4,15 @@ import { useEffect, useState } from "react";
 import { Plus, Search, Star } from "lucide-react";
 import Link from "next/link";
 import { apiClient } from "@/app/lib/apiClient";
+import { useDebounce } from "@/app/_hooks/useDebounce";
 import { useToastStore } from "@/store/useToastStore";
 import { RecipeCard } from "./RecipeCard";
 import { UserRecipeCard, UserRecipe } from "./UserRecipeCard";
+import { RecipeCategoryFilter } from "@/app/_components/recipes/RecipeCategoryFilter";
+import type {
+  RecipeCategory,
+  RecipeCategoryCount,
+} from "@/app/lib/recipeCategories";
 
 type RecipeIngredient = {
   id: string;
@@ -29,6 +35,8 @@ type Recipe = {
   createdAt: string;
   products: RecipeIngredient[];
   steps: string[];
+  // Optional so this type stays compatible with RecipeCard's own Recipe type
+  categories?: RecipeCategory[];
 };
 
 type RecipeFavorite = {
@@ -51,6 +59,9 @@ type Props = {
   date: string;
 };
 
+const DEBOUNCE_DELAY = 300;
+const SEARCH_LIMIT = 20;
+
 export const RecipeSearch = ({ mealType, date }: Props) => {
   const showToast = useToastStore((state) => state.showToast);
 
@@ -61,16 +72,40 @@ export const RecipeSearch = ({ mealType, date }: Props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [onlyFavorites, setOnlyFavorites] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<
+    RecipeCategory[]
+  >([]);
+  const [categoryCounts, setCategoryCounts] = useState<RecipeCategoryCount[]>(
+    [],
+  );
+  const debouncedQuery = useDebounce(query.trim(), DEBOUNCE_DELAY);
+  // Joined to a string so effects depend on a stable primitive, not a new array
+  const categoriesParam = selectedCategories.join(",");
+  const hasGlobalFilter =
+    debouncedQuery.length > 0 || selectedCategories.length > 0;
+
+  // Counts follow the typed text, so "(12)" always says how many results ticking it adds
+  useEffect(() => {
+    let isCurrent = true;
+    const fetchCounts = async () => {
+      const { data } = await apiClient.GET("/recipes/categories", {
+        params: { query: { search: debouncedQuery || undefined } },
+      });
+      if (isCurrent && data) setCategoryCounts(data.categories);
+    };
+    fetchCounts();
+    return () => {
+      isCurrent = false;
+    };
+  }, [debouncedQuery]);
 
   useEffect(() => {
     const load = async () => {
-      const [recipesRes, userRecipesRes, favRes] = await Promise.all([
-        apiClient.GET("/recipes"),
+      const [userRecipesRes, favRes] = await Promise.all([
         apiClient.GET("/user-recipes"),
         apiClient.GET("/favorites/recipes"),
       ]);
-      if (recipesRes.data)
-        setGlobalRecipes(recipesRes.data.recipes as unknown as Recipe[]);
       if (userRecipesRes.data)
         setUserRecipes(
           userRecipesRes.data.userRecipes as unknown as UserRecipe[],
@@ -81,6 +116,44 @@ export const RecipeSearch = ({ mealType, date }: Props) => {
     };
     load();
   }, []);
+
+  // Global recipes are paginated on the server, so searching has to happen there too
+  useEffect(() => {
+    if (!hasGlobalFilter) return;
+
+    // Ignore responses of searches that were superseded by newer typing or ticking
+    let isCurrent = true;
+    const search = async () => {
+      setIsSearching(true);
+      try {
+        const { data } = await apiClient.GET("/recipes", {
+          params: {
+            query: {
+              search: debouncedQuery || undefined,
+              categories: categoriesParam || undefined,
+              limit: SEARCH_LIMIT,
+            },
+          },
+        });
+        if (isCurrent && data)
+          setGlobalRecipes(data.recipes as unknown as Recipe[]);
+      } finally {
+        if (isCurrent) setIsSearching(false);
+      }
+    };
+    search();
+    return () => {
+      isCurrent = false;
+    };
+  }, [debouncedQuery, categoriesParam, hasGlobalFilter]);
+
+  const toggleCategory = (category: RecipeCategory) => {
+    setSelectedCategories((prev) =>
+      prev.includes(category)
+        ? prev.filter((c) => c !== category)
+        : [...prev, category],
+    );
+  };
 
   const addUserRecipeToDiary = async (recipe: UserRecipe, portion: number) => {
     if (!mealType || !date) {
@@ -192,10 +265,19 @@ export const RecipeSearch = ({ mealType, date }: Props) => {
   const filteredUserRecipes = userRecipes.filter((r) =>
     r.name.toLowerCase().includes(normalizedQuery),
   );
-  const filteredGlobalRecipes = globalRecipes.filter((r) => {
-    if (onlyFavorites && !favoriteIds.has(r.id)) return false;
-    return r.name.toLowerCase().includes(normalizedQuery);
-  });
+  // Favorites come complete from their own endpoint, so they are filtered locally;
+  // all other global recipes are already filtered by the server-side search
+  const filteredGlobalRecipes = onlyFavorites
+    ? favorites
+        .map((f) => f.recipe)
+        .filter((r) => r.name.toLowerCase().includes(normalizedQuery))
+        // Same OR semantics as the server: keep a favorite with any ticked category
+        .filter(
+          (r) =>
+            selectedCategories.length === 0 ||
+            (r.categories ?? []).some((c) => selectedCategories.includes(c)),
+        )
+    : globalRecipes;
 
   return (
     <div className="flex flex-col gap-7">
@@ -216,6 +298,12 @@ export const RecipeSearch = ({ mealType, date }: Props) => {
           className="flex-1 min-w-0 bg-transparent text-base font-semibold text-ink placeholder:text-ink-muted placeholder:font-normal outline-none"
         />
       </label>
+      <RecipeCategoryFilter
+        counts={categoryCounts}
+        selected={selectedCategories}
+        onToggle={toggleCategory}
+        onClear={() => setSelectedCategories([])}
+      />
       {/* ── MOJE PRZEPISY ── */}
       <section aria-labelledby="my-recipes-heading">
         <div className="flex items-baseline justify-between border-b-[5px] border-ink pb-0.5">
@@ -257,50 +345,55 @@ export const RecipeSearch = ({ mealType, date }: Props) => {
       </section>
 
       {/* ── PRZEPISY GLOBALNE ── */}
-      {(query.trim().length > 0 || onlyFavorites) &&
-        globalRecipes.length > 0 && (
-          <section aria-labelledby="global-recipes-heading">
-            <div className="flex items-baseline justify-between border-b-[5px] border-ink pb-0.5">
-              <h2
-                id="global-recipes-heading"
-                className="font-display text-[26px] uppercase"
-              >
-                Przepisy globalne
-              </h2>
-              <button
-                onClick={() => setOnlyFavorites((v) => !v)}
-                aria-pressed={onlyFavorites}
-                className={`flex items-center gap-1.5 min-h-9 text-xs font-extrabold uppercase cursor-pointer ${
-                  onlyFavorites ? "text-ink" : "text-ink-muted hover:text-ink"
-                }`}
-              >
-                <Star
-                  size={14}
-                  strokeWidth={2}
-                  fill={onlyFavorites ? "currentColor" : "none"}
-                />
-                Tylko ulubione
-              </button>
+      {(query.trim().length > 0 ||
+        onlyFavorites ||
+        selectedCategories.length > 0) && (
+        <section aria-labelledby="global-recipes-heading">
+          <div className="flex items-baseline justify-between border-b-[5px] border-ink pb-0.5">
+            <h2
+              id="global-recipes-heading"
+              className="font-display text-[26px] uppercase"
+            >
+              Przepisy globalne
+            </h2>
+            <button
+              onClick={() => setOnlyFavorites((v) => !v)}
+              aria-pressed={onlyFavorites}
+              className={`flex items-center gap-1.5 min-h-9 text-xs font-extrabold uppercase cursor-pointer ${
+                onlyFavorites ? "text-ink" : "text-ink-muted hover:text-ink"
+              }`}
+            >
+              <Star
+                size={14}
+                strokeWidth={2}
+                fill={onlyFavorites ? "currentColor" : "none"}
+              />
+              Tylko ulubione
+            </button>
+          </div>
+          {isSearching && !onlyFavorites ? (
+            <div className="flex items-center justify-center py-6">
+              <div className="w-5 h-5 border-2 border-ink border-t-transparent rounded-full animate-spin" />
             </div>
-            {filteredGlobalRecipes.length === 0 ? (
-              <p className="py-4 font-mono text-sm">
-                {onlyFavorites ? "Brak ulubionych przepisów." : "Brak wyników."}
-              </p>
-            ) : (
-              filteredGlobalRecipes.map((recipe) => (
-                <RecipeCard
-                  key={recipe.id}
-                  recipe={recipe}
-                  isFavorite={favoriteIds.has(recipe.id)}
-                  onAddToDiary={addGlobalRecipeToDiary}
-                  onFavoriteToggle={handleFavoriteToggle}
-                  onCopy={handleCopy}
-                  isCopied={alreadyCopiedIds.has(recipe.id)}
-                />
-              ))
-            )}
-          </section>
-        )}
+          ) : filteredGlobalRecipes.length === 0 ? (
+            <p className="py-4 font-mono text-sm">
+              {onlyFavorites ? "Brak ulubionych przepisów." : "Brak wyników."}
+            </p>
+          ) : (
+            filteredGlobalRecipes.map((recipe) => (
+              <RecipeCard
+                key={recipe.id}
+                recipe={recipe}
+                isFavorite={favoriteIds.has(recipe.id)}
+                onAddToDiary={addGlobalRecipeToDiary}
+                onFavoriteToggle={handleFavoriteToggle}
+                onCopy={handleCopy}
+                isCopied={alreadyCopiedIds.has(recipe.id)}
+              />
+            ))
+          )}
+        </section>
+      )}
     </div>
   );
 };

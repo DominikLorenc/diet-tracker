@@ -1,5 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { formatAmount, pluralPl } from "@/utils/format";
 import { todayLocal } from "@/utils/date";
 import Link from "next/link";
@@ -7,6 +8,12 @@ import { apiClient } from "@/app/lib/apiClient";
 import { useUserStore } from "@/store/useUserStore";
 import { useToastStore } from "@/store/useToastStore";
 import { PageHeader, pageClass } from "@/app/_components/ui/PageHeader";
+import {
+  parseCategoriesParam,
+  type RecipeCategory,
+  type RecipeCategoryCount,
+} from "@/app/lib/recipeCategories";
+import { RecipeCategoryFilter } from "@/app/_components/recipes/RecipeCategoryFilter";
 
 export interface Product {
   id: string;
@@ -39,22 +46,125 @@ export interface RecipesResponse {
   recipes: Recipe[];
 }
 
+const PAGE_SIZE = 20;
+
 export default function Recipes() {
+  return (
+    // useSearchParams() needs a Suspense boundary to prerender at build time
+    <Suspense>
+      <RecipesContent />
+    </Suspense>
+  );
+}
+
+function RecipesContent() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [categoryCounts, setCategoryCounts] = useState<RecipeCategoryCount[]>(
+    [],
+  );
+
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const user = useUserStore((s) => s.user);
   const isAdmin = user?.role === "ADMIN";
   const showToast = useToastStore((s) => s.showToast);
 
+  // The URL is the single source of truth for filters, so they survive a refresh
+  // and can be shared as a link. Joined to a string for a stable effect dependency.
+  const selectedCategories = parseCategoriesParam(
+    searchParams.get("categories"),
+  );
+  const categoriesParam = selectedCategories.join(",");
+
+  // Changing filters always starts again from the first page. Adjusting state
+  // during render (instead of in an effect) avoids one extra fetch of the old page.
+  const [pageFilters, setPageFilters] = useState(categoriesParam);
+  if (pageFilters !== categoriesParam) {
+    setPageFilters(categoriesParam);
+    setPage(1);
+  }
+
   useEffect(() => {
-    const fetchData = async () => {
-      const recipesRes = await apiClient.GET("/recipes");
-      if (recipesRes.data) {
-        setRecipes(recipesRes.data.recipes as Recipe[]);
+    const fetchCategoryCounts = async () => {
+      const { data } = await apiClient.GET("/recipes/categories");
+      if (data) setCategoryCounts(data.categories);
+    };
+    fetchCategoryCounts();
+  }, []);
+
+  useEffect(() => {
+    // Ignore a response that arrives after the filters or page already changed again
+    let isCurrent = true;
+    const fetchPage = async () => {
+      setIsLoading(true);
+      try {
+        const { data, error } = await apiClient.GET("/recipes", {
+          params: {
+            query: {
+              page,
+              limit: PAGE_SIZE,
+              categories: categoriesParam || undefined,
+            },
+          },
+        });
+        if (!isCurrent) return;
+        if (error) {
+          showToast(
+            "error",
+            "Nie udało się pobrać przepisów",
+            "Spróbuj ponownie",
+          );
+          return;
+        }
+        if (data) {
+          setTotal(data.total);
+          // Page 1 replaces the list, later pages append to it ("show more")
+          setRecipes((prev) =>
+            page === 1
+              ? (data.recipes as Recipe[])
+              : [...prev, ...(data.recipes as Recipe[])],
+          );
+        }
+      } finally {
+        if (isCurrent) setIsLoading(false);
       }
     };
-    fetchData();
-  }, []);
+    fetchPage();
+    return () => {
+      isCurrent = false;
+    };
+  }, [page, categoriesParam, showToast]);
+
+  const hasMore = recipes.length < total;
+
+  const setCategoriesInUrl = (categories: RecipeCategory[]) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (categories.length > 0) {
+      params.set("categories", categories.join(","));
+    } else {
+      params.delete("categories");
+    }
+    const query = params.toString();
+    // replace, not push: ticking checkboxes should not flood the back button history
+    router.replace(query ? `${pathname}?${query}` : pathname, {
+      scroll: false,
+    });
+  };
+
+  const toggleCategory = (category: RecipeCategory) => {
+    setCategoriesInUrl(
+      selectedCategories.includes(category)
+        ? selectedCategories.filter((c) => c !== category)
+        : [...selectedCategories, category],
+    );
+  };
+
+  const clearCategories = () => setCategoriesInUrl([]);
 
   const handleAddRecipeToDiary = async (recipe: Recipe) => {
     const { error } = await apiClient.POST("/diary", {
@@ -77,12 +187,27 @@ export default function Recipes() {
     <div className={pageClass()}>
       <PageHeader
         title="Przepisy"
-        eyebrow={pluralPl(recipes.length, {
+        eyebrow={pluralPl(total, {
           one: "przepis",
           few: "przepisy",
           many: "przepisów",
         })}
       />
+
+      <div className="mb-6">
+        <RecipeCategoryFilter
+          counts={categoryCounts}
+          selected={selectedCategories}
+          onToggle={toggleCategory}
+          onClear={clearCategories}
+        />
+      </div>
+
+      {!isLoading && recipes.length === 0 && (
+        <p className="py-5 px-4 border-2 border-dashed border-ink text-sm">
+          Brak przepisów w wybranych kategoriach.
+        </p>
+      )}
 
       <div className="grid gap-6 xl:grid-cols-2 items-start">
         {recipes.map((recipe) => (
@@ -94,6 +219,18 @@ export default function Recipes() {
           />
         ))}
       </div>
+
+      {hasMore && (
+        <button
+          onClick={() => setPage((p) => p + 1)}
+          disabled={isLoading}
+          className="mt-6 w-full min-h-12 px-4 border-2 border-ink bg-card text-sm font-extrabold uppercase hover:bg-ink hover:text-paper transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-wait"
+        >
+          {isLoading
+            ? "Ładowanie…"
+            : `Pokaż więcej (${recipes.length} z ${total})`}
+        </button>
+      )}
     </div>
   );
 }

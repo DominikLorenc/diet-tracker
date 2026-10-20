@@ -11,17 +11,22 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** Get all recipes */
+    /** Get all recipes (paginated, searchable, filterable by categories) */
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          page?: number;
+          limit?: number;
+          search?: string;
+          categories?: string;
+        };
         header?: never;
         path?: never;
         cookie?: never;
       };
       requestBody?: never;
       responses: {
-        /** @description List of recipes */
+        /** @description Page of recipes */
         200: {
           headers: {
             [name: string]: unknown;
@@ -51,6 +56,20 @@ export interface paths {
                   };
                 }[];
               }[];
+              total: number;
+              page: number;
+              limit: number;
+            };
+          };
+        };
+        /** @description Invalid query parameters */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
             };
           };
         };
@@ -140,6 +159,78 @@ export interface paths {
         };
       };
     };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/recipes/categories": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get the number of recipes in every category, optionally narrowed by name search */
+    get: {
+      parameters: {
+        query?: {
+          search?: string;
+        };
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Recipe count per category, in enum order, including empty categories */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              categories: {
+                /** @enum {string} */
+                category:
+                  | "OATMEAL_PUDDING"
+                  | "YOGURT_COTTAGE"
+                  | "CAKES_COOKIES"
+                  | "SANDWICHES_TOASTS"
+                  | "PANCAKES"
+                  | "EGGS"
+                  | "WRAPS"
+                  | "TRADITIONAL"
+                  | "SALADS"
+                  | "PASTA"
+                  | "SMOOTHIES"
+                  | "FAST_FOOD"
+                  | "READY_MEALS"
+                  | "DESSERTS"
+                  | "SOUPS"
+                  | "MAIN_DISHES"
+                  | "SNACKS";
+                count: number;
+              }[];
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -483,6 +574,7 @@ export interface paths {
                         gramsPerUnit: string | null;
                       };
                     }[];
+                    steps: string[];
                   } | null;
                   userRecipeId: string | null;
                   userRecipe: {
@@ -521,6 +613,7 @@ export interface paths {
                         gramsPerUnit: string | null;
                       };
                     }[];
+                    steps: string[];
                   } | null;
                 }[];
               }[];
@@ -628,6 +721,7 @@ export interface paths {
                         gramsPerUnit: string | null;
                       };
                     }[];
+                    steps: string[];
                   } | null;
                   userRecipeId: string | null;
                   userRecipe: {
@@ -666,6 +760,7 @@ export interface paths {
                         gramsPerUnit: string | null;
                       };
                     }[];
+                    steps: string[];
                   } | null;
                 }[];
               };
@@ -797,6 +892,7 @@ export interface paths {
                         gramsPerUnit: string | null;
                       };
                     }[];
+                    steps: string[];
                   } | null;
                   userRecipeId: string | null;
                   userRecipe: {
@@ -835,6 +931,7 @@ export interface paths {
                         gramsPerUnit: string | null;
                       };
                     }[];
+                    steps: string[];
                   } | null;
                 }[];
               };
@@ -969,6 +1066,7 @@ export interface paths {
                       gramsPerUnit: string | null;
                     };
                   }[];
+                  steps: string[];
                 } | null;
                 userRecipeId: string | null;
                 userRecipe: {
@@ -1007,6 +1105,7 @@ export interface paths {
                       gramsPerUnit: string | null;
                     };
                   }[];
+                  steps: string[];
                 } | null;
               };
             };
@@ -1148,6 +1247,7 @@ export interface paths {
                       gramsPerUnit: string | null;
                     };
                   }[];
+                  steps: string[];
                 } | null;
                 userRecipeId: string | null;
                 userRecipe: {
@@ -1186,6 +1286,7 @@ export interface paths {
                       gramsPerUnit: string | null;
                     };
                   }[];
+                  steps: string[];
                 } | null;
               };
             };
@@ -1318,6 +1419,7 @@ export interface paths {
                       gramsPerUnit: string | null;
                     };
                   }[];
+                  steps: string[];
                 } | null;
                 userRecipeId: string | null;
                 userRecipe: {
@@ -1356,6 +1458,7 @@ export interface paths {
                       gramsPerUnit: string | null;
                     };
                   }[];
+                  steps: string[];
                 } | null;
               };
             };
