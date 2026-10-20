@@ -13,6 +13,8 @@ export const recipeSchema = registry.register(
             }),
         ),
         steps: z.array(z.string().trim().min(1)).optional().default([]),
+        // No default on purpose: a PATCH without categories must keep the saved ones
+        categories: z.array(z.enum(RecipeCategory)).max(Object.values(RecipeCategory).length).optional(),
     }),
 );
 

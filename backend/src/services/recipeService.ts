@@ -20,7 +20,12 @@ type CreateRecipeInput = {
         quantity: number;
     }[];
     steps: string[];
+    categories?: RecipeCategory[];
 };
+
+// undefined stays undefined, so Prisma leaves the column untouched (or uses its default)
+const uniqueCategories = (categories?: RecipeCategory[]): RecipeCategory[] | undefined =>
+    categories && [...new Set(categories)];
 
 type RecipeWithProducts = Prisma.RecipeGetPayload<{
     include: { products: { include: { product: true } } };
@@ -36,6 +41,7 @@ export const createRecipeService = async (recipe: CreateRecipeInput): Promise<Re
         data: {
             name: recipe.name,
             steps: recipe.steps,
+            categories: uniqueCategories(recipe.categories),
             products: {
                 create: recipe.products.map((product) => toDecimalSafe(product, ['quantity'])),
             },
@@ -154,6 +160,7 @@ export const updateRecipeValues = async (id: string, recipe: CreateRecipeInput):
             data: {
                 name: recipe.name,
                 steps: recipe.steps,
+                categories: uniqueCategories(recipe.categories),
                 products: {
                     deleteMany: {},
                     create: recipe.products.map((product) => toDecimalSafe(product, ['quantity'])),

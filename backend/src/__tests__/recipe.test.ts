@@ -60,6 +60,31 @@ describe('POST /api/v1/recipes', () => {
         expect(res.status).toBe(400);
     });
 
+    it('should pass categories to the service', async () => {
+        vi.mocked(createRecipeService).mockResolvedValue({
+            id: '1',
+            name: recipeName,
+            createdAt: new Date(),
+            steps: [],
+            categories: ['SOUPS'],
+        });
+        const res = await request(app)
+            .post('/api/v1/recipes')
+            .send({ ...recipe, categories: ['SOUPS'] })
+            .set('Cookie', ['token=' + token]);
+        expect(res.status).toBe(201);
+        expect(vi.mocked(createRecipeService).mock.calls[0][0].categories).toEqual(['SOUPS']);
+    });
+
+    it('should return 400 when a category is unknown', async () => {
+        const res = await request(app)
+            .post('/api/v1/recipes')
+            .send({ ...recipe, categories: ['HACKED'] })
+            .set('Cookie', ['token=' + token]);
+        expect(res.status).toBe(400);
+        expect(createRecipeService).not.toHaveBeenCalled();
+    });
+
     it('should return 401 when user is not logged in', async () => {
         const res = await request(app).post('/api/v1/recipes').send(recipe);
         expect(res.status).toBe(401);
