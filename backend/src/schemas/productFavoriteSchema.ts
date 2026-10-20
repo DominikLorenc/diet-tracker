@@ -1,16 +1,6 @@
 import { z } from 'zod';
-
-// Schema produktu tak jak go zwraca Prisma (Decimal → string w JSON)
-const productResponseSchema = z.object({
-    id: z.string(),
-    name: z.string(),
-    calories: z.string(),
-    carbs: z.string(),
-    protein: z.string(),
-    fat: z.string(),
-    imageUrl: z.string(),
-    createdAt: z.string(),
-});
+import { RecipeCategory } from '../generated/prisma';
+import { productResponseSchema, decimalString } from '../docs/sharedSchemas';
 
 export const productFavoriteSchema = z.object({
     id: z.string(),
@@ -20,16 +10,35 @@ export const productFavoriteSchema = z.object({
     product: productResponseSchema,
 });
 
-const recipeResponseSchema = z.object({
+const favoriteRecipeSchema = z.object({
     id: z.string(),
     name: z.string(),
     createdAt: z.string(),
+    steps: z.array(z.string()),
+    categories: z.array(z.enum(RecipeCategory)),
 });
 
+// POST returns the bare recipe
 export const recipeFavoriteSchema = z.object({
     id: z.string(),
     userId: z.string(),
     recipeId: z.string(),
     createdAt: z.string(),
-    recipe: recipeResponseSchema,
+    recipe: favoriteRecipeSchema,
+});
+
+// GET also includes the ingredients, so the list can show calories
+export const recipeFavoriteWithProductsSchema = recipeFavoriteSchema.extend({
+    recipe: favoriteRecipeSchema.extend({
+        products: z.array(
+            z.object({
+                id: z.string(),
+                recipeId: z.string(),
+                productId: z.string(),
+                quantity: decimalString,
+                createdAt: z.string(),
+                product: productResponseSchema,
+            }),
+        ),
+    }),
 });

@@ -2,25 +2,16 @@ import { registry, errorSchema } from '../swagger';
 import { recipeSchema, recipeListQuerySchema, recipeCategoryCountsQuerySchema } from '../schemas/recipeSchema';
 import { RecipeCategory } from '../generated/prisma';
 import { z } from 'zod';
+import { productResponseSchema, forbiddenResponse } from './sharedSchemas';
 
 const errorContent = { 'application/json': { schema: errorSchema } };
-
-const productSchema = z.object({
-    id: z.string(),
-    name: z.string(),
-    calories: z.string(),
-    carbs: z.string(),
-    protein: z.string(),
-    fat: z.string(),
-    imageUrl: z.string(),
-    createdAt: z.string(),
-});
 
 const recipeResponseSchema = z.object({
     id: z.string(),
     name: z.string(),
     createdAt: z.string(),
     steps: z.array(z.string()),
+    categories: z.array(z.enum(RecipeCategory)),
     products: z.array(
         z.object({
             id: z.string(),
@@ -28,7 +19,7 @@ const recipeResponseSchema = z.object({
             productId: z.string(),
             recipeId: z.string(),
             createdAt: z.string(),
-            product: productSchema,
+            product: productResponseSchema,
         }),
     ),
 });
@@ -51,6 +42,7 @@ registry.registerPath({
         },
         400: { description: 'Validation error', content: errorContent },
         401: { description: 'Unauthorized', content: errorContent },
+        403: forbiddenResponse,
     },
 });
 
@@ -130,10 +122,13 @@ registry.registerPath({
     path: '/recipes/{id}',
     tags: ['Recipes'],
     summary: 'Update recipe',
+    // Full replace, not a partial patch: the controller validates the whole recipeSchema
+    description:
+        'Replaces name, ingredients and steps. Categories are optional: when omitted, the saved ones are kept.',
     security: [{ cookieAuth: [] }],
     request: {
         params: z.object({ id: z.uuid() }),
-        body: { content: { 'application/json': { schema: recipeSchema.partial() } } },
+        body: { content: { 'application/json': { schema: recipeSchema } } },
     },
     responses: {
         200: {
@@ -143,6 +138,7 @@ registry.registerPath({
         400: { description: 'Validation error', content: errorContent },
         404: { description: 'Recipe not found', content: errorContent },
         401: { description: 'Unauthorized', content: errorContent },
+        403: forbiddenResponse,
     },
 });
 
@@ -164,5 +160,6 @@ registry.registerPath({
         },
         404: { description: 'Recipe not found', content: errorContent },
         401: { description: 'Unauthorized', content: errorContent },
+        403: forbiddenResponse,
     },
 });

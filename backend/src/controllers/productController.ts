@@ -18,12 +18,13 @@ import {
     productListQuerySchema,
 } from '../schemas/productSchema';
 import { Role } from '../generated/prisma';
+import { sendValidationError } from '../utils/sendValidationError';
 
 export const createProduct = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const result = productSchema.safeParse(req.body);
         if (!result.success) {
-            res.status(400).json({ message: result.error.issues });
+            sendValidationError(res, result.error);
             return;
         }
 
@@ -40,7 +41,7 @@ export const getProducts = async (req: Request, res: Response, next: NextFunctio
         const resultSchema = productListQuerySchema.safeParse(req.query);
 
         if (!resultSchema.success) {
-            res.status(400).json({ message: resultSchema.error.issues });
+            sendValidationError(res, resultSchema.error);
             return;
         }
 
@@ -74,14 +75,14 @@ export const updateProduct = async (req: Request, res: Response, next: NextFunct
 
         const result = productIdSchema.safeParse(id);
         if (!result.success) {
-            res.status(400).json({ message: result.error.issues });
+            sendValidationError(res, result.error);
             return;
         }
 
         const validationProduct = updateProductSchema.safeParse(req.body);
 
         if (!validationProduct.success) {
-            res.status(400).json({ message: validationProduct.error.issues });
+            sendValidationError(res, validationProduct.error);
             return;
         }
 
@@ -98,7 +99,7 @@ export const deleteProduct = async (req: Request, res: Response, next: NextFunct
 
     const result = productIdSchema.safeParse(id);
     if (!result.success) {
-        res.status(404).json({ message: result.error.issues });
+        sendValidationError(res, result.error, 404);
         return;
     }
 
@@ -114,7 +115,7 @@ export const searchProducts = async (req: Request, res: Response, next: NextFunc
     const result = searchProductSchema.safeParse({ search: req.query.search });
 
     if (!result.success) {
-        res.status(400).json({ message: result.error.issues });
+        sendValidationError(res, result.error);
         return;
     }
 
@@ -132,13 +133,13 @@ export const getProductByBarcodeController = async (req: Request, res: Response,
 
     const result = barcodeCodeSchema.safeParse(code);
     if (!result.success) {
-        res.status(400).json({ message: result.error.issues });
+        sendValidationError(res, result.error);
         return;
     }
 
     const queryResult = barcodeQuerySchema.safeParse(req.query);
     if (!queryResult.success) {
-        res.status(400).json({ message: queryResult.error.issues });
+        sendValidationError(res, queryResult.error);
         return;
     }
 

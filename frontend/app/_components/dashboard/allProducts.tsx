@@ -12,6 +12,7 @@ import { apiClient } from "@/app/lib/apiClient";
 import { Button } from "../ui/Button";
 import { useDebounce } from "@/app/_hooks/useDebounce";
 import type { ProductCategory } from "@/app/lib/productCategories";
+import { parseProduct } from "@/app/lib/apiParsers";
 
 type Product = {
   name: string;
@@ -74,7 +75,7 @@ export const AllProducts = () => {
         );
       } else if (data) {
         setTotal(data.total);
-        setProducts(data.products);
+        setProducts(data.products.map(parseProduct));
       }
     } finally {
       setIsLoading(false);

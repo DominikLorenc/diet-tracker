@@ -106,12 +106,8 @@ export const RecipeSearch = ({ mealType, date }: Props) => {
         apiClient.GET("/user-recipes"),
         apiClient.GET("/favorites/recipes"),
       ]);
-      if (userRecipesRes.data)
-        setUserRecipes(
-          userRecipesRes.data.userRecipes as unknown as UserRecipe[],
-        );
-      if (favRes.data)
-        setFavorites(favRes.data.favorites as unknown as RecipeFavorite[]);
+      if (userRecipesRes.data) setUserRecipes(userRecipesRes.data.userRecipes);
+      if (favRes.data) setFavorites(favRes.data.favorites);
       setIsLoading(false);
     };
     load();
@@ -135,8 +131,7 @@ export const RecipeSearch = ({ mealType, date }: Props) => {
             },
           },
         });
-        if (isCurrent && data)
-          setGlobalRecipes(data.recipes as unknown as Recipe[]);
+        if (isCurrent && data) setGlobalRecipes(data.recipes);
       } finally {
         if (isCurrent) setIsSearching(false);
       }
@@ -210,10 +205,7 @@ export const RecipeSearch = ({ mealType, date }: Props) => {
     if (error) {
       showToast("error", "Błąd", "Nie udało się skopiować przepisu");
     } else if (data?.userRecipe) {
-      setUserRecipes((prev) => [
-        ...prev,
-        data.userRecipe as unknown as UserRecipe,
-      ]);
+      setUserRecipes((prev) => [...prev, data.userRecipe]);
       setCopiedIds((prev) => new Set([...prev, recipeId]));
       showToast("success", "Skopiowano!", "Dodano do Twoich przepisów");
     }

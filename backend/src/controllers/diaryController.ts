@@ -14,12 +14,13 @@ import {
     toggleEatenSchema,
     updateQuantitySchema,
 } from '../schemas/diarySchema';
+import { sendValidationError } from '../utils/sendValidationError';
 
 export const createDiaryEntry = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const result = diaryEntrySchema.safeParse(req.body);
         if (!result.success) {
-            res.status(400).json({ message: result.error.issues });
+            sendValidationError(res, result.error);
             return;
         }
 
@@ -61,7 +62,7 @@ export const getDiary = async (req: Request, res: Response, next: NextFunction) 
 
         const searchDate = dateDiarySchema.safeParse({ date });
         if (!searchDate.success) {
-            res.status(400).json({ message: searchDate.error.issues });
+            sendValidationError(res, searchDate.error);
             return;
         }
 
@@ -85,7 +86,7 @@ export const deleteDiaryEntry = async (req: Request, res: Response, next: NextFu
 
         const result = diaryIdSchema.safeParse(id);
         if (!result.success) {
-            res.status(400).json({ message: result.error.issues });
+            sendValidationError(res, result.error);
             return;
         }
 
@@ -108,13 +109,13 @@ export const toggleEatenItem = async (req: Request, res: Response, next: NextFun
 
         const result = diaryIdSchema.safeParse(id);
         if (!result.success) {
-            res.status(400).json({ message: result.error.issues });
+            sendValidationError(res, result.error);
             return;
         }
 
         const validation = toggleEatenSchema.safeParse(req.body);
         if (!validation.success) {
-            res.status(400).json({ message: validation.error.issues });
+            sendValidationError(res, validation.error);
             return;
         }
 
@@ -139,7 +140,7 @@ export const deleteDiaryItem = async (req: Request, res: Response, next: NextFun
 
         const result = diaryIdSchema.safeParse(id);
         if (!result.success) {
-            res.status(400).json({ message: result.error.issues });
+            sendValidationError(res, result.error);
             return;
         }
 
@@ -162,13 +163,13 @@ export const updateQuantityItem = async (req: Request, res: Response, next: Next
 
         const result = diaryIdSchema.safeParse(id);
         if (!result.success) {
-            res.status(400).json({ message: result.error.issues });
+            sendValidationError(res, result.error);
             return;
         }
 
         const validation = updateQuantitySchema.safeParse(req.body);
         if (!validation.success) {
-            res.status(400).json({ message: validation.error.issues });
+            sendValidationError(res, validation.error);
             return;
         }
 

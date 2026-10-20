@@ -19,6 +19,7 @@ import {
   CATEGORY_LABELS,
   type ProductCategory,
 } from "@/app/lib/productCategories";
+import { parseProduct } from "@/app/lib/apiParsers";
 
 type Inputs = z.infer<typeof productSchema>;
 
@@ -124,7 +125,7 @@ export const ProductForm = ({
           "Produkt dodany!",
           `${product.calories} kcal | B: ${product.protein}g W: ${product.carbs}g T: ${product.fat}g`,
         );
-        onSuccess?.(product as Product);
+        onSuccess?.(parseProduct(product));
         closeModal();
       }
     } catch {
@@ -167,7 +168,7 @@ export const ProductForm = ({
           `${product.calories} kcal | B: ${product.protein}g W: ${product.carbs}g T: ${product.fat}g`,
         );
         if (onSuccess) {
-          onSuccess(product as Product);
+          onSuccess(parseProduct(product));
         }
 
         closeModal();

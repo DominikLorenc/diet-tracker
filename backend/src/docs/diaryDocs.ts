@@ -1,54 +1,52 @@
 import { registry, errorSchema } from '../swagger';
 import { diaryEntrySchema, updateQuantitySchema } from '../schemas/diarySchema';
-import { ProductCategory } from '../generated/prisma';
+import { RecipeCategory } from '../generated/prisma';
+import { productResponseSchema, decimalString } from './sharedSchemas';
 import { z } from 'zod';
 
 const errorContent = { 'application/json': { schema: errorSchema } };
 
-const productSchema = z.object({
-    id: z.string(),
-    name: z.string(),
-    calories: z.string(),
-    carbs: z.string(),
-    protein: z.string(),
-    fat: z.string(),
-    imageUrl: z.string(),
-    createdAt: z.string(),
-    category: z.enum(ProductCategory),
-    // Nullable: only some products carry a per-piece weight (e.g. one egg = 60 g).
-    gramsPerUnit: z.string().nullable(),
-});
-
-const diaryItemSchema = z.object({
+// The bare row: what the PATCH/DELETE item endpoints return (no relations included)
+const diaryItemBaseSchema = z.object({
     id: z.string(),
     diaryEntryId: z.string(),
     productId: z.string().nullable(),
     recipeId: z.string().nullable(),
+    userRecipeId: z.string().nullable(),
     mealType: z.enum(['BREAKFAST', 'LUNCH', 'DINNER', 'SNACK']),
     isEaten: z.boolean(),
-    quantity: z.string(),
+    quantity: decimalString,
     createdAt: z.string(),
-    product: productSchema.nullable(),
+});
+
+// GET /diary includes the product or recipe with all its ingredients
+const diaryItemSchema = diaryItemBaseSchema.extend({
+    product: productResponseSchema.nullable(),
     recipe: z
         .object({
             id: z.string(),
             name: z.string(),
+            createdAt: z.string(),
             products: z.array(
                 z.object({
-                    quantity: z.string(),
-                    product: productSchema,
+                    id: z.string(),
+                    recipeId: z.string(),
+                    productId: z.string(),
+                    quantity: decimalString,
+                    createdAt: z.string(),
+                    product: productResponseSchema,
                 }),
             ),
             steps: z.array(z.string()),
+            categories: z.array(z.enum(RecipeCategory)),
         })
         .nullable(),
-    userRecipeId: z.string().nullable(),
     userRecipe: z
         .object({
             id: z.string(),
             userId: z.string(),
             createdAt: z.string(),
-            sourceRecipeId: z.string(),
+            sourceRecipeId: z.string().nullable(),
             name: z.string(),
             userRecipeIngredients: z.array(
                 z.object({
@@ -58,7 +56,7 @@ const diaryItemSchema = z.object({
                     quantity: z.string(),
                     createdAt: z.string(),
                     updatedAt: z.string(),
-                    product: productSchema,
+                    product: productResponseSchema,
                 }),
             ),
             steps: z.array(z.string()),
@@ -66,11 +64,15 @@ const diaryItemSchema = z.object({
         .nullable(),
 });
 
-const diaryEntryResponseSchema = z.object({
+// The bare day row: what POST /diary and DELETE /diary/{id} return (no items included)
+const diaryEntryBaseSchema = z.object({
     id: z.string(),
     date: z.string(),
     userId: z.string(),
     createdAt: z.string(),
+});
+
+const diaryEntryResponseSchema = diaryEntryBaseSchema.extend({
     items: z.array(diaryItemSchema),
 });
 
@@ -88,7 +90,7 @@ registry.registerPath({
             description: 'Entry added',
             content: {
                 'application/json': {
-                    schema: z.object({ message: z.string(), newDiaryEntry: diaryEntryResponseSchema }),
+                    schema: z.object({ message: z.string(), newDiaryEntry: diaryEntryBaseSchema }),
                 },
             },
         },
@@ -132,7 +134,7 @@ registry.registerPath({
         200: {
             description: 'Entry deleted',
             content: {
-                'application/json': { schema: z.object({ message: z.string(), deleted: diaryEntryResponseSchema }) },
+                'application/json': { schema: z.object({ message: z.string(), deleted: diaryEntryBaseSchema }) },
             },
         },
         404: { description: 'Entry not found', content: errorContent },
@@ -153,7 +155,9 @@ registry.registerPath({
     responses: {
         200: {
             description: 'Item updated',
-            content: { 'application/json': { schema: z.object({ message: z.string(), updated: diaryItemSchema }) } },
+            content: {
+                'application/json': { schema: z.object({ message: z.string(), updated: diaryItemBaseSchema }) },
+            },
         },
         400: { description: 'Validation error', content: errorContent },
         401: { description: 'Unauthorized', content: errorContent },
@@ -174,7 +178,9 @@ registry.registerPath({
     responses: {
         200: {
             description: 'Item updated',
-            content: { 'application/json': { schema: z.object({ message: z.string(), updated: diaryItemSchema }) } },
+            content: {
+                'application/json': { schema: z.object({ message: z.string(), updated: diaryItemBaseSchema }) },
+            },
         },
         400: { description: 'Validation error', content: errorContent },
         401: { description: 'Unauthorized', content: errorContent },
@@ -194,7 +200,9 @@ registry.registerPath({
     responses: {
         200: {
             description: 'Item deleted',
-            content: { 'application/json': { schema: z.object({ message: z.string(), deleted: diaryItemSchema }) } },
+            content: {
+                'application/json': { schema: z.object({ message: z.string(), deleted: diaryItemBaseSchema }) },
+            },
         },
         404: { description: 'Item not found', content: errorContent },
         401: { description: 'Unauthorized', content: errorContent },

@@ -38,6 +38,25 @@ export interface paths {
                 name: string;
                 createdAt: string;
                 steps: string[];
+                categories: (
+                  | "OATMEAL_PUDDING"
+                  | "YOGURT_COTTAGE"
+                  | "CAKES_COOKIES"
+                  | "SANDWICHES_TOASTS"
+                  | "PANCAKES"
+                  | "EGGS"
+                  | "WRAPS"
+                  | "TRADITIONAL"
+                  | "SALADS"
+                  | "PASTA"
+                  | "SMOOTHIES"
+                  | "FAST_FOOD"
+                  | "READY_MEALS"
+                  | "DESSERTS"
+                  | "SOUPS"
+                  | "MAIN_DISHES"
+                  | "SNACKS"
+                )[];
                 products: {
                   id: string;
                   quantity: string;
@@ -52,7 +71,20 @@ export interface paths {
                     protein: string;
                     fat: string;
                     imageUrl: string;
+                    barcode: string | null;
                     createdAt: string;
+                    /** @enum {string} */
+                    category:
+                      | "BREAD"
+                      | "DAIRY"
+                      | "MEAT"
+                      | "VEGETABLES"
+                      | "FRUITS"
+                      | "BEVERAGES"
+                      | "DRY_GOODS"
+                      | "SPICES"
+                      | "OTHER";
+                    gramsPerUnit: string | null;
                   };
                 }[];
               }[];
@@ -70,6 +102,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -81,6 +118,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -114,6 +156,25 @@ export interface paths {
                 name: string;
                 createdAt: string;
                 steps: string[];
+                categories: (
+                  | "OATMEAL_PUDDING"
+                  | "YOGURT_COTTAGE"
+                  | "CAKES_COOKIES"
+                  | "SANDWICHES_TOASTS"
+                  | "PANCAKES"
+                  | "EGGS"
+                  | "WRAPS"
+                  | "TRADITIONAL"
+                  | "SALADS"
+                  | "PASTA"
+                  | "SMOOTHIES"
+                  | "FAST_FOOD"
+                  | "READY_MEALS"
+                  | "DESSERTS"
+                  | "SOUPS"
+                  | "MAIN_DISHES"
+                  | "SNACKS"
+                )[];
                 products: {
                   id: string;
                   quantity: string;
@@ -128,7 +189,20 @@ export interface paths {
                     protein: string;
                     fat: string;
                     imageUrl: string;
+                    barcode: string | null;
                     createdAt: string;
+                    /** @enum {string} */
+                    category:
+                      | "BREAD"
+                      | "DAIRY"
+                      | "MEAT"
+                      | "VEGETABLES"
+                      | "FRUITS"
+                      | "BEVERAGES"
+                      | "DRY_GOODS"
+                      | "SPICES"
+                      | "OTHER";
+                    gramsPerUnit: string | null;
                   };
                 }[];
               };
@@ -143,6 +217,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -154,6 +233,27 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
+            };
+          };
+        };
+        /** @description Forbidden: admin only */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -224,6 +324,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -268,6 +373,25 @@ export interface paths {
                 name: string;
                 createdAt: string;
                 steps: string[];
+                categories: (
+                  | "OATMEAL_PUDDING"
+                  | "YOGURT_COTTAGE"
+                  | "CAKES_COOKIES"
+                  | "SANDWICHES_TOASTS"
+                  | "PANCAKES"
+                  | "EGGS"
+                  | "WRAPS"
+                  | "TRADITIONAL"
+                  | "SALADS"
+                  | "PASTA"
+                  | "SMOOTHIES"
+                  | "FAST_FOOD"
+                  | "READY_MEALS"
+                  | "DESSERTS"
+                  | "SOUPS"
+                  | "MAIN_DISHES"
+                  | "SNACKS"
+                )[];
                 products: {
                   id: string;
                   quantity: string;
@@ -282,7 +406,20 @@ export interface paths {
                     protein: string;
                     fat: string;
                     imageUrl: string;
+                    barcode: string | null;
                     createdAt: string;
+                    /** @enum {string} */
+                    category:
+                      | "BREAD"
+                      | "DAIRY"
+                      | "MEAT"
+                      | "VEGETABLES"
+                      | "FRUITS"
+                      | "BEVERAGES"
+                      | "DRY_GOODS"
+                      | "SPICES"
+                      | "OTHER";
+                    gramsPerUnit: string | null;
                   };
                 }[];
               };
@@ -297,6 +434,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -308,6 +450,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -340,6 +487,25 @@ export interface paths {
                 name: string;
                 createdAt: string;
                 steps: string[];
+                categories: (
+                  | "OATMEAL_PUDDING"
+                  | "YOGURT_COTTAGE"
+                  | "CAKES_COOKIES"
+                  | "SANDWICHES_TOASTS"
+                  | "PANCAKES"
+                  | "EGGS"
+                  | "WRAPS"
+                  | "TRADITIONAL"
+                  | "SALADS"
+                  | "PASTA"
+                  | "SMOOTHIES"
+                  | "FAST_FOOD"
+                  | "READY_MEALS"
+                  | "DESSERTS"
+                  | "SOUPS"
+                  | "MAIN_DISHES"
+                  | "SNACKS"
+                )[];
                 products: {
                   id: string;
                   quantity: string;
@@ -354,7 +520,20 @@ export interface paths {
                     protein: string;
                     fat: string;
                     imageUrl: string;
+                    barcode: string | null;
                     createdAt: string;
+                    /** @enum {string} */
+                    category:
+                      | "BREAD"
+                      | "DAIRY"
+                      | "MEAT"
+                      | "VEGETABLES"
+                      | "FRUITS"
+                      | "BEVERAGES"
+                      | "DRY_GOODS"
+                      | "SPICES"
+                      | "OTHER";
+                    gramsPerUnit: string | null;
                   };
                 }[];
               };
@@ -369,6 +548,27 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
+            };
+          };
+        };
+        /** @description Forbidden: admin only */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -380,6 +580,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -387,7 +592,10 @@ export interface paths {
     };
     options?: never;
     head?: never;
-    /** Update recipe */
+    /**
+     * Update recipe
+     * @description Replaces name, ingredients and steps. Categories are optional: when omitted, the saved ones are kept.
+     */
     patch: {
       parameters: {
         query?: never;
@@ -399,16 +607,7 @@ export interface paths {
       };
       requestBody?: {
         content: {
-          "application/json": {
-            name?: string;
-            products?: {
-              /** Format: uuid */
-              productId: string;
-              quantity: number;
-            }[];
-            /** @default [] */
-            steps?: string[];
-          };
+          "application/json": components["schemas"]["Recipe"];
         };
       };
       responses: {
@@ -424,6 +623,25 @@ export interface paths {
                 name: string;
                 createdAt: string;
                 steps: string[];
+                categories: (
+                  | "OATMEAL_PUDDING"
+                  | "YOGURT_COTTAGE"
+                  | "CAKES_COOKIES"
+                  | "SANDWICHES_TOASTS"
+                  | "PANCAKES"
+                  | "EGGS"
+                  | "WRAPS"
+                  | "TRADITIONAL"
+                  | "SALADS"
+                  | "PASTA"
+                  | "SMOOTHIES"
+                  | "FAST_FOOD"
+                  | "READY_MEALS"
+                  | "DESSERTS"
+                  | "SOUPS"
+                  | "MAIN_DISHES"
+                  | "SNACKS"
+                )[];
                 products: {
                   id: string;
                   quantity: string;
@@ -438,7 +656,20 @@ export interface paths {
                     protein: string;
                     fat: string;
                     imageUrl: string;
+                    barcode: string | null;
                     createdAt: string;
+                    /** @enum {string} */
+                    category:
+                      | "BREAD"
+                      | "DAIRY"
+                      | "MEAT"
+                      | "VEGETABLES"
+                      | "FRUITS"
+                      | "BEVERAGES"
+                      | "DRY_GOODS"
+                      | "SPICES"
+                      | "OTHER";
+                    gramsPerUnit: string | null;
                   };
                 }[];
               };
@@ -453,6 +684,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -464,6 +700,27 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
+            };
+          };
+        };
+        /** @description Forbidden: admin only */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -475,6 +732,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -519,6 +781,7 @@ export interface paths {
                   diaryEntryId: string;
                   productId: string | null;
                   recipeId: string | null;
+                  userRecipeId: string | null;
                   /** @enum {string} */
                   mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
                   isEaten: boolean;
@@ -532,6 +795,7 @@ export interface paths {
                     protein: string;
                     fat: string;
                     imageUrl: string;
+                    barcode: string | null;
                     createdAt: string;
                     /** @enum {string} */
                     category:
@@ -549,8 +813,13 @@ export interface paths {
                   recipe: {
                     id: string;
                     name: string;
+                    createdAt: string;
                     products: {
+                      id: string;
+                      recipeId: string;
+                      productId: string;
                       quantity: string;
+                      createdAt: string;
                       product: {
                         id: string;
                         name: string;
@@ -559,6 +828,7 @@ export interface paths {
                         protein: string;
                         fat: string;
                         imageUrl: string;
+                        barcode: string | null;
                         createdAt: string;
                         /** @enum {string} */
                         category:
@@ -575,13 +845,31 @@ export interface paths {
                       };
                     }[];
                     steps: string[];
+                    categories: (
+                      | "OATMEAL_PUDDING"
+                      | "YOGURT_COTTAGE"
+                      | "CAKES_COOKIES"
+                      | "SANDWICHES_TOASTS"
+                      | "PANCAKES"
+                      | "EGGS"
+                      | "WRAPS"
+                      | "TRADITIONAL"
+                      | "SALADS"
+                      | "PASTA"
+                      | "SMOOTHIES"
+                      | "FAST_FOOD"
+                      | "READY_MEALS"
+                      | "DESSERTS"
+                      | "SOUPS"
+                      | "MAIN_DISHES"
+                      | "SNACKS"
+                    )[];
                   } | null;
-                  userRecipeId: string | null;
                   userRecipe: {
                     id: string;
                     userId: string;
                     createdAt: string;
-                    sourceRecipeId: string;
+                    sourceRecipeId: string | null;
                     name: string;
                     userRecipeIngredients: {
                       id: string;
@@ -598,6 +886,7 @@ export interface paths {
                         protein: string;
                         fat: string;
                         imageUrl: string;
+                        barcode: string | null;
                         createdAt: string;
                         /** @enum {string} */
                         category:
@@ -628,6 +917,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -661,108 +955,6 @@ export interface paths {
                 date: string;
                 userId: string;
                 createdAt: string;
-                items: {
-                  id: string;
-                  diaryEntryId: string;
-                  productId: string | null;
-                  recipeId: string | null;
-                  /** @enum {string} */
-                  mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
-                  isEaten: boolean;
-                  quantity: string;
-                  createdAt: string;
-                  product: {
-                    id: string;
-                    name: string;
-                    calories: string;
-                    carbs: string;
-                    protein: string;
-                    fat: string;
-                    imageUrl: string;
-                    createdAt: string;
-                    /** @enum {string} */
-                    category:
-                      | "BREAD"
-                      | "DAIRY"
-                      | "MEAT"
-                      | "VEGETABLES"
-                      | "FRUITS"
-                      | "BEVERAGES"
-                      | "DRY_GOODS"
-                      | "SPICES"
-                      | "OTHER";
-                    gramsPerUnit: string | null;
-                  } | null;
-                  recipe: {
-                    id: string;
-                    name: string;
-                    products: {
-                      quantity: string;
-                      product: {
-                        id: string;
-                        name: string;
-                        calories: string;
-                        carbs: string;
-                        protein: string;
-                        fat: string;
-                        imageUrl: string;
-                        createdAt: string;
-                        /** @enum {string} */
-                        category:
-                          | "BREAD"
-                          | "DAIRY"
-                          | "MEAT"
-                          | "VEGETABLES"
-                          | "FRUITS"
-                          | "BEVERAGES"
-                          | "DRY_GOODS"
-                          | "SPICES"
-                          | "OTHER";
-                        gramsPerUnit: string | null;
-                      };
-                    }[];
-                    steps: string[];
-                  } | null;
-                  userRecipeId: string | null;
-                  userRecipe: {
-                    id: string;
-                    userId: string;
-                    createdAt: string;
-                    sourceRecipeId: string;
-                    name: string;
-                    userRecipeIngredients: {
-                      id: string;
-                      userRecipeId: string;
-                      productId: string;
-                      quantity: string;
-                      createdAt: string;
-                      updatedAt: string;
-                      product: {
-                        id: string;
-                        name: string;
-                        calories: string;
-                        carbs: string;
-                        protein: string;
-                        fat: string;
-                        imageUrl: string;
-                        createdAt: string;
-                        /** @enum {string} */
-                        category:
-                          | "BREAD"
-                          | "DAIRY"
-                          | "MEAT"
-                          | "VEGETABLES"
-                          | "FRUITS"
-                          | "BEVERAGES"
-                          | "DRY_GOODS"
-                          | "SPICES"
-                          | "OTHER";
-                        gramsPerUnit: string | null;
-                      };
-                    }[];
-                    steps: string[];
-                  } | null;
-                }[];
               };
             };
           };
@@ -775,6 +967,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -786,6 +983,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -832,108 +1034,6 @@ export interface paths {
                 date: string;
                 userId: string;
                 createdAt: string;
-                items: {
-                  id: string;
-                  diaryEntryId: string;
-                  productId: string | null;
-                  recipeId: string | null;
-                  /** @enum {string} */
-                  mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
-                  isEaten: boolean;
-                  quantity: string;
-                  createdAt: string;
-                  product: {
-                    id: string;
-                    name: string;
-                    calories: string;
-                    carbs: string;
-                    protein: string;
-                    fat: string;
-                    imageUrl: string;
-                    createdAt: string;
-                    /** @enum {string} */
-                    category:
-                      | "BREAD"
-                      | "DAIRY"
-                      | "MEAT"
-                      | "VEGETABLES"
-                      | "FRUITS"
-                      | "BEVERAGES"
-                      | "DRY_GOODS"
-                      | "SPICES"
-                      | "OTHER";
-                    gramsPerUnit: string | null;
-                  } | null;
-                  recipe: {
-                    id: string;
-                    name: string;
-                    products: {
-                      quantity: string;
-                      product: {
-                        id: string;
-                        name: string;
-                        calories: string;
-                        carbs: string;
-                        protein: string;
-                        fat: string;
-                        imageUrl: string;
-                        createdAt: string;
-                        /** @enum {string} */
-                        category:
-                          | "BREAD"
-                          | "DAIRY"
-                          | "MEAT"
-                          | "VEGETABLES"
-                          | "FRUITS"
-                          | "BEVERAGES"
-                          | "DRY_GOODS"
-                          | "SPICES"
-                          | "OTHER";
-                        gramsPerUnit: string | null;
-                      };
-                    }[];
-                    steps: string[];
-                  } | null;
-                  userRecipeId: string | null;
-                  userRecipe: {
-                    id: string;
-                    userId: string;
-                    createdAt: string;
-                    sourceRecipeId: string;
-                    name: string;
-                    userRecipeIngredients: {
-                      id: string;
-                      userRecipeId: string;
-                      productId: string;
-                      quantity: string;
-                      createdAt: string;
-                      updatedAt: string;
-                      product: {
-                        id: string;
-                        name: string;
-                        calories: string;
-                        carbs: string;
-                        protein: string;
-                        fat: string;
-                        imageUrl: string;
-                        createdAt: string;
-                        /** @enum {string} */
-                        category:
-                          | "BREAD"
-                          | "DAIRY"
-                          | "MEAT"
-                          | "VEGETABLES"
-                          | "FRUITS"
-                          | "BEVERAGES"
-                          | "DRY_GOODS"
-                          | "SPICES"
-                          | "OTHER";
-                        gramsPerUnit: string | null;
-                      };
-                    }[];
-                    steps: string[];
-                  } | null;
-                }[];
               };
             };
           };
@@ -946,6 +1046,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -957,6 +1062,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -1011,102 +1121,12 @@ export interface paths {
                 diaryEntryId: string;
                 productId: string | null;
                 recipeId: string | null;
+                userRecipeId: string | null;
                 /** @enum {string} */
                 mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
                 isEaten: boolean;
                 quantity: string;
                 createdAt: string;
-                product: {
-                  id: string;
-                  name: string;
-                  calories: string;
-                  carbs: string;
-                  protein: string;
-                  fat: string;
-                  imageUrl: string;
-                  createdAt: string;
-                  /** @enum {string} */
-                  category:
-                    | "BREAD"
-                    | "DAIRY"
-                    | "MEAT"
-                    | "VEGETABLES"
-                    | "FRUITS"
-                    | "BEVERAGES"
-                    | "DRY_GOODS"
-                    | "SPICES"
-                    | "OTHER";
-                  gramsPerUnit: string | null;
-                } | null;
-                recipe: {
-                  id: string;
-                  name: string;
-                  products: {
-                    quantity: string;
-                    product: {
-                      id: string;
-                      name: string;
-                      calories: string;
-                      carbs: string;
-                      protein: string;
-                      fat: string;
-                      imageUrl: string;
-                      createdAt: string;
-                      /** @enum {string} */
-                      category:
-                        | "BREAD"
-                        | "DAIRY"
-                        | "MEAT"
-                        | "VEGETABLES"
-                        | "FRUITS"
-                        | "BEVERAGES"
-                        | "DRY_GOODS"
-                        | "SPICES"
-                        | "OTHER";
-                      gramsPerUnit: string | null;
-                    };
-                  }[];
-                  steps: string[];
-                } | null;
-                userRecipeId: string | null;
-                userRecipe: {
-                  id: string;
-                  userId: string;
-                  createdAt: string;
-                  sourceRecipeId: string;
-                  name: string;
-                  userRecipeIngredients: {
-                    id: string;
-                    userRecipeId: string;
-                    productId: string;
-                    quantity: string;
-                    createdAt: string;
-                    updatedAt: string;
-                    product: {
-                      id: string;
-                      name: string;
-                      calories: string;
-                      carbs: string;
-                      protein: string;
-                      fat: string;
-                      imageUrl: string;
-                      createdAt: string;
-                      /** @enum {string} */
-                      category:
-                        | "BREAD"
-                        | "DAIRY"
-                        | "MEAT"
-                        | "VEGETABLES"
-                        | "FRUITS"
-                        | "BEVERAGES"
-                        | "DRY_GOODS"
-                        | "SPICES"
-                        | "OTHER";
-                      gramsPerUnit: string | null;
-                    };
-                  }[];
-                  steps: string[];
-                } | null;
               };
             };
           };
@@ -1119,6 +1139,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -1130,6 +1155,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -1141,6 +1171,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -1192,102 +1227,12 @@ export interface paths {
                 diaryEntryId: string;
                 productId: string | null;
                 recipeId: string | null;
+                userRecipeId: string | null;
                 /** @enum {string} */
                 mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
                 isEaten: boolean;
                 quantity: string;
                 createdAt: string;
-                product: {
-                  id: string;
-                  name: string;
-                  calories: string;
-                  carbs: string;
-                  protein: string;
-                  fat: string;
-                  imageUrl: string;
-                  createdAt: string;
-                  /** @enum {string} */
-                  category:
-                    | "BREAD"
-                    | "DAIRY"
-                    | "MEAT"
-                    | "VEGETABLES"
-                    | "FRUITS"
-                    | "BEVERAGES"
-                    | "DRY_GOODS"
-                    | "SPICES"
-                    | "OTHER";
-                  gramsPerUnit: string | null;
-                } | null;
-                recipe: {
-                  id: string;
-                  name: string;
-                  products: {
-                    quantity: string;
-                    product: {
-                      id: string;
-                      name: string;
-                      calories: string;
-                      carbs: string;
-                      protein: string;
-                      fat: string;
-                      imageUrl: string;
-                      createdAt: string;
-                      /** @enum {string} */
-                      category:
-                        | "BREAD"
-                        | "DAIRY"
-                        | "MEAT"
-                        | "VEGETABLES"
-                        | "FRUITS"
-                        | "BEVERAGES"
-                        | "DRY_GOODS"
-                        | "SPICES"
-                        | "OTHER";
-                      gramsPerUnit: string | null;
-                    };
-                  }[];
-                  steps: string[];
-                } | null;
-                userRecipeId: string | null;
-                userRecipe: {
-                  id: string;
-                  userId: string;
-                  createdAt: string;
-                  sourceRecipeId: string;
-                  name: string;
-                  userRecipeIngredients: {
-                    id: string;
-                    userRecipeId: string;
-                    productId: string;
-                    quantity: string;
-                    createdAt: string;
-                    updatedAt: string;
-                    product: {
-                      id: string;
-                      name: string;
-                      calories: string;
-                      carbs: string;
-                      protein: string;
-                      fat: string;
-                      imageUrl: string;
-                      createdAt: string;
-                      /** @enum {string} */
-                      category:
-                        | "BREAD"
-                        | "DAIRY"
-                        | "MEAT"
-                        | "VEGETABLES"
-                        | "FRUITS"
-                        | "BEVERAGES"
-                        | "DRY_GOODS"
-                        | "SPICES"
-                        | "OTHER";
-                      gramsPerUnit: string | null;
-                    };
-                  }[];
-                  steps: string[];
-                } | null;
               };
             };
           };
@@ -1300,6 +1245,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -1311,6 +1261,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -1322,6 +1277,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -1364,102 +1324,12 @@ export interface paths {
                 diaryEntryId: string;
                 productId: string | null;
                 recipeId: string | null;
+                userRecipeId: string | null;
                 /** @enum {string} */
                 mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
                 isEaten: boolean;
                 quantity: string;
                 createdAt: string;
-                product: {
-                  id: string;
-                  name: string;
-                  calories: string;
-                  carbs: string;
-                  protein: string;
-                  fat: string;
-                  imageUrl: string;
-                  createdAt: string;
-                  /** @enum {string} */
-                  category:
-                    | "BREAD"
-                    | "DAIRY"
-                    | "MEAT"
-                    | "VEGETABLES"
-                    | "FRUITS"
-                    | "BEVERAGES"
-                    | "DRY_GOODS"
-                    | "SPICES"
-                    | "OTHER";
-                  gramsPerUnit: string | null;
-                } | null;
-                recipe: {
-                  id: string;
-                  name: string;
-                  products: {
-                    quantity: string;
-                    product: {
-                      id: string;
-                      name: string;
-                      calories: string;
-                      carbs: string;
-                      protein: string;
-                      fat: string;
-                      imageUrl: string;
-                      createdAt: string;
-                      /** @enum {string} */
-                      category:
-                        | "BREAD"
-                        | "DAIRY"
-                        | "MEAT"
-                        | "VEGETABLES"
-                        | "FRUITS"
-                        | "BEVERAGES"
-                        | "DRY_GOODS"
-                        | "SPICES"
-                        | "OTHER";
-                      gramsPerUnit: string | null;
-                    };
-                  }[];
-                  steps: string[];
-                } | null;
-                userRecipeId: string | null;
-                userRecipe: {
-                  id: string;
-                  userId: string;
-                  createdAt: string;
-                  sourceRecipeId: string;
-                  name: string;
-                  userRecipeIngredients: {
-                    id: string;
-                    userRecipeId: string;
-                    productId: string;
-                    quantity: string;
-                    createdAt: string;
-                    updatedAt: string;
-                    product: {
-                      id: string;
-                      name: string;
-                      calories: string;
-                      carbs: string;
-                      protein: string;
-                      fat: string;
-                      imageUrl: string;
-                      createdAt: string;
-                      /** @enum {string} */
-                      category:
-                        | "BREAD"
-                        | "DAIRY"
-                        | "MEAT"
-                        | "VEGETABLES"
-                        | "FRUITS"
-                        | "BEVERAGES"
-                        | "DRY_GOODS"
-                        | "SPICES"
-                        | "OTHER";
-                      gramsPerUnit: string | null;
-                    };
-                  }[];
-                  steps: string[];
-                } | null;
               };
             };
           };
@@ -1472,6 +1342,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -1483,6 +1358,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -1524,10 +1404,10 @@ export interface paths {
               products: {
                 id: string;
                 name: string;
-                calories: number;
-                carbs: number;
-                protein: number;
-                fat: number;
+                calories: string;
+                carbs: string;
+                protein: string;
+                fat: string;
                 imageUrl: string;
                 barcode: string | null;
                 createdAt: string;
@@ -1542,7 +1422,7 @@ export interface paths {
                   | "DRY_GOODS"
                   | "SPICES"
                   | "OTHER";
-                gramsPerUnit: number | null;
+                gramsPerUnit: string | null;
               }[];
               total: number;
               page: number;
@@ -1558,6 +1438,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -1569,6 +1454,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -1600,10 +1490,10 @@ export interface paths {
               product: {
                 id: string;
                 name: string;
-                calories: number;
-                carbs: number;
-                protein: number;
-                fat: number;
+                calories: string;
+                carbs: string;
+                protein: string;
+                fat: string;
                 imageUrl: string;
                 barcode: string | null;
                 createdAt: string;
@@ -1618,7 +1508,7 @@ export interface paths {
                   | "DRY_GOODS"
                   | "SPICES"
                   | "OTHER";
-                gramsPerUnit: number | null;
+                gramsPerUnit: string | null;
               };
             };
           };
@@ -1631,6 +1521,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -1642,6 +1537,27 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
+            };
+          };
+        };
+        /** @description Forbidden: admin only */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -1682,10 +1598,10 @@ export interface paths {
               products: {
                 id: string;
                 name: string;
-                calories: number;
-                carbs: number;
-                protein: number;
-                fat: number;
+                calories: string;
+                carbs: string;
+                protein: string;
+                fat: string;
                 imageUrl: string;
                 barcode: string | null;
                 createdAt: string;
@@ -1700,7 +1616,7 @@ export interface paths {
                   | "DRY_GOODS"
                   | "SPICES"
                   | "OTHER";
-                gramsPerUnit: number | null;
+                gramsPerUnit: string | null;
               }[];
             };
           };
@@ -1713,6 +1629,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -1724,6 +1645,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -1791,6 +1717,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -1802,6 +1733,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -1813,6 +1749,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -1855,10 +1796,10 @@ export interface paths {
               product: {
                 id: string;
                 name: string;
-                calories: number;
-                carbs: number;
-                protein: number;
-                fat: number;
+                calories: string;
+                carbs: string;
+                protein: string;
+                fat: string;
                 imageUrl: string;
                 barcode: string | null;
                 createdAt: string;
@@ -1873,7 +1814,7 @@ export interface paths {
                   | "DRY_GOODS"
                   | "SPICES"
                   | "OTHER";
-                gramsPerUnit: number | null;
+                gramsPerUnit: string | null;
               };
             };
           };
@@ -1886,6 +1827,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -1897,6 +1843,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -1927,10 +1878,10 @@ export interface paths {
               deleted: {
                 id: string;
                 name: string;
-                calories: number;
-                carbs: number;
-                protein: number;
-                fat: number;
+                calories: string;
+                carbs: string;
+                protein: string;
+                fat: string;
                 imageUrl: string;
                 barcode: string | null;
                 createdAt: string;
@@ -1945,7 +1896,7 @@ export interface paths {
                   | "DRY_GOODS"
                   | "SPICES"
                   | "OTHER";
-                gramsPerUnit: number | null;
+                gramsPerUnit: string | null;
               };
             };
           };
@@ -1958,6 +1909,27 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
+            };
+          };
+        };
+        /** @description Forbidden: admin only */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -1969,6 +1941,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2022,10 +1999,10 @@ export interface paths {
               product: {
                 id: string;
                 name: string;
-                calories: number;
-                carbs: number;
-                protein: number;
-                fat: number;
+                calories: string;
+                carbs: string;
+                protein: string;
+                fat: string;
                 imageUrl: string;
                 barcode: string | null;
                 createdAt: string;
@@ -2040,7 +2017,7 @@ export interface paths {
                   | "DRY_GOODS"
                   | "SPICES"
                   | "OTHER";
-                gramsPerUnit: number | null;
+                gramsPerUnit: string | null;
               };
             };
           };
@@ -2053,6 +2030,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2064,6 +2046,27 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
+            };
+          };
+        };
+        /** @description Forbidden: admin only */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2075,6 +2078,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2125,11 +2133,11 @@ export interface paths {
                 userId: string;
                 /** Format: date-time */
                 date: string;
-                weight: number;
-                waist: number;
-                hips: number;
-                arm: number;
-                thigh: number | null;
+                weight: string;
+                waist: string;
+                hips: string;
+                arm: string;
+                thigh: string | null;
                 /** Format: date-time */
                 createdAt: string;
                 /** Format: date-time */
@@ -2146,6 +2154,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2157,6 +2170,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2200,11 +2218,11 @@ export interface paths {
                 userId: string;
                 /** Format: date-time */
                 date: string;
-                weight: number;
-                waist: number;
-                hips: number;
-                arm: number;
-                thigh: number | null;
+                weight: string;
+                waist: string;
+                hips: string;
+                arm: string;
+                thigh: string | null;
                 /** Format: date-time */
                 createdAt: string;
                 /** Format: date-time */
@@ -2221,6 +2239,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2256,11 +2279,11 @@ export interface paths {
                 userId: string;
                 /** Format: date-time */
                 date: string;
-                weight: number;
-                waist: number;
-                hips: number;
-                arm: number;
-                thigh: number | null;
+                weight: string;
+                waist: string;
+                hips: string;
+                arm: string;
+                thigh: string | null;
                 /** Format: date-time */
                 createdAt: string;
                 /** Format: date-time */
@@ -2277,6 +2300,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2288,6 +2316,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2333,11 +2366,11 @@ export interface paths {
                 userId: string;
                 /** Format: date-time */
                 date: string;
-                weight: number;
-                waist: number;
-                hips: number;
-                arm: number;
-                thigh: number | null;
+                weight: string;
+                waist: string;
+                hips: string;
+                arm: string;
+                thigh: string | null;
                 /** Format: date-time */
                 createdAt: string;
                 /** Format: date-time */
@@ -2354,6 +2387,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2365,6 +2403,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2399,11 +2442,11 @@ export interface paths {
                 userId: string;
                 /** Format: date-time */
                 date: string;
-                weight: number;
-                waist: number;
-                hips: number;
-                arm: number;
-                thigh: number | null;
+                weight: string;
+                waist: string;
+                hips: string;
+                arm: string;
+                thigh: string | null;
                 /** Format: date-time */
                 createdAt: string;
                 /** Format: date-time */
@@ -2420,6 +2463,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2431,6 +2479,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2477,11 +2530,11 @@ export interface paths {
                 userId: string;
                 /** Format: date-time */
                 date: string;
-                weight: number;
-                waist: number;
-                hips: number;
-                arm: number;
-                thigh: number | null;
+                weight: string;
+                waist: string;
+                hips: string;
+                arm: string;
+                thigh: string | null;
                 /** Format: date-time */
                 createdAt: string;
                 /** Format: date-time */
@@ -2498,6 +2551,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2509,6 +2567,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2520,6 +2583,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2564,7 +2632,20 @@ export interface paths {
                   protein: string;
                   fat: string;
                   imageUrl: string;
+                  barcode: string | null;
                   createdAt: string;
+                  /** @enum {string} */
+                  category:
+                    | "BREAD"
+                    | "DAIRY"
+                    | "MEAT"
+                    | "VEGETABLES"
+                    | "FRUITS"
+                    | "BEVERAGES"
+                    | "DRY_GOODS"
+                    | "SPICES"
+                    | "OTHER";
+                  gramsPerUnit: string | null;
                 };
               }[];
             };
@@ -2578,6 +2659,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2622,7 +2708,20 @@ export interface paths {
                   protein: string;
                   fat: string;
                   imageUrl: string;
+                  barcode: string | null;
                   createdAt: string;
+                  /** @enum {string} */
+                  category:
+                    | "BREAD"
+                    | "DAIRY"
+                    | "MEAT"
+                    | "VEGETABLES"
+                    | "FRUITS"
+                    | "BEVERAGES"
+                    | "DRY_GOODS"
+                    | "SPICES"
+                    | "OTHER";
+                  gramsPerUnit: string | null;
                 };
               };
             };
@@ -2636,6 +2735,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2647,6 +2751,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2658,6 +2767,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2710,6 +2824,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2721,6 +2840,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2732,6 +2856,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2775,6 +2904,56 @@ export interface paths {
                   id: string;
                   name: string;
                   createdAt: string;
+                  steps: string[];
+                  categories: (
+                    | "OATMEAL_PUDDING"
+                    | "YOGURT_COTTAGE"
+                    | "CAKES_COOKIES"
+                    | "SANDWICHES_TOASTS"
+                    | "PANCAKES"
+                    | "EGGS"
+                    | "WRAPS"
+                    | "TRADITIONAL"
+                    | "SALADS"
+                    | "PASTA"
+                    | "SMOOTHIES"
+                    | "FAST_FOOD"
+                    | "READY_MEALS"
+                    | "DESSERTS"
+                    | "SOUPS"
+                    | "MAIN_DISHES"
+                    | "SNACKS"
+                  )[];
+                  products: {
+                    id: string;
+                    recipeId: string;
+                    productId: string;
+                    quantity: string;
+                    createdAt: string;
+                    product: {
+                      id: string;
+                      name: string;
+                      calories: string;
+                      carbs: string;
+                      protein: string;
+                      fat: string;
+                      imageUrl: string;
+                      barcode: string | null;
+                      createdAt: string;
+                      /** @enum {string} */
+                      category:
+                        | "BREAD"
+                        | "DAIRY"
+                        | "MEAT"
+                        | "VEGETABLES"
+                        | "FRUITS"
+                        | "BEVERAGES"
+                        | "DRY_GOODS"
+                        | "SPICES"
+                        | "OTHER";
+                      gramsPerUnit: string | null;
+                    };
+                  }[];
                 };
               }[];
             };
@@ -2788,6 +2967,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2828,6 +3012,26 @@ export interface paths {
                   id: string;
                   name: string;
                   createdAt: string;
+                  steps: string[];
+                  categories: (
+                    | "OATMEAL_PUDDING"
+                    | "YOGURT_COTTAGE"
+                    | "CAKES_COOKIES"
+                    | "SANDWICHES_TOASTS"
+                    | "PANCAKES"
+                    | "EGGS"
+                    | "WRAPS"
+                    | "TRADITIONAL"
+                    | "SALADS"
+                    | "PASTA"
+                    | "SMOOTHIES"
+                    | "FAST_FOOD"
+                    | "READY_MEALS"
+                    | "DESSERTS"
+                    | "SOUPS"
+                    | "MAIN_DISHES"
+                    | "SNACKS"
+                  )[];
                 };
               };
             };
@@ -2841,6 +3045,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2852,6 +3061,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2863,6 +3077,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2915,6 +3134,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2926,6 +3150,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2937,6 +3166,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -2994,6 +3228,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3005,6 +3244,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3068,6 +3312,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3079,6 +3328,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3134,6 +3388,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3190,6 +3449,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3238,6 +3502,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3300,6 +3569,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3311,6 +3585,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3379,6 +3658,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3390,6 +3674,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3436,6 +3725,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3479,12 +3773,25 @@ export interface paths {
                 product: {
                   id: string;
                   name: string;
-                  calories: number;
-                  carbs: number;
-                  protein: number;
-                  fat: number;
+                  calories: string;
+                  carbs: string;
+                  protein: string;
+                  fat: string;
                   imageUrl: string;
+                  barcode: string | null;
                   createdAt: string;
+                  /** @enum {string} */
+                  category:
+                    | "BREAD"
+                    | "DAIRY"
+                    | "MEAT"
+                    | "VEGETABLES"
+                    | "FRUITS"
+                    | "BEVERAGES"
+                    | "DRY_GOODS"
+                    | "SPICES"
+                    | "OTHER";
+                  gramsPerUnit: string | null;
                 } | null;
               }[];
             };
@@ -3498,6 +3805,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3546,6 +3858,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3557,6 +3874,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3592,6 +3914,7 @@ export interface paths {
           };
           content: {
             "application/json": {
+              message: string;
               userRecipes: {
                 id: string;
                 userId: string;
@@ -3614,7 +3937,20 @@ export interface paths {
                     protein: string;
                     fat: string;
                     imageUrl: string;
+                    barcode: string | null;
                     createdAt: string;
+                    /** @enum {string} */
+                    category:
+                      | "BREAD"
+                      | "DAIRY"
+                      | "MEAT"
+                      | "VEGETABLES"
+                      | "FRUITS"
+                      | "BEVERAGES"
+                      | "DRY_GOODS"
+                      | "SPICES"
+                      | "OTHER";
+                    gramsPerUnit: string | null;
                   };
                 }[];
               }[];
@@ -3629,6 +3965,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3688,7 +4029,20 @@ export interface paths {
                     protein: string;
                     fat: string;
                     imageUrl: string;
+                    barcode: string | null;
                     createdAt: string;
+                    /** @enum {string} */
+                    category:
+                      | "BREAD"
+                      | "DAIRY"
+                      | "MEAT"
+                      | "VEGETABLES"
+                      | "FRUITS"
+                      | "BEVERAGES"
+                      | "DRY_GOODS"
+                      | "SPICES"
+                      | "OTHER";
+                    gramsPerUnit: string | null;
                   };
                 }[];
               };
@@ -3703,6 +4057,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3714,6 +4073,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3777,7 +4141,20 @@ export interface paths {
                     protein: string;
                     fat: string;
                     imageUrl: string;
+                    barcode: string | null;
                     createdAt: string;
+                    /** @enum {string} */
+                    category:
+                      | "BREAD"
+                      | "DAIRY"
+                      | "MEAT"
+                      | "VEGETABLES"
+                      | "FRUITS"
+                      | "BEVERAGES"
+                      | "DRY_GOODS"
+                      | "SPICES"
+                      | "OTHER";
+                    gramsPerUnit: string | null;
                   };
                 }[];
               };
@@ -3792,6 +4169,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3803,6 +4185,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3865,7 +4252,20 @@ export interface paths {
                     protein: string;
                     fat: string;
                     imageUrl: string;
+                    barcode: string | null;
                     createdAt: string;
+                    /** @enum {string} */
+                    category:
+                      | "BREAD"
+                      | "DAIRY"
+                      | "MEAT"
+                      | "VEGETABLES"
+                      | "FRUITS"
+                      | "BEVERAGES"
+                      | "DRY_GOODS"
+                      | "SPICES"
+                      | "OTHER";
+                    gramsPerUnit: string | null;
                   };
                 }[];
               };
@@ -3880,6 +4280,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3891,6 +4296,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3902,6 +4312,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3965,7 +4380,20 @@ export interface paths {
                     protein: string;
                     fat: string;
                     imageUrl: string;
+                    barcode: string | null;
                     createdAt: string;
+                    /** @enum {string} */
+                    category:
+                      | "BREAD"
+                      | "DAIRY"
+                      | "MEAT"
+                      | "VEGETABLES"
+                      | "FRUITS"
+                      | "BEVERAGES"
+                      | "DRY_GOODS"
+                      | "SPICES"
+                      | "OTHER";
+                    gramsPerUnit: string | null;
                   };
                 }[];
               };
@@ -3980,6 +4408,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -3991,6 +4424,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -4002,6 +4440,11 @@ export interface paths {
           content: {
             "application/json": {
               message: string;
+              issues?: {
+                code: string;
+                path: (string | number)[];
+                message: string;
+              }[];
             };
           };
         };
@@ -4066,6 +4509,25 @@ export interface components {
       }[];
       /** @default [] */
       steps: string[];
+      categories?: (
+        | "OATMEAL_PUDDING"
+        | "YOGURT_COTTAGE"
+        | "CAKES_COOKIES"
+        | "SANDWICHES_TOASTS"
+        | "PANCAKES"
+        | "EGGS"
+        | "WRAPS"
+        | "TRADITIONAL"
+        | "SALADS"
+        | "PASTA"
+        | "SMOOTHIES"
+        | "FAST_FOOD"
+        | "READY_MEALS"
+        | "DESSERTS"
+        | "SOUPS"
+        | "MAIN_DISHES"
+        | "SNACKS"
+      )[];
     };
     Measurements: {
       /** Format: date-time */

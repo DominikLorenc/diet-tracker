@@ -1,18 +1,8 @@
 import { registry, errorSchema } from '../swagger';
 import { z } from 'zod';
+import { productResponseSchema } from './sharedSchemas';
 
 const errorContent = { 'application/json': { schema: errorSchema } };
-
-const productSchema = z.object({
-    id: z.string(),
-    name: z.string(),
-    calories: z.number(),
-    carbs: z.number(),
-    protein: z.number(),
-    fat: z.number(),
-    imageUrl: z.string(),
-    createdAt: z.string(),
-});
 
 const recentSearchSchema = z.object({
     id: z.string(),
@@ -22,7 +12,7 @@ const recentSearchSchema = z.object({
 });
 
 const recentSearchWithProductSchema = recentSearchSchema.extend({
-    product: productSchema.nullable(),
+    product: productResponseSchema.nullable(),
 });
 
 registry.registerPath({

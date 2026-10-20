@@ -8,6 +8,7 @@ import {
     getMeasurementByDate,
 } from '../services/measurementsService';
 import { measurementsSchema, measurementsIdSchema, dateMeasurementSchema } from '../schemas/measurements';
+import { sendValidationError } from '../utils/sendValidationError';
 
 export const createMeasurementController = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -19,7 +20,7 @@ export const createMeasurementController = async (req: Request, res: Response, n
 
         const result = measurementsSchema.safeParse(req.body);
         if (!result.success) {
-            res.status(400).json({ message: result.error.issues });
+            sendValidationError(res, result.error);
             return;
         }
 
@@ -62,7 +63,7 @@ export const getMeasurementsByIdController = async (req: Request, res: Response,
 
         const result = measurementsIdSchema.safeParse(id);
         if (!result.success) {
-            res.status(400).json({ message: result.error.issues });
+            sendValidationError(res, result.error);
             return;
         }
 
@@ -84,13 +85,13 @@ export const updateMeasurementController = async (req: Request, res: Response, n
 
         const paramsResult = measurementsIdSchema.safeParse(req.params.id);
         if (!paramsResult.success) {
-            res.status(400).json({ message: paramsResult.error.issues });
+            sendValidationError(res, paramsResult.error);
             return;
         }
 
         const bodyResult = measurementsSchema.partial().safeParse(req.body);
         if (!bodyResult.success) {
-            res.status(400).json({ message: bodyResult.error.issues });
+            sendValidationError(res, bodyResult.error);
             return;
         }
         if (Object.keys(bodyResult.data).length === 0) {
@@ -143,7 +144,7 @@ export const deleteMeasurementController = async (req: Request, res: Response, n
 
         const result = measurementsIdSchema.safeParse(id);
         if (!result.success) {
-            res.status(400).json({ message: result.error.issues });
+            sendValidationError(res, result.error);
             return;
         }
 

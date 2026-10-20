@@ -1,20 +1,20 @@
 import { registry, errorSchema } from '../swagger';
 import { measurementsSchema, dateMeasurementSchema } from '../schemas/measurements';
 import { z } from 'zod';
+import { decimalString } from './sharedSchemas';
 
 const errorContent = { 'application/json': { schema: errorSchema } };
 
-const decimalResponseSchema = z.union([z.number()]);
 const measurementResponseSchema = z.object({
     id: z.uuid(),
     userId: z.uuid(),
     date: z.iso.datetime(),
-    weight: decimalResponseSchema,
-    waist: decimalResponseSchema,
-    hips: decimalResponseSchema,
-    arm: decimalResponseSchema,
+    weight: decimalString,
+    waist: decimalString,
+    hips: decimalString,
+    arm: decimalString,
     // Nullable: measurements created before thigh was tracked have no value
-    thigh: z.number().nullable(),
+    thigh: decimalString.nullable(),
     createdAt: z.iso.datetime(),
     updatedAt: z.iso.datetime(),
 });

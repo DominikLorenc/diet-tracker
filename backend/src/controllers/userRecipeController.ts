@@ -7,6 +7,7 @@ import {
     copyRecipe,
 } from '../services/userRecipeService';
 import { createUserRecipeSchema, updateUserRecipeSchema, copyRecipeSchema, UUIDScheme } from '../schemas/userSchema';
+import { sendValidationError } from '../utils/sendValidationError';
 
 export const createUserRecipeController = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -17,7 +18,7 @@ export const createUserRecipeController = async (req: Request, res: Response, ne
 
         const result = createUserRecipeSchema.safeParse(req.body);
         if (!result.success) {
-            return res.status(400).json({ message: result.error.issues });
+            return sendValidationError(res, result.error);
         }
 
         const { name, products, steps } = result.data;
@@ -54,7 +55,7 @@ export const updateUserRecipeController = async (req: Request, res: Response, ne
 
         const result = updateUserRecipeSchema.safeParse(req.body);
         if (!result.success) {
-            return res.status(400).json({ message: result.error.issues });
+            return sendValidationError(res, result.error);
         }
 
         const { id } = req.params;
@@ -62,7 +63,7 @@ export const updateUserRecipeController = async (req: Request, res: Response, ne
         const userRecipeId = UUIDScheme.safeParse(id);
 
         if (!userRecipeId.success) {
-            return res.status(400).json({ message: userRecipeId.error.issues });
+            return sendValidationError(res, userRecipeId.error);
         }
 
         const { name, products, steps } = result.data;
@@ -87,7 +88,7 @@ export const deleteUserRecipeController = async (req: Request, res: Response, ne
         const result = UUIDScheme.safeParse(id);
 
         if (!result.success) {
-            return res.status(400).json({ message: result.error.issues });
+            return sendValidationError(res, result.error);
         }
 
         const userRecipeId = result.data;
@@ -109,7 +110,7 @@ export const copyRecipeController = async (req: Request, res: Response, next: Ne
 
         const result = copyRecipeSchema.safeParse(req.body);
         if (!result.success) {
-            return res.status(400).json({ message: result.error.issues });
+            return sendValidationError(res, result.error);
         }
 
         const { sourceRecipeId } = result.data;

@@ -1,19 +1,9 @@
 import { registry, errorSchema } from '../swagger';
 import { createUserRecipeSchema, updateUserRecipeSchema, copyRecipeSchema } from '../schemas/userSchema';
 import { z } from 'zod';
+import { productResponseSchema } from './sharedSchemas';
 
 const errorContent = { 'application/json': { schema: errorSchema } };
-
-const productSchema = z.object({
-    id: z.string(),
-    name: z.string(),
-    calories: z.string(),
-    carbs: z.string(),
-    protein: z.string(),
-    fat: z.string(),
-    imageUrl: z.string(),
-    createdAt: z.string(),
-});
 
 const userRecipeIngredientSchema = z.object({
     id: z.string(),
@@ -22,7 +12,7 @@ const userRecipeIngredientSchema = z.object({
     quantity: z.string(),
     createdAt: z.string(),
     updatedAt: z.string(),
-    product: productSchema,
+    product: productResponseSchema,
 });
 
 const userRecipeResponseSchema = z.object({
@@ -44,7 +34,11 @@ registry.registerPath({
     responses: {
         200: {
             description: 'List of user recipes',
-            content: { 'application/json': { schema: z.object({ userRecipes: z.array(userRecipeResponseSchema) }) } },
+            content: {
+                'application/json': {
+                    schema: z.object({ message: z.string(), userRecipes: z.array(userRecipeResponseSchema) }),
+                },
+            },
         },
         401: { description: 'Unauthorized', content: errorContent },
     },

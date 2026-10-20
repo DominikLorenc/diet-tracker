@@ -21,6 +21,7 @@ import {
   type ScannedProduct,
 } from "@/app/_components/barcode/BarcodeScannerModal";
 import { Plus, ScanBarcode, Search } from "lucide-react";
+import { parseProduct } from "@/app/lib/apiParsers";
 
 const searchSchema = z.object({
   search: z.string().min(1, "Wpisz nazwę produktu"),
@@ -109,11 +110,17 @@ export const ProductSearch = ({
       ]);
       if (recentRes.data)
         setRecentSearches(
-          recentRes.data.recentSearches as unknown as RecentSearch[],
+          recentRes.data.recentSearches.map((search) => ({
+            ...search,
+            product: search.product && parseProduct(search.product),
+          })),
         );
       if (favRes.data)
         setFavoriteProducts(
-          favRes.data.favorites as unknown as ProductFavorite[],
+          favRes.data.favorites.map((favorite) => ({
+            ...favorite,
+            product: parseProduct(favorite.product),
+          })),
         );
     };
     load();
@@ -174,7 +181,7 @@ export const ProductSearch = ({
       showToast("error", "Błąd wyszukiwania", "Spróbuj ponownie");
     } else if (data) {
       setNewlyCreatedProduct?.(null);
-      setSearchResults(data.products as Product[]);
+      setSearchResults(data.products.map(parseProduct));
       setHasSearched(true);
     }
   };
@@ -200,8 +207,7 @@ export const ProductSearch = ({
   };
 
   const recentProducts = recentSearches
-    .filter((r) => r.product !== null)
-    .map((r) => r.product as Product)
+    .flatMap((r) => (r.product ? [r.product] : []))
     .slice(0, 5);
 
   const showInitialState = !hasSearched;

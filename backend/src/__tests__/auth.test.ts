@@ -78,6 +78,7 @@ describe('POST /api/v1/users/register', () => {
 describe('POST /api/v1/users/login', () => {
     it('should return 200 and set cookie when valid data is provided', async () => {
         vi.mocked(loginUser).mockResolvedValue({
+            id: '11111111-1111-4111-8111-111111111111',
             email: 'test@test.com',
             username: 'test',
             role: 'USER',
@@ -91,6 +92,17 @@ describe('POST /api/v1/users/login', () => {
 
         expect(res.status).toBe(200);
         expect(res.headers['set-cookie']).toBeDefined();
+        expect(res.body.user.id).toBe('11111111-1111-4111-8111-111111111111');
+        // The token lives only in the httpOnly cookie, never in the JSON body
+        expect(res.body.user.token).toBeUndefined();
+    });
+
+    it('should return a readable message and the Zod issues on invalid input', async () => {
+        const res = await request(app).post('/api/v1/users/login').send({ email: 'not-an-email' });
+
+        expect(res.status).toBe(400);
+        expect(typeof res.body.message).toBe('string');
+        expect(Array.isArray(res.body.issues)).toBe(true);
     });
     it('should return 401 when invalid credentials', async () => {
         vi.mocked(loginUser).mockRejectedValue(new AppError('Invalid email or password', 401));

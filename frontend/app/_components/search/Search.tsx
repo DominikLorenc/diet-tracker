@@ -17,6 +17,7 @@ import {
   BarcodeScannerModal,
   type ScannedProduct,
 } from "@/app/_components/barcode/BarcodeScannerModal";
+import { parseProduct } from "@/app/lib/apiParsers";
 
 type Product = {
   name: string;
@@ -88,7 +89,12 @@ export const Search = ({
         await apiClient.GET("/recent-searches");
 
       if (data) {
-        setRecentSearches(data.recentSearches);
+        setRecentSearches(
+          data.recentSearches.map((search) => ({
+            ...search,
+            product: search.product && parseProduct(search.product),
+          })),
+        );
       }
 
       if (fetchError) {
@@ -155,7 +161,7 @@ export const Search = ({
     if (searchError) {
       setError("Coś poszło nie tak");
     } else if (data) {
-      setResults(data.products as Product[]);
+      setResults(data.products.map(parseProduct));
       setIsSearched(true);
     }
 

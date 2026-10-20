@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { addRecentSearchService, getRecentSearchesService } from '../services/recentSearchesService';
 import { productIdSchema } from '../schemas/productSchema';
+import { sendValidationError } from '../utils/sendValidationError';
 
 export const addRecentSearch = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -8,7 +9,7 @@ export const addRecentSearch = async (req: Request, res: Response, next: NextFun
 
         const result = productIdSchema.safeParse(productId);
         if (!result.success) {
-            res.status(400).json({ message: result.error.issues });
+            sendValidationError(res, result.error);
             return;
         }
 

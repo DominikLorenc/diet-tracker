@@ -37,7 +37,7 @@ export const registerUser = async (user: Prisma.UserCreateInput): Promise<User> 
 export const loginUser = async (
     email: string,
     password: string,
-): Promise<Pick<User, 'email' | 'username' | 'role'> & { token: string }> => {
+): Promise<Pick<User, 'id' | 'email' | 'username' | 'role'> & { token: string }> => {
     const user = await prisma.user.findUnique({
         where: {
             email,
@@ -62,6 +62,7 @@ export const loginUser = async (
     });
 
     return {
+        id: user.id,
         username,
         role,
         email,

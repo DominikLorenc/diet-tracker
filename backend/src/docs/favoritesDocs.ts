@@ -1,5 +1,9 @@
 import { registry, errorSchema } from '../swagger';
-import { productFavoriteSchema, recipeFavoriteSchema } from '../schemas/productFavoriteSchema';
+import {
+    productFavoriteSchema,
+    recipeFavoriteSchema,
+    recipeFavoriteWithProductsSchema,
+} from '../schemas/productFavoriteSchema';
 import { z } from 'zod';
 
 const errorContent = { 'application/json': { schema: errorSchema } };
@@ -80,7 +84,7 @@ registry.registerPath({
             description: 'List of favorite recipes',
             content: {
                 'application/json': {
-                    schema: z.object({ favorites: z.array(recipeFavoriteSchema) }),
+                    schema: z.object({ favorites: z.array(recipeFavoriteWithProductsSchema) }),
                 },
             },
         },

@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { apiClient } from "@/app/lib/apiClient";
 
 import type { Measurement } from "@/app/_types/measurements";
+import { parseMeasurement } from "@/app/lib/apiParsers";
 
 export type UseMeasurementsReturn = {
   measurements: Measurement[];
@@ -29,7 +30,7 @@ export const useMeasurements = (startDateStr: string, endDateStr: string) => {
       });
 
       if (data) {
-        setMeasurements(data.measurements);
+        setMeasurements(data.measurements.map(parseMeasurement));
       }
 
       if (error) {

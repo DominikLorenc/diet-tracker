@@ -1,23 +1,9 @@
 import { registry, errorSchema } from '../swagger';
 import { productSchema, productListQuerySchema, barcodeQuerySchema, barcodeCodeSchema } from '../schemas/productSchema';
-import { ProductCategory } from '../generated/prisma';
+import { productResponseSchema, forbiddenResponse } from './sharedSchemas';
 import { z } from 'zod';
 
 const errorContent = { 'application/json': { schema: errorSchema } };
-
-const productResponseSchema = z.object({
-    id: z.string(),
-    name: z.string(),
-    calories: z.number(),
-    carbs: z.number(),
-    protein: z.number(),
-    fat: z.number(),
-    imageUrl: z.string(),
-    barcode: z.string().nullable(),
-    createdAt: z.string(),
-    category: z.enum(ProductCategory),
-    gramsPerUnit: z.number().nullable(),
-});
 
 const barcodeProductResponseSchema = z.object({
     id: z.string().optional(),
@@ -49,6 +35,7 @@ registry.registerPath({
         },
         400: { description: 'Validation error', content: errorContent },
         401: { description: 'Unauthorized', content: errorContent },
+        403: forbiddenResponse,
     },
 });
 
@@ -159,6 +146,7 @@ registry.registerPath({
         400: { description: 'Validation error', content: errorContent },
         404: { description: 'Product not found', content: errorContent },
         401: { description: 'Unauthorized', content: errorContent },
+        403: forbiddenResponse,
     },
 });
 
@@ -180,5 +168,6 @@ registry.registerPath({
         },
         404: { description: 'Product not found', content: errorContent },
         401: { description: 'Unauthorized', content: errorContent },
+        403: forbiddenResponse,
     },
 });

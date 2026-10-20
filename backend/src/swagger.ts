@@ -5,7 +5,13 @@ extendZodWithOpenApi(z);
 
 export const registry = new OpenAPIRegistry();
 
-export const errorSchema = z.object({ message: z.string() });
+export const errorSchema = z.object({
+    message: z.string(),
+    // Only on validation errors (400): the raw Zod issues, one per invalid field
+    issues: z
+        .array(z.object({ code: z.string(), path: z.array(z.union([z.string(), z.number()])), message: z.string() }))
+        .optional(),
+});
 
 registry.registerComponent('securitySchemes', 'cookieAuth', {
     type: 'apiKey',

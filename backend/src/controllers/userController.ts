@@ -17,6 +17,7 @@ import {
     resetPasswordService,
 } from '../services/userService';
 import { AppError } from '../utils/AppError';
+import { sendValidationError } from '../utils/sendValidationError';
 
 // Single source of truth for auth-cookie attributes, shared by login (set) and
 // logout (clear) so they can never drift apart. Excludes maxAge on purpose —
@@ -32,7 +33,7 @@ const getCookieOptions = (): CookieOptions => {
 export const register = async (req: Request, res: Response, next: NextFunction) => {
     const result = registerSchema.safeParse(req.body);
     if (!result.success) {
-        return res.status(400).json({ message: result.error.issues });
+        return sendValidationError(res, result.error);
     }
 
     try {
@@ -57,7 +58,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
     const result = loginSchema.safeParse(req.body);
     if (!result.success) {
-        return res.status(400).json({ message: result.error.issues });
+        return sendValidationError(res, result.error);
     }
 
     try {
@@ -105,7 +106,7 @@ export const updateGoals = async (req: Request, res: Response, next: NextFunctio
     try {
         const validation = updateGoalsSchema.safeParse(req.body);
         if (!validation.success) {
-            return res.status(400).json({ message: validation.error.issues });
+            return sendValidationError(res, validation.error);
         }
 
         const { dailyCaloriesGoal, dailyProteinGoal, dailyCarbsGoal, dailyFatGoal } = validation.data;
@@ -131,7 +132,7 @@ export const updateImageUrlController = async (req: Request, res: Response, next
     try {
         const validation = updateImageUrlSchema.safeParse(req.body);
         if (!validation.success) {
-            return res.status(400).json({ message: validation.error.issues });
+            return sendValidationError(res, validation.error);
         }
 
         const { imageUrl } = validation.data;
@@ -146,7 +147,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
     try {
         const result = forgotPasswordSchema.safeParse(req.body);
         if (!result.success) {
-            return res.status(400).json({ message: result.error.issues });
+            return sendValidationError(res, result.error);
         }
 
         const { email } = result.data;
@@ -163,7 +164,7 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
     try {
         const result = resetPasswordSchema.safeParse(req.body);
         if (!result.success) {
-            return res.status(400).json({ message: result.error.issues });
+            return sendValidationError(res, result.error);
         }
         const { token, password } = result.data;
         await resetPasswordService(token, password);

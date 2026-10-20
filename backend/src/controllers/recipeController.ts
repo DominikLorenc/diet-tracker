@@ -13,12 +13,13 @@ import {
     updateRecipeValues,
     deleteRecipeService,
 } from '../services/recipeService';
+import { sendValidationError } from '../utils/sendValidationError';
 
 export const createRecipe = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const result = recipeSchema.safeParse(req.body);
         if (!result.success) {
-            res.status(400).json({ message: result.error.issues });
+            sendValidationError(res, result.error);
             return;
         }
 
@@ -34,7 +35,7 @@ export const getRecipes = async (req: Request, res: Response, next: NextFunction
     try {
         const result = recipeListQuerySchema.safeParse(req.query);
         if (!result.success) {
-            res.status(400).json({ message: result.error.issues });
+            sendValidationError(res, result.error);
             return;
         }
 
@@ -49,7 +50,7 @@ export const getRecipeCategories = async (req: Request, res: Response, next: Nex
     try {
         const result = recipeCategoryCountsQuerySchema.safeParse(req.query);
         if (!result.success) {
-            res.status(400).json({ message: result.error.issues });
+            sendValidationError(res, result.error);
             return;
         }
 
@@ -83,14 +84,14 @@ export const updateRecipe = async (req: Request, res: Response, next: NextFuncti
 
         const result = recipeIdSchema.safeParse(id);
         if (!result.success) {
-            res.status(400).json({ message: result.error.issues });
+            sendValidationError(res, result.error);
             return;
         }
 
         const validationRecipe = recipeSchema.safeParse(req.body);
 
         if (!validationRecipe.success) {
-            res.status(400).json({ message: validationRecipe.error.issues });
+            sendValidationError(res, validationRecipe.error);
             return;
         }
 
@@ -107,7 +108,7 @@ export const deleteRecipe = async (req: Request, res: Response, next: NextFuncti
 
     const result = recipeIdSchema.safeParse(id);
     if (!result.success) {
-        res.status(404).json({ message: result.error.issues });
+        sendValidationError(res, result.error, 404);
         return;
     }
 
