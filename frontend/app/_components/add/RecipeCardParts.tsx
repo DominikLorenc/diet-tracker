@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { ChevronDown, Minus, Plus } from "lucide-react";
+import { formatAmount } from "@/utils/format";
 
 type HeaderProps = {
   name: string;
@@ -78,7 +79,10 @@ export const RecipeCardBody = ({
               className="flex justify-between gap-3 py-1.5 border-b border-ink text-sm"
             >
               <span>{ing.name}</span>
-              <span className="font-mono">{ing.quantity} g</span>
+              {/* Grams follow the chosen portion, same as the kcal total */}
+              <span className="font-mono">
+                {formatAmount(parseFloat(ing.quantity) * portion, 2)} g
+              </span>
             </li>
           ))}
         </ul>
