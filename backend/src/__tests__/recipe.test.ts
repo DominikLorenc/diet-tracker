@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
     createRecipeService,
     getAllRecipes,
+    getRecipeCategoryCounts,
     getRecipeById,
     updateRecipeValues,
     deleteRecipeService,
@@ -40,6 +41,7 @@ describe('POST /api/v1/recipes', () => {
             name: recipeName,
             createdAt: new Date(),
             steps: [],
+            categories: [],
         });
         const res = await request(app)
             .post('/api/v1/recipes')
@@ -69,44 +71,81 @@ describe('GET /api/v1/recipes', () => {
         vi.resetAllMocks();
     });
     it('should return 200 and all recipes', async () => {
-        vi.mocked(getAllRecipes).mockResolvedValue([
-            {
-                id: '1',
-                name: recipeName,
-                createdAt: new Date(),
-                steps: [],
-                products: [
-                    {
-                        id: 'uuid',
-                        recipeId: '1',
-                        productId,
-                        quantity: new Decimal(1),
-                        createdAt: new Date(),
-                        product: {
-                            id: productId,
-                            name: 'Test product',
-                            calories: new Decimal(100),
-                            carbs: new Decimal(100),
-                            protein: new Decimal(100),
-                            fat: new Decimal(100),
+        vi.mocked(getAllRecipes).mockResolvedValue({
+            total: 1,
+            page: 1,
+            limit: 20,
+            recipes: [
+                {
+                    id: '1',
+                    name: recipeName,
+                    createdAt: new Date(),
+                    steps: [],
+                    categories: [],
+                    products: [
+                        {
+                            id: 'uuid',
+                            recipeId: '1',
+                            productId,
+                            quantity: new Decimal(1),
                             createdAt: new Date(),
-                            imageUrl: 'https://example.com/image.jpg',
-                            barcode: '1234567890',
-                            category: 'OTHER',
-                            gramsPerUnit: null,
+                            product: {
+                                id: productId,
+                                name: 'Test product',
+                                calories: new Decimal(100),
+                                carbs: new Decimal(100),
+                                protein: new Decimal(100),
+                                fat: new Decimal(100),
+                                createdAt: new Date(),
+                                imageUrl: 'https://example.com/image.jpg',
+                                barcode: '1234567890',
+                                category: 'OTHER',
+                                gramsPerUnit: null,
+                            },
                         },
-                    },
-                ],
-            },
-        ]);
+                    ],
+                },
+            ],
+        });
         const res = await request(app)
             .get('/api/v1/recipes')
             .set('Cookie', ['token=' + token]);
         expect(res.status).toBe(200);
+        expect(res.body.total).toBe(1);
+        expect(res.body.recipes).toHaveLength(1);
+    });
+
+    it('should return 400 when categories contain an unknown value', async () => {
+        const res = await request(app)
+            .get('/api/v1/recipes?categories=HACKED')
+            .set('Cookie', ['token=' + token]);
+        expect(res.status).toBe(400);
+        expect(getAllRecipes).not.toHaveBeenCalled();
     });
 
     it('should return 401 when user is not logged in', async () => {
         const res = await request(app).get('/api/v1/recipes');
+        expect(res.status).toBe(401);
+    });
+});
+
+describe('GET /api/v1/recipes/categories', () => {
+    beforeEach(() => {
+        vi.resetAllMocks();
+    });
+    it('should return 200 and category counts', async () => {
+        vi.mocked(getRecipeCategoryCounts).mockResolvedValue([{ category: 'SOUPS', count: 28 }]);
+        const res = await request(app)
+            .get('/api/v1/recipes/categories')
+            .set('Cookie', ['token=' + token]);
+        expect(res.status).toBe(200);
+        expect(res.body.categories).toEqual([{ category: 'SOUPS', count: 28 }]);
+        // Guards the route order: '/categories' must not be swallowed by '/:id'
+        expect(getRecipeById).not.toHaveBeenCalled();
+    });
+
+    it('should return 401 when user is not logged in', async () => {
+        const res = await request(app).get('/api/v1/recipes/categories');
         expect(res.status).toBe(401);
     });
 });
@@ -121,6 +160,7 @@ describe('GET /api/v1/recipes/:id', () => {
             name: recipeName,
             createdAt: new Date(),
             steps: [],
+            categories: [],
             products: [
                 {
                     id: productId,
@@ -182,6 +222,7 @@ describe('PATCH /api/v1/recipes/:id', () => {
             name: recipeName,
             createdAt: new Date(),
             steps: [],
+            categories: [],
         });
         const res = await request(app)
             .patch(`/api/v1/recipes/${recipeId}`)
@@ -236,6 +277,7 @@ describe('DELETE /api/v1/recipes/:id', () => {
             name: recipeName,
             createdAt: new Date(),
             steps: [],
+            categories: [],
         });
         const res = await request(app)
             .delete(`/api/v1/recipes/${recipeId}`)

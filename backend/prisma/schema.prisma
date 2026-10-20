@@ -32,6 +32,26 @@ datasource db {
   OTHER
 }
 
+enum RecipeCategory {
+  OATMEAL_PUDDING
+  YOGURT_COTTAGE
+  CAKES_COOKIES
+  SANDWICHES_TOASTS
+  PANCAKES
+  EGGS
+  WRAPS
+  TRADITIONAL
+  SALADS
+  PASTA
+  SMOOTHIES
+  FAST_FOOD
+  READY_MEALS
+  DESSERTS
+  SOUPS
+  MAIN_DISHES
+  SNACKS
+}
+
 
 model User {
     id        String   @id @default(uuid())
@@ -181,6 +201,7 @@ enum MealType {
     recipeFavorites RecipeFavorite[]
     userRecipes UserRecipe[]
     steps String[] @default([])
+    categories RecipeCategory[] @default([])
   }
 
   model RecipeIngredient {

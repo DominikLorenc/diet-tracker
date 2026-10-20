@@ -1,5 +1,6 @@
 import { registry, errorSchema } from '../swagger';
-import { recipeSchema } from '../schemas/recipeSchema';
+import { recipeSchema, recipeListQuerySchema, recipeCategoryCountsQuerySchema } from '../schemas/recipeSchema';
+import { RecipeCategory } from '../generated/prisma';
 import { z } from 'zod';
 
 const errorContent = { 'application/json': { schema: errorSchema } };
@@ -57,12 +58,49 @@ registry.registerPath({
     method: 'get',
     path: '/recipes',
     tags: ['Recipes'],
-    summary: 'Get all recipes',
+    summary: 'Get all recipes (paginated, searchable, filterable by categories)',
     security: [{ cookieAuth: [] }],
+    request: {
+        query: recipeListQuerySchema,
+    },
     responses: {
         200: {
-            description: 'List of recipes',
-            content: { 'application/json': { schema: z.object({ recipes: z.array(recipeResponseSchema) }) } },
+            description: 'Page of recipes',
+            content: {
+                'application/json': {
+                    schema: z.object({
+                        recipes: z.array(recipeResponseSchema),
+                        total: z.number(),
+                        page: z.number(),
+                        limit: z.number(),
+                    }),
+                },
+            },
+        },
+        400: { description: 'Invalid query parameters', content: errorContent },
+        401: { description: 'Unauthorized', content: errorContent },
+    },
+});
+
+registry.registerPath({
+    method: 'get',
+    path: '/recipes/categories',
+    tags: ['Recipes'],
+    summary: 'Get the number of recipes in every category, optionally narrowed by name search',
+    security: [{ cookieAuth: [] }],
+    request: {
+        query: recipeCategoryCountsQuerySchema,
+    },
+    responses: {
+        200: {
+            description: 'Recipe count per category, in enum order, including empty categories',
+            content: {
+                'application/json': {
+                    schema: z.object({
+                        categories: z.array(z.object({ category: z.enum(RecipeCategory), count: z.number() })),
+                    }),
+                },
+            },
         },
         401: { description: 'Unauthorized', content: errorContent },
     },

@@ -1,8 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
-import { recipeSchema, recipeIdSchema } from '../schemas/recipeSchema';
+import {
+    recipeSchema,
+    recipeIdSchema,
+    recipeListQuerySchema,
+    recipeCategoryCountsQuerySchema,
+} from '../schemas/recipeSchema';
 import {
     createRecipeService,
     getAllRecipes,
+    getRecipeCategoryCounts,
     getRecipeById,
     updateRecipeValues,
     deleteRecipeService,
@@ -26,8 +32,29 @@ export const createRecipe = async (req: Request, res: Response, next: NextFuncti
 
 export const getRecipes = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const recipes = await getAllRecipes();
-        res.status(200).json({ recipes });
+        const result = recipeListQuerySchema.safeParse(req.query);
+        if (!result.success) {
+            res.status(400).json({ message: result.error.issues });
+            return;
+        }
+
+        const recipes = await getAllRecipes(result.data);
+        res.status(200).json(recipes);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getRecipeCategories = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const result = recipeCategoryCountsQuerySchema.safeParse(req.query);
+        if (!result.success) {
+            res.status(400).json({ message: result.error.issues });
+            return;
+        }
+
+        const categories = await getRecipeCategoryCounts(result.data.search);
+        res.status(200).json({ categories });
     } catch (error) {
         next(error);
     }

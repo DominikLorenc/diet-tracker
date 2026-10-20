@@ -1,4 +1,4 @@
-import { Recipe } from '../generated/prisma';
+import { Recipe, RecipeCategory } from '../generated/prisma';
 import { Prisma } from '../generated/prisma';
 import prisma from '../lib/prisma';
 import { AppError } from '../utils/AppError';
@@ -44,16 +44,76 @@ export const createRecipeService = async (recipe: CreateRecipeInput): Promise<Re
     return newRecipe;
 };
 
-export const getAllRecipes = async (): Promise<RecipeWithProducts[]> => {
-    const recipes = await prisma.recipe.findMany({
-        include: {
-            products: {
-                include: { product: true },
-            },
-        },
-    });
+// LIKE treats % and _ as wildcards and Prisma's `contains` passes them through,
+// so escape them to make a search for "50%" match literally in both list and counts
+const escapeLikePattern = (value: string): string => value.replace(/[\\%_]/g, (char) => `\\${char}`);
 
-    return recipes;
+type RecipeListQuery = {
+    page: number;
+    limit: number;
+    search?: string;
+    categories?: RecipeCategory[];
+};
+
+type RecipeListResult = { recipes: RecipeWithProducts[]; total: number; page: number; limit: number };
+
+export const getAllRecipes = async ({
+    page,
+    limit,
+    search,
+    categories,
+}: RecipeListQuery): Promise<RecipeListResult> => {
+    // Each optional filter adds one condition; AND of zero conditions matches everything
+    const filters: Prisma.RecipeWhereInput[] = [];
+    if (search) {
+        filters.push({ name: { contains: escapeLikePattern(search), mode: 'insensitive' } });
+    }
+    if (categories && categories.length > 0) {
+        filters.push({ categories: { hasSome: categories } });
+    }
+    const where: Prisma.RecipeWhereInput = { AND: filters };
+
+    const [recipes, total] = await prisma.$transaction([
+        prisma.recipe.findMany({
+            where,
+            // Stable order is required, otherwise pages can repeat or skip recipes
+            orderBy: { name: 'asc' },
+            skip: (page - 1) * limit,
+            take: limit,
+            include: {
+                products: {
+                    include: { product: true },
+                },
+            },
+        }),
+        prisma.recipe.count({ where }),
+    ]);
+
+    return { recipes, total, page, limit };
+};
+
+type RecipeCategoryCount = { category: RecipeCategory; count: number };
+
+export const getRecipeCategoryCounts = async (search?: string): Promise<RecipeCategoryCount[]> => {
+    // Counts follow the search text but deliberately ignore selected categories:
+    // with OR filtering, a category's count must not shrink when another one is ticked.
+    // Values inside Prisma.sql are sent as bound parameters, never concatenated into SQL.
+    const searchFilter = search ? Prisma.sql`WHERE name ILIKE ${`%${escapeLikePattern(search)}%`}` : Prisma.empty;
+
+    // Prisma groupBy cannot split an array column, so unnest it in SQL
+    const rows = await prisma.$queryRaw<{ category: RecipeCategory; count: bigint }[]>`
+        SELECT unnest(categories) AS category, COUNT(*) AS count
+        FROM "Recipe"
+        ${searchFilter}
+        GROUP BY category
+    `;
+
+    // COUNT(*) comes back as bigint; also include categories with zero recipes, in enum order
+    const countByCategory = new Map(rows.map((row) => [row.category, Number(row.count)]));
+    return Object.values(RecipeCategory).map((category) => ({
+        category,
+        count: countByCategory.get(category) ?? 0,
+    }));
 };
 
 export const getRecipeById = async (id: string): Promise<RecipeWithProducts> => {
