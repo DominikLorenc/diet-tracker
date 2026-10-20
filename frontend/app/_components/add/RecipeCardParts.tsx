@@ -56,6 +56,44 @@ type BodyProps = {
 
 const PORTION_STEP = 0.5;
 
+type PortionStepperProps = {
+  portion: number;
+  onPortionChange: (portion: number) => void;
+};
+
+// −/+ control for how many portions of a recipe to log (half-portion steps)
+export const PortionStepper = ({
+  portion,
+  onPortionChange,
+}: PortionStepperProps) => (
+  <div className="flex items-stretch">
+    <button
+      type="button"
+      onClick={() =>
+        onPortionChange(Math.max(PORTION_STEP, portion - PORTION_STEP))
+      }
+      aria-label="Mniej o pół porcji"
+      className="w-12 h-12 border-2 border-ink flex items-center justify-center cursor-pointer hover:bg-ink hover:text-paper transition-colors"
+    >
+      <Minus size={18} strokeWidth={3} strokeLinecap="square" />
+    </button>
+    <span className="flex-1 flex items-center justify-center gap-1.5 border-y-2 border-ink bg-card font-mono">
+      <span className="text-xl font-semibold">
+        {portion.toLocaleString("pl-PL")}
+      </span>
+      <span>porcji</span>
+    </span>
+    <button
+      type="button"
+      onClick={() => onPortionChange(portion + PORTION_STEP)}
+      aria-label="Więcej o pół porcji"
+      className="w-12 h-12 border-2 border-ink flex items-center justify-center cursor-pointer hover:bg-ink hover:text-paper transition-colors"
+    >
+      <Plus size={18} strokeWidth={3} strokeLinecap="square" />
+    </button>
+  </div>
+);
+
 export const RecipeCardBody = ({
   ingredients,
   steps,
@@ -110,32 +148,7 @@ export const RecipeCardBody = ({
       </div>
     )}
 
-    <div className="flex items-stretch">
-      <button
-        type="button"
-        onClick={() =>
-          onPortionChange(Math.max(PORTION_STEP, portion - PORTION_STEP))
-        }
-        aria-label="Mniej o pół porcji"
-        className="w-12 h-12 border-2 border-ink flex items-center justify-center cursor-pointer hover:bg-ink hover:text-paper transition-colors"
-      >
-        <Minus size={18} strokeWidth={3} strokeLinecap="square" />
-      </button>
-      <span className="flex-1 flex items-center justify-center gap-1.5 border-y-2 border-ink bg-card font-mono">
-        <span className="text-xl font-semibold">
-          {portion.toLocaleString("pl-PL")}
-        </span>
-        <span>porcji</span>
-      </span>
-      <button
-        type="button"
-        onClick={() => onPortionChange(portion + PORTION_STEP)}
-        aria-label="Więcej o pół porcji"
-        className="w-12 h-12 border-2 border-ink flex items-center justify-center cursor-pointer hover:bg-ink hover:text-paper transition-colors"
-      >
-        <Plus size={18} strokeWidth={3} strokeLinecap="square" />
-      </button>
-    </div>
+    <PortionStepper portion={portion} onPortionChange={onPortionChange} />
 
     <button
       type="button"

@@ -14,6 +14,9 @@ import {
   type RecipeCategoryCount,
 } from "@/app/lib/recipeCategories";
 import { RecipeCategoryFilter } from "@/app/_components/recipes/RecipeCategoryFilter";
+import { PortionStepper } from "@/app/_components/add/RecipeCardParts";
+import type { MealType } from "@/app/_components/dashboard/DiaryDayView";
+import { MEAL_LABELS, guessMealTypeByHour } from "@/app/lib/mealTypes";
 
 export interface Product {
   id: string;
@@ -166,13 +169,18 @@ function RecipesContent() {
 
   const clearCategories = () => setCategoriesInUrl([]);
 
-  const handleAddRecipeToDiary = async (recipe: Recipe) => {
+  // Diary stores a recipe entry in grams, so the portion is converted here
+  const handleAddRecipeToDiary = async (
+    recipe: Recipe,
+    grams: number,
+    mealType: MealType,
+  ) => {
     const { error } = await apiClient.POST("/diary", {
       body: {
         date: todayLocal(),
         recipeId: recipe.id,
-        quantity: DEFAULT_RECIPE_GRAMS,
-        mealType: "BREAKFAST",
+        quantity: grams,
+        mealType,
       },
     });
 
@@ -180,7 +188,11 @@ function RecipesContent() {
       showToast("error", "Nie udało się dodać przepisu", error.message);
       return;
     }
-    showToast("success", `${recipe.name} dodany do śniadania`);
+    showToast(
+      "success",
+      "Dodano!",
+      `${recipe.name} → ${MEAL_LABELS[mealType].toLowerCase()}`,
+    );
   };
 
   return (
@@ -215,7 +227,9 @@ function RecipesContent() {
             key={recipe.id}
             recipe={recipe}
             canEdit={isAdmin}
-            onAdd={() => handleAddRecipeToDiary(recipe)}
+            onAdd={(grams, mealType) =>
+              handleAddRecipeToDiary(recipe, grams, mealType)
+            }
           />
         ))}
       </div>
@@ -235,10 +249,9 @@ function RecipesContent() {
   );
 }
 
-const DEFAULT_RECIPE_GRAMS = 100;
-
-function productMacros(item: RecipeProduct) {
-  const factor = parseFloat(item.quantity) / 100;
+// Macros of one ingredient, scaled by the chosen number of portions
+function productMacros(item: RecipeProduct, portion: number) {
+  const factor = (parseFloat(item.quantity) / 100) * portion;
   return {
     calories: factor * parseFloat(item.product.calories),
     protein: factor * parseFloat(item.product.protein),
@@ -250,23 +263,39 @@ function productMacros(item: RecipeProduct) {
 type RecipeLabelProps = {
   recipe: Recipe;
   canEdit: boolean;
-  onAdd: () => void;
+  onAdd: (grams: number, mealType: MealType) => Promise<void>;
 };
 
 function RecipeLabel({ recipe, canEdit, onAdd }: RecipeLabelProps) {
+  const [portion, setPortion] = useState(1);
+  const [mealType, setMealType] = useState<MealType>(() =>
+    guessMealTypeByHour(new Date().getHours()),
+  );
+  const [adding, setAdding] = useState(false);
+
+  // Everything on the label follows the chosen portion, so what you see is what gets logged
   const totals = recipe.products.reduce(
     (sum, item) => {
-      const m = productMacros(item);
+      const m = productMacros(item, portion);
       return {
         calories: sum.calories + m.calories,
         protein: sum.protein + m.protein,
         carbs: sum.carbs + m.carbs,
         fat: sum.fat + m.fat,
-        grams: sum.grams + parseFloat(item.quantity),
+        grams: sum.grams + parseFloat(item.quantity) * portion,
       };
     },
     { calories: 0, protein: 0, carbs: 0, fat: 0, grams: 0 },
   );
+
+  const handleAdd = async () => {
+    setAdding(true);
+    try {
+      await onAdd(totals.grams, mealType);
+    } finally {
+      setAdding(false);
+    }
+  };
 
   return (
     <article className="border-2 border-ink bg-card px-3 pt-1.5 pb-3 flex flex-col">
@@ -282,7 +311,11 @@ function RecipeLabel({ recipe, canEdit, onAdd }: RecipeLabelProps) {
         )}
       </div>
       <div className="flex justify-between text-sm pt-1 pb-1 border-b border-ink">
-        <span>Cały przepis</span>
+        <span>
+          {portion === 1
+            ? "Cały przepis"
+            : `${portion.toLocaleString("pl-PL")} porcji`}
+        </span>
         <span className="font-mono font-semibold">
           {formatAmount(totals.grams)} g
         </span>
@@ -320,7 +353,7 @@ function RecipeLabel({ recipe, canEdit, onAdd }: RecipeLabelProps) {
       </h3>
       <ul>
         {recipe.products.map((item) => {
-          const m = productMacros(item);
+          const m = productMacros(item, portion);
           return (
             <li
               key={item.productId}
@@ -331,7 +364,7 @@ function RecipeLabel({ recipe, canEdit, onAdd }: RecipeLabelProps) {
                   {item.product.name}
                 </span>
                 <span className="font-mono text-[11px]">
-                  {formatAmount(parseFloat(item.quantity))} g · B{" "}
+                  {formatAmount(parseFloat(item.quantity) * portion, 2)} g · B{" "}
                   {m.protein.toFixed(0)} · W {m.carbs.toFixed(0)} · T{" "}
                   {m.fat.toFixed(0)}
                 </span>
@@ -365,12 +398,47 @@ function RecipeLabel({ recipe, canEdit, onAdd }: RecipeLabelProps) {
         </>
       )}
 
-      <button
-        onClick={onAdd}
-        className="mt-4 flex items-center justify-between min-h-12 px-4 bg-ink text-paper text-sm font-extrabold uppercase hover:bg-accent transition-colors cursor-pointer"
-      >
-        <span>+ {DEFAULT_RECIPE_GRAMS} g do dzisiejszego śniadania</span>
-      </button>
+      <div className="mt-4 flex flex-col gap-2">
+        <PortionStepper portion={portion} onPortionChange={setPortion} />
+
+        <div
+          role="radiogroup"
+          aria-label="Posiłek"
+          className="grid grid-cols-4 gap-1.5"
+        >
+          {(Object.keys(MEAL_LABELS) as MealType[]).map((value) => {
+            const isSelected = mealType === value;
+            return (
+              <button
+                key={value}
+                type="button"
+                role="radio"
+                aria-checked={isSelected}
+                onClick={() => setMealType(value)}
+                className={`min-w-0 px-1 py-1.5 border-2 border-ink text-[11px] sm:text-xs uppercase truncate cursor-pointer transition-colors ${
+                  isSelected
+                    ? "bg-ink text-paper font-extrabold"
+                    : "font-semibold hover:bg-ink hover:text-paper"
+                }`}
+              >
+                {MEAL_LABELS[value]}
+              </button>
+            );
+          })}
+        </div>
+
+        <button
+          type="button"
+          onClick={handleAdd}
+          disabled={adding}
+          className="flex items-center justify-between min-h-12 px-4 bg-ink text-paper text-sm font-extrabold uppercase hover:bg-accent transition-colors cursor-pointer disabled:opacity-60"
+        >
+          <span>{adding ? "Dodaję…" : "Dodaj na dziś"}</span>
+          <span className="font-mono font-semibold">
+            {totals.calories.toFixed(0)} kcal
+          </span>
+        </button>
+      </div>
     </article>
   );
 }

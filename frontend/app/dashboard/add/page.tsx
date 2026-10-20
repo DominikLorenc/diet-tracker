@@ -10,6 +10,7 @@ import { RecipeSearch } from "@/app/_components/add/RecipeSearch";
 import { ProductForm } from "@/app/_components/shared/ProductForm";
 import { useUserStore } from "@/store/useUserStore";
 import { parseLocalDate, todayLocal } from "@/utils/date";
+import { MEAL_LABELS, guessMealTypeByHour } from "@/app/lib/mealTypes";
 
 type Tab = "products" | "recipes" | "new";
 
@@ -23,22 +24,6 @@ type Product = {
   imageUrl: string;
   createdAt: string;
 };
-
-const MEAL_LABELS: Record<string, string> = {
-  BREAKFAST: "Śniadanie",
-  LUNCH: "Obiad",
-  DINNER: "Kolacja",
-  SNACK: "Przekąska",
-};
-
-// Best guess for the meal when the page is opened without context
-// (e.g. from the bottom nav), based on the current local hour.
-function guessMealTypeByHour(hour: number): string {
-  if (hour < 11) return "BREAKFAST";
-  if (hour < 16) return "LUNCH";
-  if (hour < 21) return "DINNER";
-  return "SNACK";
-}
 
 function AddPageContent() {
   const searchParams = useSearchParams();
