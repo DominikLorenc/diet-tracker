@@ -1,4 +1,8 @@
 import { z } from "zod";
+import {
+  isRecipeCategory,
+  type RecipeCategory,
+} from "@/app/lib/recipeCategories";
 
 export const recipeFormSchema = z.object({
   name: z.string().trim().min(1, "Nazwa przepisu jest wymagana"),
@@ -13,4 +17,9 @@ export const recipeFormSchema = z.object({
     )
     .min(1, "Dodaj przynajmniej jeden składnik"),
   steps: z.array(z.object({ value: z.string() })),
+  categories: z.array(
+    z.custom<RecipeCategory>(
+      (value) => typeof value === "string" && isRecipeCategory(value),
+    ),
+  ),
 });

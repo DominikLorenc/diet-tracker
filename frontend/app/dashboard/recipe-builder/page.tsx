@@ -28,6 +28,7 @@ import { apiClient } from "@/app/lib/apiClient";
 import { recipeFormSchema } from "@/schemas/recipeSchema";
 import { Search } from "@/app/_components/search/Search";
 import { useUserStore } from "@/store/useUserStore";
+import { RECIPE_CATEGORY_LABELS } from "@/app/lib/recipeCategories";
 
 type Product = {
   id: string;
@@ -112,6 +113,8 @@ function RecipeBuilderContent() {
   const [error, setError] = useState("");
   const [role, setRole] = useState<"USER" | "ADMIN" | null>(null);
   const user = useUserStore((state) => state.user);
+  // Categories drive the filters of the shared recipe list, so only global recipes have them
+  const isGlobalRecipe = !isUserRecipe && role === "ADMIN";
 
   const {
     register,
@@ -123,7 +126,7 @@ function RecipeBuilderContent() {
     resolver: zodResolver(recipeFormSchema),
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    defaultValues: { name: "", products: [], steps: [] },
+    defaultValues: { name: "", products: [], steps: [], categories: [] },
   });
 
   const {
@@ -169,6 +172,7 @@ function RecipeBuilderContent() {
               quantity: parseFloat(ing.quantity),
             })),
             steps: r.steps.map((step) => ({ value: step })),
+            categories: r.categories,
           });
         }
       } else {
@@ -185,6 +189,7 @@ function RecipeBuilderContent() {
                 quantity: parseFloat(ing.quantity),
               })),
               steps: found.steps.map((step) => ({ value: step })),
+              categories: [],
             });
           }
         }
@@ -227,16 +232,17 @@ function RecipeBuilderContent() {
 
     let saveError: unknown = null;
 
-    if (!isUserRecipe && role === "ADMIN") {
+    if (isGlobalRecipe) {
+      const { categories } = data;
       if (editId) {
         const { error } = await apiClient.PATCH("/recipes/{id}", {
           params: { path: { id: editId } },
-          body: { name: data.name, products, steps },
+          body: { name: data.name, products, steps, categories },
         });
         saveError = error;
       } else {
         const { error } = await apiClient.POST("/recipes", {
-          body: { name: data.name, products, steps },
+          body: { name: data.name, products, steps, categories },
         });
         saveError = error;
       }
@@ -369,6 +375,33 @@ function RecipeBuilderContent() {
           </p>
         )}
       </section>
+
+      {isGlobalRecipe && (
+        <fieldset>
+          <legend className="w-full flex items-baseline justify-between font-display text-[26px] uppercase border-b-[5px] border-ink pb-0.5">
+            Kategorie
+            <span className="font-mono text-[11px] font-medium normal-case">
+              do filtrów
+            </span>
+          </legend>
+          <div className="grid sm:grid-cols-2 gap-x-4">
+            {Object.entries(RECIPE_CATEGORY_LABELS).map(([category, label]) => (
+              <label
+                key={category}
+                className="flex items-center justify-between gap-3 min-h-11 border-b border-ink cursor-pointer"
+              >
+                <span className="text-[15px]">{label}</span>
+                <input
+                  type="checkbox"
+                  value={category}
+                  className="w-5 h-5 accent-ink cursor-pointer"
+                  {...register("categories")}
+                />
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      )}
 
       {/* Kroki przygotowania */}
       <section aria-labelledby="steps-heading">

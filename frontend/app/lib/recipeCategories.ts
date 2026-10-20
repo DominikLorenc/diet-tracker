@@ -31,7 +31,7 @@ export const RECIPE_CATEGORY_LABELS: Record<RecipeCategory, string> = {
   SNACKS: "Przekąski",
 };
 
-const isRecipeCategory = (value: string): value is RecipeCategory =>
+export const isRecipeCategory = (value: string): value is RecipeCategory =>
   Object.hasOwn(RECIPE_CATEGORY_LABELS, value);
 
 // The URL can be edited by hand, so keep only known, unique categories
