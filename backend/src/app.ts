@@ -32,6 +32,22 @@ app.use(
     }),
 );
 app.use(globalRateLimiter);
+
+// Reject requests that carry a Content-Encoding header instead of letting
+// body-parser decompress them. This app only receives plain JSON from the
+// browser, so it never needs compressed request bodies. Refusing them closes
+// the pre-auth decoder attack surface (e.g. the Brotli OOB-write RCE,
+// CVE-2026-111497) independently of the Node.js version.
+// IMPORTANT: must run BEFORE express.json() — otherwise body-parser already
+// decompressed the body before this guard ever sees it.
+app.use((req, res, next) => {
+    if (req.headers['content-encoding']) {
+        res.status(415).send('unsupported media/encoding');
+    } else {
+        next();
+    }
+});
+
 app.use(express.json());
 app.use(cookieParser());
 
